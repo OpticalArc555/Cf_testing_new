@@ -3,9 +3,11 @@ package com.spring.jwt.security;
 
 import com.spring.jwt.entity.Dealer;
 import com.spring.jwt.entity.InspectorProfile;
+import com.spring.jwt.entity.SalesPerson;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +24,7 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
 
 
     @Override
@@ -48,28 +51,33 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 
         String firstName = null;
         String dealerId = null;
-        String userId = null;
+        String userId = String.valueOf(user.getId());
         String userProfileId = null;
-        String inspectorProfileId=null;
+        String inspectorProfileId = null;
+        String salesPersonId = null;
 
         if (authorities.contains(new SimpleGrantedAuthority("DEALER"))) {
             Dealer dealer = user.getDealer();
             if (dealer != null) {
                 firstName = dealer.getFirstname();
                 dealerId = String.valueOf(dealer.getId());
-                userId = String.valueOf(dealer.getUser().getId());
-
             }
         } else if (authorities.contains(new SimpleGrantedAuthority("USER"))) {
-            firstName = user.getProfile().getFirstName();
-            userProfileId = String.valueOf(user.getProfile().getId());
-            userId = String.valueOf(user.getId());
+            if (user.getProfile() != null) {
+                firstName = user.getProfile().getFirstName();
+                userProfileId = String.valueOf(user.getProfile().getId());
+            }
         } else if (authorities.contains(new SimpleGrantedAuthority("INSPECTOR"))) {
             InspectorProfile inspectorProfile = user.getInspectorProfile();
             if (inspectorProfile != null) {
                 firstName = inspectorProfile.getFirstName();
                 inspectorProfileId = String.valueOf(inspectorProfile.getId());
-                userId = String.valueOf(user.getId());
+            }
+        } else if (authorities.contains(new SimpleGrantedAuthority("SALESPERSON"))) {
+            SalesPerson salesPerson = user.getSalesPerson();
+            if (salesPerson != null) {
+                firstName = salesPerson.getFirstName();
+                salesPersonId = String.valueOf(salesPerson.getSalesPersonId());
             }
         }
 
@@ -81,9 +89,9 @@ public class UserDetailsServiceCustom implements UserDetailsService {
                 userId,
                 userProfileId,
                 inspectorProfileId,
+                salesPersonId,
                 authorities
         );
-
     }
 
 }

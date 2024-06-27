@@ -123,7 +123,7 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         Page<InspectorProfile> allProfiles = inspectorProfileRepo.findAll(pageable);
 
         if (allProfiles.isEmpty()) {
-            throw new PageNotFoundException("Page Not Found");
+            throw new PageNotFoundException("No Data Found");
         }
 
         List<InspectorProfileDto> profileDtoList = allProfiles.stream()
@@ -136,6 +136,7 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
 
     private InspectorProfileDto convertToDto(InspectorProfile inspectorProfile) {
         InspectorProfileDto dto = new InspectorProfileDto();
+        dto.setInspectorProfileId(inspectorProfile.getId());
         dto.setAddress(inspectorProfile.getAddress());
         dto.setCity(inspectorProfile.getCity());
         dto.setFirstName(inspectorProfile.getFirstName());

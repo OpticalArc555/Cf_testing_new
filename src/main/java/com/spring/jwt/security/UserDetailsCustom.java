@@ -26,9 +26,13 @@ public class UserDetailsCustom implements UserDetails {
 
     private String inspectorProfileId;
 
+    private String salesPersonId;
+
+    public String getSalesPersonId() {return salesPersonId;
+    }
 
     public String getInspectorProfileId() {
-        return inspectorProfileId;
+    return inspectorProfileId;
     }
 
     public String getUserId() {
