@@ -62,7 +62,6 @@ public class BidCarsServiceImpl implements BidCarsService {
             bidDetailsDTO.setCreatedAt(bidCar.getCreatedAt());
             bidDetailsDTO.setMusicFeature(beadingCar.getMusicFeature());
             bidDetailsDTO.setArea(beadingCar.getArea());
-            bidDetailsDTO.setBodyType(beadingCar.getBodyType());
             bidDetailsDTO.setBrand(beadingCar.getBrand());
             bidDetailsDTO.setCarInsurance(beadingCar.getCarInsurance());
             bidDetailsDTO.setCarStatus(beadingCar.getCarStatus());
@@ -72,18 +71,18 @@ public class BidCarsServiceImpl implements BidCarsService {
             bidDetailsDTO.setFuelType(beadingCar.getFuelType());
             bidDetailsDTO.setKmDriven(beadingCar.getKmDriven());
             bidDetailsDTO.setModel(beadingCar.getModel());
-            bidDetailsDTO.setNoOfWheels(beadingCar.getNoOfWheels());
             bidDetailsDTO.setOwnerSerial(beadingCar.getOwnerSerial());
             bidDetailsDTO.setPowerWindowFeature(beadingCar.getPowerWindowFeature());
             bidDetailsDTO.setPrice(beadingCar.getPrice());
             bidDetailsDTO.setRearParkingCameraFeature(beadingCar.getRearParkingCameraFeature());
             bidDetailsDTO.setRegistration(beadingCar.getRegistration());
-            bidDetailsDTO.setSafetyDescription(beadingCar.getSafetyDescription());
             bidDetailsDTO.setTransmission(beadingCar.getTransmission());
-            bidDetailsDTO.setTyre(beadingCar.getTyre());
             bidDetailsDTO.setYear(beadingCar.getYear());
             bidDetailsDTO.setDate(beadingCar.getDate());
             bidDetailsDTO.setUserId(beadingCar.getUserId());
+            bidDetailsDTO.setVariant(beadingCar.getVariant());
+            bidDetailsDTO.setTitle(beadingCar.getTitle());
+            bidDetailsDTO.setDealer_id(beadingCar.getDealerId());
 
             return bidDetailsDTO;
         }else {

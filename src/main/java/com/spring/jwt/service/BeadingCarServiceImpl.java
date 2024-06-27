@@ -28,36 +28,83 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     @Override
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId) {
-        BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId).orElseThrow(()->new BeadingCarNotFoundException(("beadingCAR not found"), HttpStatus.NOT_FOUND));
-        beadingCAR.setAcFeature(beadingCARDto.getAcFeature());
-        beadingCAR.setMusicFeature(beadingCARDto.getMusicFeature());
-        beadingCAR.setArea(beadingCARDto.getArea());
-        beadingCAR.setDate(beadingCARDto.getDate());
-        beadingCAR.setBodyType(beadingCARDto.getBodyType());
-        beadingCAR.setBrand(beadingCARDto.getBrand());
-        beadingCAR.setCarInsurance(beadingCARDto.getCarInsurance());
-        beadingCAR.setCarStatus(beadingCARDto.getCarStatus());
-        beadingCAR.setCity(beadingCARDto.getCity());
-        beadingCAR.setColor(beadingCARDto.getColor());
-        beadingCAR.setDescription(beadingCARDto.getDescription());
-        beadingCAR.setFuelType(beadingCARDto.getFuelType());
-        beadingCAR.setKmDriven(beadingCARDto.getKmDriven());
-        beadingCAR.setModel(beadingCARDto.getModel());
-        beadingCAR.setNoOfWheels(beadingCARDto.getNoOfWheels());
-        beadingCAR.setPowerWindowFeature(beadingCARDto.getPowerWindowFeature());
-        beadingCAR.setOwnerSerial(beadingCARDto.getOwnerSerial());
-        beadingCAR.setPowerWindowFeature(beadingCARDto.getPowerWindowFeature());
-        beadingCAR.setPrice(beadingCARDto.getPrice());
-        beadingCAR.setRearParkingCameraFeature(beadingCARDto.getRearParkingCameraFeature());
-        beadingCAR.setRegistration(beadingCARDto.getRegistration());
-        beadingCAR.setSafetyDescription(beadingCARDto.getSafetyDescription());
-        beadingCAR.setTransmission(beadingCARDto.getTransmission());
-        beadingCAR.setTyre(beadingCARDto.getTyre());
-        beadingCAR.setYear(beadingCARDto.getYear());
-        beadingCarRepo.save(beadingCAR);
-        return "beadingcar edited";
+        BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
+                .orElseThrow(() -> new BeadingCarNotFoundException("beadingCAR not found", HttpStatus.NOT_FOUND));
 
+        if (beadingCARDto.getAcFeature() != null) {
+            beadingCAR.setAcFeature(beadingCARDto.getAcFeature());
+        }
+        if (beadingCARDto.getMusicFeature() != null) {
+            beadingCAR.setMusicFeature(beadingCARDto.getMusicFeature());
+        }
+        if (beadingCARDto.getArea() != null) {
+            beadingCAR.setArea(beadingCARDto.getArea());
+        }
+        if (beadingCARDto.getDate() != null) {
+            beadingCAR.setDate(beadingCARDto.getDate());
+        }
+        if (beadingCARDto.getBrand() != null) {
+            beadingCAR.setBrand(beadingCARDto.getBrand());
+        }
+        if (beadingCARDto.getCarInsurance() != null) {
+            beadingCAR.setCarInsurance(beadingCARDto.getCarInsurance());
+        }
+        if (beadingCARDto.getCarStatus() != null) {
+            beadingCAR.setCarStatus(beadingCARDto.getCarStatus());
+        }
+        if (beadingCARDto.getCity() != null) {
+            beadingCAR.setCity(beadingCARDto.getCity());
+        }
+        if (beadingCARDto.getColor() != null) {
+            beadingCAR.setColor(beadingCARDto.getColor());
+        }
+        if (beadingCARDto.getDescription() != null) {
+            beadingCAR.setDescription(beadingCARDto.getDescription());
+        }
+        if (beadingCARDto.getFuelType() != null) {
+            beadingCAR.setFuelType(beadingCARDto.getFuelType());
+        }
+        if (beadingCARDto.getKmDriven() != null) {
+            beadingCAR.setKmDriven(beadingCARDto.getKmDriven());
+        }
+        if (beadingCARDto.getModel() != null) {
+            beadingCAR.setModel(beadingCARDto.getModel());
+        }
+        if (beadingCARDto.getPowerWindowFeature() != null) {
+            beadingCAR.setPowerWindowFeature(beadingCARDto.getPowerWindowFeature());
+        }
+        if (beadingCARDto.getOwnerSerial() != null) {
+            beadingCAR.setOwnerSerial(beadingCARDto.getOwnerSerial());
+        }
+        if (beadingCARDto.getPrice() != null) {
+            beadingCAR.setPrice(beadingCARDto.getPrice());
+        }
+        if (beadingCARDto.getRearParkingCameraFeature() != null) {
+            beadingCAR.setRearParkingCameraFeature(beadingCARDto.getRearParkingCameraFeature());
+        }
+        if (beadingCARDto.getRegistration() != null) {
+            beadingCAR.setRegistration(beadingCARDto.getRegistration());
+        }
+        if (beadingCARDto.getTransmission() != null) {
+            beadingCAR.setTransmission(beadingCARDto.getTransmission());
+        }
+        if (beadingCARDto.getYear() != null) {
+            beadingCAR.setYear(beadingCARDto.getYear());
+        }
+        if (beadingCARDto.getVariant() != null) {
+            beadingCAR.setVariant(beadingCARDto.getVariant());
+        }
+        if (beadingCARDto.getTitle() != null) {
+            beadingCAR.setTitle(beadingCARDto.getTitle());
+        }
+        if (beadingCARDto.getDealerId() != null) {
+            beadingCAR.setDealerId(beadingCARDto.getDealerId());
+        }
+
+        beadingCarRepo.save(beadingCAR);
+        return "beadingCAR edited";
     }
+
 
     @Override
     public List<BeadingCARDto> getAllBeadingCars() {
@@ -96,4 +143,30 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         return dtos;
     }
 
+    @Override
+    public List<BeadingCARDto> getByDealerID(Integer getDealerId) {
+        List<BeadingCAR> beadingCars = beadingCarRepo.findByDealerId(getDealerId);
+        if (beadingCars.isEmpty()) {
+            throw new BeadingCarNotFoundException("No Beading cars found for dealer with id: " + getDealerId, HttpStatus.NOT_FOUND);
+        }
+        List<BeadingCARDto> dtos = new ArrayList<>();
+        for (BeadingCAR beadingCAR : beadingCars) {
+            dtos.add(new BeadingCARDto(beadingCAR));
+        }
+        return dtos;
+    }
+
+    @Override
+    public List<BeadingCARDto> getByStatus(String carStatus) {
+        List<BeadingCAR> beadingCars = beadingCarRepo.findByCarStatus(carStatus);
+        if (beadingCars.isEmpty()) {
+            throw new BeadingCarNotFoundException("No Beading cars found with status: " + carStatus, HttpStatus.NOT_FOUND);
+        }
+        List<BeadingCARDto> dtos = new ArrayList<>();
+        for (BeadingCAR beadingCAR : beadingCars) {
+            dtos.add(new BeadingCARDto(beadingCAR));
+        }
+        return dtos;
+
+    }
 }

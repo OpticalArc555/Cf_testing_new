@@ -3,6 +3,7 @@ package com.spring.jwt.entity;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.dto.CarDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,14 +31,8 @@ public class BeadingCAR {
     @Column(name = "area", length = 45)
     private String area;
 
-    @Column(name = "`bodytype`", length = 45)
-    private String bodyType;
-
     @Column(name = "brand", nullable = false, length = 45)
     private String brand;
-
-    @Column(name = "car_insurance")
-    private Boolean carInsurance;
 
     @Column(name = "carStatus", length = 50)
     private String carStatus;
@@ -48,29 +43,27 @@ public class BeadingCAR {
     @Column(name = "color", length = 45)
     private String color;
 
-    @Column(name = "description", length = 250)
+    @Column(name = "description", length = 5000)
+    @Size(max = 5000, message = "Description cannot exceed 5000 characters")
     private String description;
 
     @Column(name = "fuel_type", length = 45)
     private String fuelType;
 
     @Column(name = "km_driven", length = 50)
-    private int kmDriven;
+    private Integer kmDriven;
 
     @Column(name = "model", length = 45)
     private String model;
 
-    @Column(name = "no_of_wheels")
-    private int noOfWheels;
-
     @Column(name = "owner_serial")
-    private int ownerSerial;
+    private Integer ownerSerial;
 
     @Column(name = "power_window_feature")
     private Boolean powerWindowFeature;
 
     @Column(name = "price", length = 45)
-    private int price;
+    private Integer price;
 
     @Column(name = "rear_parking_camera_feature")
     private Boolean rearParkingCameraFeature;
@@ -78,23 +71,32 @@ public class BeadingCAR {
     @Column(name = "registration", length = 45)
     private String registration;
 
-    @Column(name = "safety_description", length = 250)
-    private String safetyDescription;
-
     @Column(name = "transmission", length = 45)
     private String transmission;
 
-    @Column(name = "tyre", length = 45)
-    private String tyre;
-
     @Column(name = "year")
-    private int year;
+    private Integer year;
 
     @Column(name = "date")
     private LocalDate date;
 
     @Column(name = "UserId")
     private int userId;
+
+    @Column(name = "car_insurance")
+    private Boolean carInsurance;
+
+    @Column(name = "variant", length = 45)
+    private String variant;
+
+    @Column(name = "title", length = 250)
+    private String title;
+
+    @Column(name = "dealer_id")
+    private Integer dealerId;
+
+
+
 
     public BeadingCAR() {
     }
@@ -104,9 +106,7 @@ public class BeadingCAR {
         this.acFeature = beadingCARDto.getAcFeature();
         this.musicFeature = beadingCARDto.getMusicFeature();
         this.area = beadingCARDto.getArea();
-        this.bodyType = beadingCARDto.getBodyType();
         this.brand = beadingCARDto.getBrand();
-        this.carInsurance = beadingCARDto.getCarInsurance();
         this.carStatus = beadingCARDto.getCarStatus();
         this.city = beadingCARDto.getCity();
         this.color = beadingCARDto.getColor();
@@ -114,17 +114,19 @@ public class BeadingCAR {
         this.fuelType = beadingCARDto.getFuelType();
         this.kmDriven = beadingCARDto.getKmDriven();
         this.model = beadingCARDto.getModel();
-        this.noOfWheels = beadingCARDto.getNoOfWheels();
         this.ownerSerial = beadingCARDto.getOwnerSerial();
         this.powerWindowFeature = beadingCARDto.getPowerWindowFeature();
         this.price = beadingCARDto.getPrice();
         this.rearParkingCameraFeature = beadingCARDto.getRearParkingCameraFeature();
         this.registration = beadingCARDto.getRegistration();
-        this.safetyDescription = beadingCARDto.getSafetyDescription();
         this.transmission = beadingCARDto.getTransmission();
-        this.tyre = beadingCARDto.getTyre();
         this.year = beadingCARDto.getYear();
         this.date = beadingCARDto.getDate();
         this.userId = beadingCARDto.getUserId();
+        this.title= beadingCARDto.getTitle();
+        this.variant=beadingCARDto.getVariant();
+        this.dealerId= beadingCARDto.getDealerId();
     }
+
+
 }

@@ -11,5 +11,8 @@ public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaS
 
     List<BeadingCAR> findByUserId (int userId);
 
+    List<BeadingCAR> findByDealerId(Integer getDealerId);
 
+
+    List<BeadingCAR> findByCarStatus(String carStatus);
 }
