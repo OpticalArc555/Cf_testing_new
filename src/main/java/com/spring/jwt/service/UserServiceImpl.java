@@ -129,6 +129,20 @@ public class UserServiceImpl implements UserService {
             inspectorProfile.setLastName(registerDto.getLastName());
             user.setInspectorProfile(inspectorProfile);
             inspectorProfile.setUser(user);
+
+        } else if (role.getName().equals("SALESPERSON")) {
+            SalesPerson salesPerson = new SalesPerson();
+
+            salesPerson.setFirstName(registerDto.getFirstName());
+            salesPerson.setLastName(registerDto.getLastName());
+            salesPerson.setAddress(registerDto.getAddress());
+            salesPerson.setArea(registerDto.getArea());
+            salesPerson.setCity(registerDto.getCity());
+            salesPerson.setJoiningdate(registerDto.getJoiningdate());
+            salesPerson.setDocumentId(registerDto.getDocumentId());
+            salesPerson.setStatus(registerDto.status);
+            user.setSalesPerson(salesPerson);
+             salesPerson.setUser(user);
         }
         return user;
     }
@@ -258,6 +272,7 @@ public class UserServiceImpl implements UserService {
         BaseResponseDTO response = new BaseResponseDTO();
 
         Optional<Userprofile> user = userProfileRepository.findById(id);
+
         if(user.isPresent()){
             user.get().setFirstName(userProfileDto.getFirstName());
             user.get().setLastName(userProfileDto.getLastName());

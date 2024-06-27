@@ -1,5 +1,6 @@
 package com.spring.jwt.dto;
 
+import com.spring.jwt.Bidding.DTO.SalesPersonDto;
 import lombok.Data;
 
 import java.util.List;

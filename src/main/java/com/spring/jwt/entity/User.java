@@ -54,7 +54,8 @@ public class User {
     @OneToOne(mappedBy = "user" , cascade = CascadeType.ALL)
     private WalletAccount account;
 
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private SalesPerson salesPerson;
 
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
