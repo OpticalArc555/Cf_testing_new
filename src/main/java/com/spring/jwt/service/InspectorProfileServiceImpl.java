@@ -147,5 +147,6 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
             dto.setMobileNo(user.getMobileNo());
         }
         return dto;
+
     }
 }
