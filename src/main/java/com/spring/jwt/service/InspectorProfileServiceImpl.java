@@ -33,6 +33,7 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
     public String updateProfile(InspectorProfileDto inspectorProfileDto, Integer InspectorProfileId) {
         InspectorProfile profile = inspectorProfileRepo.findById(InspectorProfileId).orElseThrow(() -> new UserNotFoundExceptions("Profile not found", HttpStatus.NOT_FOUND));
 
+
         if (inspectorProfileDto.getAddress() != null) {
             profile.setAddress(inspectorProfileDto.getAddress());
         }
