@@ -116,7 +116,7 @@ public class DOUploadController {
         }
 
     }
-    @GetMapping("/delete")
+    @DeleteMapping("/deleteDocumentId")
     private ResponseEntity<?> delete(@RequestParam Integer DocumentId) {
         try {
             String documents =iDocument.deleteById(DocumentId);
@@ -157,7 +157,7 @@ public class DOUploadController {
 
         }
     }
-    @DeleteMapping("/delete")
+    @DeleteMapping("/deleteCarId")
     private ResponseEntity<?> deleteCar(@RequestParam Integer carId) {
         try {
             Object documents =iDocument.delete(carId);
