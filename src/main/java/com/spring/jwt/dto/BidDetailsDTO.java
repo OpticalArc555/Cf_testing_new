@@ -25,8 +25,6 @@ public class BidDetailsDTO {
     private String area;
 
 
-    private String bodyType;
-
 
     private String brand;
 
@@ -55,8 +53,6 @@ public class BidDetailsDTO {
     private String model;
 
 
-    private int noOfWheels;
-
 
     private int ownerSerial;
 
@@ -73,13 +69,9 @@ public class BidDetailsDTO {
     private String registration;
 
 
-    private String safetyDescription;
-
 
     private String transmission;
 
-
-    private String tyre;
 
 
     private int year;
@@ -89,5 +81,11 @@ public class BidDetailsDTO {
 
 
     private int userId;
+
+    private String variant;
+
+    private String title;
+
+    private Integer dealer_id;
 
 }

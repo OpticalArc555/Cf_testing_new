@@ -18,6 +18,10 @@ public interface BeadingCarService {
 
    public List<BeadingCARDto>getByUserId(int UserId);
 
+   public List<BeadingCARDto> getByDealerID(Integer dealerId);
+
+   public List<BeadingCARDto> getByStatus(String carStatus);
+
 
 
 

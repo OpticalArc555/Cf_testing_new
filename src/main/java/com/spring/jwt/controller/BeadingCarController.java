@@ -87,4 +87,28 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars for the user"));
         }
     }
+
+    @GetMapping("/getByDealerID/{dealerId}")
+    public ResponseEntity<?> getBeadingCarsByDealerId(@PathVariable("dealerId") Integer dealerId) {
+        try {
+            List<BeadingCARDto> beadingCars = beadingCarService.getByDealerID(dealerId);
+            return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
+        } catch (BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "No Beading cars found for the dealer"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars for the dealer"));
+        }
+    }
+
+    @GetMapping("/getByStatus/{carStatus}")
+    public ResponseEntity<?> getBeadingCarsByStatus(@PathVariable("carStatus") String carStatus) {
+        try {
+            List<BeadingCARDto> beadingCars = beadingCarService.getByStatus(carStatus);
+            return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
+        } catch (BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "No Beading cars found with the given status"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
+        }
+    }
 }

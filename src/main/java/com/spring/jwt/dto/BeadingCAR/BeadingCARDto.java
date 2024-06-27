@@ -21,9 +21,6 @@ public class BeadingCARDto {
     private String area;
 
 
-    private String bodyType;
-
-
     private String brand;
 
 
@@ -45,22 +42,20 @@ public class BeadingCARDto {
     private String fuelType;
 
 
-    private int kmDriven;
+    private Integer kmDriven;
 
 
     private String model;
 
 
-    private int noOfWheels;
 
-
-    private int ownerSerial;
+    private Integer ownerSerial;
 
 
     private Boolean powerWindowFeature;
 
 
-    private int price;
+    private Integer price;
 
 
     private Boolean rearParkingCameraFeature;
@@ -69,22 +64,25 @@ public class BeadingCARDto {
     private String registration;
 
 
-    private String safetyDescription;
-
 
     private String transmission;
 
 
-    private String tyre;
 
-
-    private int year;
+    private Integer year;
 
 
     private LocalDate date;
 
 
     private int userId;
+
+
+    private String variant;
+
+    private String title;
+
+    private Integer dealerId;
 
 
     public BeadingCARDto() {
@@ -95,9 +93,7 @@ public class BeadingCARDto {
         this.acFeature = beadingCAR.getAcFeature();
         this.musicFeature = beadingCAR.getMusicFeature();
         this.area = beadingCAR.getArea();
-        this.bodyType = beadingCAR.getBodyType();
         this.brand = beadingCAR.getBrand();
-        this.carInsurance = beadingCAR.getCarInsurance();
         this.carStatus = beadingCAR.getCarStatus();
         this.city = beadingCAR.getArea();
         this.color = beadingCAR.getColor();
@@ -105,17 +101,17 @@ public class BeadingCARDto {
         this.fuelType = beadingCAR.getFuelType();
         this.kmDriven = beadingCAR.getKmDriven();
         this.model = beadingCAR.getModel();
-        this.noOfWheels = beadingCAR.getNoOfWheels();
         this.ownerSerial = beadingCAR.getOwnerSerial();
         this.powerWindowFeature = beadingCAR.getPowerWindowFeature();
         this.price = beadingCAR.getPrice();
         this.rearParkingCameraFeature = beadingCAR.getRearParkingCameraFeature();
         this.registration = beadingCAR.getRegistration();
-        this.safetyDescription = beadingCAR.getSafetyDescription();
         this.transmission = beadingCAR.getTransmission();
-        this.tyre = beadingCAR.getTyre();
         this.year = beadingCAR.getYear();
         this.date = beadingCAR.getDate();
         this.userId = beadingCAR.getUserId();
+        this.title= beadingCAR.getTitle();
+        this.variant= beadingCAR.getVariant();
+        this.dealerId= beadingCAR.getDealerId();
     }
 }
