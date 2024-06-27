@@ -30,7 +30,7 @@ public class BrandDataServiceImpl implements BrandDataService {
         brandData.setBrand(brandDataDto.getBrand());
         brandData.setVariant(brandDataDto.getVariant());
         brandData.setSubVariant(brandDataDto.getSubVariant());
-        brandData = brandDataRepository.save(brandData);
+        brandDataRepository.save(brandData);
         return brandDataDto;
     }
 

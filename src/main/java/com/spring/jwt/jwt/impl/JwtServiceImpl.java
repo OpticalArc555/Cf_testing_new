@@ -66,52 +66,61 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetailsCustom userDetailsCustom) {
-
         Instant now = Instant.now();
 
-        List<String> roles = new ArrayList<>();
-
-        userDetailsCustom.getAuthorities().forEach(role -> {
-            roles.add(role.getAuthority());
-        });
+        List<String> roles = userDetailsCustom.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
         log.info("Roles: {}", roles);
 
         String dealerId = null;
-
         String userId = null;
-
         String userProfileId = null;
-
-        String inspectorProfileId=null;
+        String inspectorProfileId = null;
+        String salesPersonId = null;
+        String firstName = userDetailsCustom.getFirstName();
 
         if (roles.contains("DEALER")) {
-
             Optional<Dealer> byEmail = dealerRepository.findByEmail(userDetailsCustom.getUsername());
-            Boolean status = byEmail.get().getStatus();
-            if (!status) {
+            if (byEmail.isPresent() && !byEmail.get().getStatus()) {
                 throw new BaseException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Your Account is Not Active Please Contact The Administrator");
             }
-
             dealerId = userDetailsCustom.getDealerId();
-            userId=userDetailsCustom.getUserId();
-        } else if (roles.contains("USER")) {
+            userId = userDetailsCustom.getUserId();
+        }
+
+        if (roles.contains("USER")) {
             userId = userDetailsCustom.getUserId();
             userProfileId = userDetailsCustom.getUserProfileId();
-        } else if (roles.contains("INSPECTOR")) {
-            userId=userDetailsCustom.getUserId();
+        }
+
+        if (roles.contains("INSPECTOR")) {
+            userId = userDetailsCustom.getUserId();
             inspectorProfileId = userDetailsCustom.getInspectorProfileId();
         }
 
+        if (roles.contains("SALESPERSON")) {
+            userId = userDetailsCustom.getUserId();
+            salesPersonId = userDetailsCustom.getSalesPersonId();
+        }
+
+        log.info("firstName: {}", firstName);
+        log.info("dealerId: {}", dealerId);
+        log.info("userId: {}", userId);
+        log.info("userProfileId: {}", userProfileId);
+        log.info("inspectorProfileId: {}", inspectorProfileId);
+        log.info("salesPersonId: {}", salesPersonId);
 
         return Jwts.builder()
                 .setSubject(userDetailsCustom.getUsername())
-                .claim("firstname", userDetailsCustom.getFirstName())
+                .claim("firstname", firstName)
                 .claim("dealerId", dealerId)
                 .claim("userId", userId)
                 .claim("userProfileId", userProfileId)
                 .claim("inspectorProfileId", inspectorProfileId)
-                .claim("authorities", userDetailsCustom.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .claim("salesPersonId", salesPersonId)
+                .claim("authorities", roles)
                 .claim("roles", roles)
                 .claim("isEnable", userDetailsCustom.isEnabled())
                 .setIssuedAt(Date.from(now))
@@ -119,6 +128,7 @@ public class JwtServiceImpl implements JwtService {
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
 
     @Override

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InspectorProfileDto {
 
+        private Integer inspectorProfileId;
+
         private String address;
 
         private String city;
