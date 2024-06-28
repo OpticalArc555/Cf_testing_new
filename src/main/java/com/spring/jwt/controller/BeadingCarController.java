@@ -2,6 +2,7 @@ package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,12 @@ public class BeadingCarController {
     private final BeadingCarService beadingCarService;
 
     @PostMapping(value = "/carregister")
-    public ResponseEntity<ResponseDto> carRegistration(@RequestBody BeadingCARDto beadingCARDto) {
-        try{
+    public ResponseEntity<?> carRegistration(@RequestBody BeadingCARDto beadingCARDto) {
+        try {
             String result = beadingCarService.AddBCar(beadingCARDto);
-            return (ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success",result)));
-        }catch (BeadingCarNotFoundException beadingCarNotFoundException){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess","Dealer not found"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", result));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("error", e.getMessage()));
         }
     }
 

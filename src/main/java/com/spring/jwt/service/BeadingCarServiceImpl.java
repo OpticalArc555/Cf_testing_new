@@ -19,13 +19,19 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     private final BeadingCarRepo beadingCarRepo;
 
-    @Override
-    public String AddBCar(BeadingCARDto beadingCARDto) {
-        BeadingCAR beadingCAR = new  BeadingCAR(beadingCARDto);
-        beadingCarRepo.save(beadingCAR);
-        return "beadingCAR added";
-    }
+//    @Override
+//    public String AddBCar(BeadingCARDto beadingCARDto) {
+//        BeadingCAR beadingCAR = new  BeadingCAR(beadingCARDto);
+//        beadingCarRepo.save(beadingCAR);
+//        return "beadingCAR added";
+//    }
+@Override
+public String AddBCar(BeadingCARDto beadingCARDto) {
+    BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
+    beadingCAR = beadingCarRepo.save(beadingCAR); // Save the entity and get the updated object
 
+    return "BeadingCarId:" + beadingCAR.getBeadingCarId();
+}
     @Override
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)

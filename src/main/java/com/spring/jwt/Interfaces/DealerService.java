@@ -19,4 +19,6 @@ public interface DealerService {
 
     public int getDealerIdByEmail(String email);
     public void updateStatus(Integer dealerId, Boolean status);
+
+    List<DealerDto> getAllDealer();
 }
