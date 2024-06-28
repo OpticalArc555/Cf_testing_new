@@ -123,6 +123,7 @@ public class AppConfig {
                 .requestMatchers("/ispProfile/**").permitAll()
                 .requestMatchers("/WalletAccount/**").permitAll()
                 .requestMatchers("/transactions/**").permitAll()
+                .requestMatchers("/uploadFileBidCar/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)
