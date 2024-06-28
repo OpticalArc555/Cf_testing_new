@@ -46,9 +46,11 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         if (inspectorProfileDto.getLastName() != null) {
             profile.setLastName(inspectorProfileDto.getLastName());
         }
+
         inspectorProfileRepo.save(profile);
 
         User user = profile.getUser();
+
         if (user != null) {
             if (inspectorProfileDto.getMobileNo() != null) {
                 user.setMobileNo(inspectorProfileDto.getMobileNo());
