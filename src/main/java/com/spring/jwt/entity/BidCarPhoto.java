@@ -35,8 +35,7 @@ public class BidCarPhoto {
         this.comment = documentDto.getComment();
         this.subtype = documentDto.getSubtype();
         this.doctype = documentDto.getDoctype();
-        this.doc = documentDto.getDoc();
-        this.userId = documentDto.hashCode();
+
         this.documentLink = documentDto.getDocumentLink();
         this.documentType = documentDto.getDocumentType();
     }

@@ -10,7 +10,6 @@ public class BidCarDto {
     private String documentLink;
 
 
-    private String doc;
     private String doctype;
     private String subtype;
     private String comment;
