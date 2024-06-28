@@ -21,11 +21,6 @@ public class BidCarPhoto {
     @Column(name = "Documentlink", length = 250)
     private String documentLink;
 
-    @Column(name = "user_userId", nullable = false)
-    private Integer userId;
-
-    @Column(name = "doc", length = 250)
-    private String doc;
     @Column(name = "doctype", length = 250)
     private String doctype;
     @Column(name = "subtype", length = 250)
