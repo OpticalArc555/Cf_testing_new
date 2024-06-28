@@ -111,4 +111,15 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
         }
     }
+    @GetMapping("/getCountByStatusAndDealerId")
+    public ResponseEntity<?> getCountByStatusAndDealerId(@RequestParam String carStatus,@RequestParam Integer dealerId) {
+        try {
+            Integer beadingCars = beadingCarService.getCountByStatusAndDealerId(carStatus,dealerId);
+            return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
+        } catch (BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "No Beading cars found with the given status"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
+        }
+    }
 }

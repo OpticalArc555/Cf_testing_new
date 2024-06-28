@@ -169,4 +169,11 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         return dtos;
 
     }
+
+    @Override
+    public Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId) {
+
+        return beadingCarRepo.getCountByStatusAndDealerId(carStatus, dealerId);
+//    return 0;
+    }
 }

@@ -23,7 +23,5 @@ public interface BeadingCarService {
    public List<BeadingCARDto> getByStatus(String carStatus);
 
 
-
-
-
+    Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId);
 }
