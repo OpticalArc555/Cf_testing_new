@@ -143,6 +143,7 @@ public class AppConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         return new CorsConfigurationSource() {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {

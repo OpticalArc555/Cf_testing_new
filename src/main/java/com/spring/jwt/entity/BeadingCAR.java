@@ -105,6 +105,7 @@ public class BeadingCAR {
         this.beadingCarId = beadingCARDto.getBeadingCarId();
         this.acFeature = beadingCARDto.getAcFeature();
         this.musicFeature = beadingCARDto.getMusicFeature();
+        this.carInsurance = beadingCARDto.getCarInsurance();
         this.area = beadingCARDto.getArea();
         this.brand = beadingCARDto.getBrand();
         this.carStatus = beadingCARDto.getCarStatus();
