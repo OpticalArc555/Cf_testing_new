@@ -9,6 +9,7 @@ import java.time.ZoneId;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "BidCars")
 public class BidCars {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
