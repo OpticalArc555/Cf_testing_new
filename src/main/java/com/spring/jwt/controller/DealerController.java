@@ -154,4 +154,17 @@ public class DealerController {
 
         }
     }
+    @GetMapping("/allDealer")
+    public ResponseEntity<ResponseAllDealerDto> getAllDealers() {
+        try {
+            List<DealerDto> dealers = dealerService.getAllDealer();
+            ResponseAllDealerDto responseAllDealerDto = new ResponseAllDealerDto("success");
+            responseAllDealerDto.setList(dealers);
+            return ResponseEntity.status(HttpStatus.OK).body(responseAllDealerDto);
+        } catch (DealerNotFoundException dealerNotFoundException) {
+            ResponseAllDealerDto responseAllDealerDto = new ResponseAllDealerDto("unsuccess");
+            responseAllDealerDto.setException("Dealer not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllDealerDto);
+        }
+    }
 }

@@ -12,6 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class SalesPersonDto {
 
+        private Integer salesPersonId;
+
         private String address;
 
         private String firstName;

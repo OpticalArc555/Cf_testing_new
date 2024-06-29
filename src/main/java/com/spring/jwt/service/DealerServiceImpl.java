@@ -263,5 +263,24 @@ public class DealerServiceImpl implements DealerService {
 
 
     }
+
+    @Override
+    public List<DealerDto> getAllDealer() {
+        List<Dealer> dealers = dealerRepository.findAll();
+
+        if (dealers.isEmpty()) {
+            throw new DealerNotFoundException("Dealer not found");
+        }
+
+        List<DealerDto> listOfDealerDto = new ArrayList<>();
+
+        for (Dealer dealer : dealers) {
+            DealerDto dealerDto = new DealerDto(dealer);
+            listOfDealerDto.add(dealerDto);
+        }
+
+        return listOfDealerDto;
+    }
+
 }
 
