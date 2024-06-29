@@ -116,6 +116,7 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     private SalesPersonDto convertToDto(SalesPerson salesPerson) {
         SalesPersonDto dto = new SalesPersonDto();
+        dto.setSalesPersonId(salesPerson.getSalesPersonId());
         dto.setAddress(salesPerson.getAddress());
         dto.setCity(salesPerson.getCity());
         dto.setFirstName(salesPerson.getFirstName());
