@@ -4,7 +4,11 @@ import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
+import com.spring.jwt.exception.DealerNotFoundException;
+import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.BeadingCarRepo;
+import com.spring.jwt.repository.DealerRepository;
+import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,19 +24,28 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     private final BeadingCarRepo beadingCarRepo;
 
-//    @Override
-//    public String AddBCar(BeadingCARDto beadingCARDto) {
-//        BeadingCAR beadingCAR = new  BeadingCAR(beadingCARDto);
-//        beadingCarRepo.save(beadingCAR);
-//        return "beadingCAR added";
-//    }
-@Override
-public String AddBCar(BeadingCARDto beadingCARDto) {
-    BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
-    beadingCAR = beadingCarRepo.save(beadingCAR); // Save the entity and get the updated object
+    private final DealerRepository dealerRepository;
 
-    return "BeadingCarId:" + beadingCAR.getBeadingCarId();
-}
+    private final UserRepository userRepository;
+
+    @Override
+    public String AddBCar(BeadingCARDto beadingCARDto) {
+        if (beadingCARDto.getDealerId() == null) {
+            throw new DealerNotFoundException("Dealer ID is required for adding a BeadingCAR");
+        }
+        if (!userRepository.existsById(beadingCARDto.getUserId())) {
+            throw new UserNotFoundExceptions("User not found with ID: " + beadingCARDto.getUserId());
+        }
+        if (!dealerRepository.existsById(beadingCARDto.getDealerId())) {
+            throw new DealerNotFoundException("Dealer not found with ID: " + beadingCARDto.getDealerId());
+        }
+        BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
+        beadingCAR.setCarStatus("pending");
+        beadingCAR = beadingCarRepo.save(beadingCAR);
+        return "BeadingCarId:" + beadingCAR.getBeadingCarId();
+    }
+
+
     @Override
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
