@@ -8,7 +8,7 @@ public class BidCarDto {
     private String documentType;
 
     private String documentLink;
-
+    private Integer carId;
 
     private String doctype;
     private String subtype;
