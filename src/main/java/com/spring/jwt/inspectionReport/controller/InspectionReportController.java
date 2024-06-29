@@ -2,9 +2,11 @@ package com.spring.jwt.inspectionReport.controller;
 
 import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.ResponseDto;
+import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.inspectionReport.Dto.AllInspectionReportDto;
 import com.spring.jwt.inspectionReport.Dto.InspectionReportDto;
 import com.spring.jwt.inspectionReport.Interface.InspectionReportService;
+import com.spring.jwt.inspectionReport.excepation.InspectionReportAlreadyExistsException;
 import com.spring.jwt.inspectionReport.excepation.InspectionReportFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,16 @@ public class InspectionReportController {
         try {
             InspectionReportDto savedReport = inspectionReportService.addInspectionReport(inspectionReportDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto("success", "Inspection report added successfully"));
-        } catch (Exception e) {
+        }catch (UserNotFoundExceptions e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "user not found"));
+        }
+        catch (InspectionReportFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "beading car not found"));
+        }
+        catch (InspectionReportAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseDto("error", "report AlreadyExists by this ID "));
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "Error adding inspection report"));
         }
     }

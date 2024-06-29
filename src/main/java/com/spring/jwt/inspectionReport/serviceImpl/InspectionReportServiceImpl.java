@@ -1,10 +1,17 @@
 package com.spring.jwt.inspectionReport.serviceImpl;
 
+import com.spring.jwt.entity.BeadingCAR;
+import com.spring.jwt.exception.DealerNotFoundException;
+import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.inspectionReport.Dto.InspectionReportDto;
 import com.spring.jwt.inspectionReport.Interface.InspectionReportService;
 import com.spring.jwt.inspectionReport.entity.InspectionReport;
+import com.spring.jwt.inspectionReport.excepation.InspectionReportAlreadyExistsException;
 import com.spring.jwt.inspectionReport.excepation.InspectionReportFoundException;
 import com.spring.jwt.inspectionReport.repo.InspectionReportRepository;
+import com.spring.jwt.repository.BeadingCarRepo;
+import com.spring.jwt.repository.DealerRepository;
+import com.spring.jwt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +23,34 @@ import java.util.stream.Collectors;
 public class InspectionReportServiceImpl implements InspectionReportService {
 @Autowired
   private InspectionReportRepository inspectionReportRepository;
+@Autowired
+  private UserRepository userRepository;
+@Autowired
+  private BeadingCarRepo beadingCarRepo;
 
     @Override
     public InspectionReportDto addInspectionReport(InspectionReportDto inspectionReportDto) {
+        if (!userRepository.existsById(inspectionReportDto.getUserId())) {
+            throw new UserNotFoundExceptions("User not found with ID: " + inspectionReportDto.getUserId());
+        }
+        if (inspectionReportDto.getBeadingCarId() == null) {
+            throw new InspectionReportFoundException("BeadingCarId cannot be null");
+        }
+        Optional<BeadingCAR> beadingCarOptional = beadingCarRepo.findById(inspectionReportDto.getBeadingCarId());
+        if (beadingCarOptional.isEmpty()) {
+            throw new InspectionReportFoundException("BeadingCar not found with ID: " + inspectionReportDto.getBeadingCarId());
+        }
+        if (inspectionReportRepository.existsByBeadingCarId(inspectionReportDto.getBeadingCarId())) {
+            throw new InspectionReportAlreadyExistsException("Inspection report already submitted for BeadingCarId: " + inspectionReportDto.getBeadingCarId());
+        }
         InspectionReport inspectionReport = convertToEntity(inspectionReportDto);
         InspectionReport savedReport = inspectionReportRepository.save(inspectionReport);
+        BeadingCAR beadingCar = beadingCarOptional.get();
+        beadingCar.setCarStatus("active");
+        beadingCarRepo.save(beadingCar);
         return convertToDto(savedReport);
     }
+
 
     @Override
     public List<InspectionReportDto> GetAllInspectionReport() {
