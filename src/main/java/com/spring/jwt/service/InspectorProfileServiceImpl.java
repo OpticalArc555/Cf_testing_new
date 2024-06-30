@@ -146,6 +146,7 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         dto.setLastName(inspectorProfile.getLastName());
         User user = inspectorProfile.getUser();
         if (user != null) {
+            dto.setUserId(user.getId());
             dto.setEmail(user.getEmail());
             dto.setMobileNo(user.getMobileNo());
         }

@@ -20,4 +20,6 @@ public class InspectorProfileDto {
         private String email;
 
         private String mobileNo;
+
+        private Integer UserId;
 }

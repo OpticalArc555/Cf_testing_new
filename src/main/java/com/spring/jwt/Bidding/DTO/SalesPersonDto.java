@@ -34,6 +34,8 @@ public class SalesPersonDto {
 
         private String mobileNo;
 
+        private Integer UserId;
+
 
     }
 
