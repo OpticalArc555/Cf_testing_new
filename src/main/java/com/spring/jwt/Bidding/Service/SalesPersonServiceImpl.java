@@ -125,10 +125,13 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         dto.setDocumentId(salesPerson.getDocumentId());
         dto.setJoiningdate(salesPerson.getJoiningdate());
         dto.setStatus(salesPerson.getStatus());
+
         User user = salesPerson.getUser();
         if (user != null) {
+            dto.setUserId(user.getId());
             dto.setEmail(user.getEmail());
             dto.setMobileNo(user.getMobileNo());
+
         }
         return dto;
     }
