@@ -7,6 +7,8 @@ import com.spring.jwt.repository.IBidDoc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BidPhotoImp implements IBidPhoto {
     @Autowired
@@ -27,12 +29,16 @@ public class BidPhotoImp implements IBidPhoto {
 
     @Override
     public Object getByCarID(Integer carId) {
-        return iBidDoc.findByCarId(carId);
+         List<BidCarPhoto> object = iBidDoc.findByCarId(carId);
+        if (object.size() == 0)throw new RuntimeException("invalid carid");
+        return object;
     }
 
     @Override
     public Object getCarIdType(Integer carId, String docType) {
-        return iBidDoc.findByDocumentTypeAndUserID(carId,docType);
+        List<BidCarPhoto> object = iBidDoc.findByDocumentTypeAndUserID(carId,docType);
+        if (object.size() == 0)throw new RuntimeException("invalid carid or doctype");
+        return object;
     }
 
     @Override
