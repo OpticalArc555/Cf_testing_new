@@ -51,7 +51,6 @@ public class WebSocketBidController {
             return placedBidService.getTopThree(placedBidDTO.getBidCarId());
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request for top three bids: {}", e.getMessage());
-            // Handle the error appropriately, possibly return an empty list or a specific error response
             return Collections.emptyList();
         }
     }
