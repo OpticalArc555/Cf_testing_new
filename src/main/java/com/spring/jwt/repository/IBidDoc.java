@@ -5,15 +5,17 @@ import com.spring.jwt.entity.BidCarPhoto;
 import com.spring.jwt.entity.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface IBidDoc extends JpaRepository<BidCarPhoto,Integer> {
-    @Query("SELECT jfq FROM Document jfq WHERE jfq.carId = :carId")
-    List<BidCarPhoto> findByCarId(Integer carId);
-    @Query("SELECT jfq FROM Document jfq WHERE jfq.carId = :carId AND jfq.documentType = :documentType")
-    public List<BidCarPhoto> findByDocumentTypeAndUserID(Integer carId, String documentType);
+    @Query("SELECT b FROM BidCarPhoto b WHERE b.carId = :carId AND b.doctype = :doctype")
+    List<BidCarPhoto> findByDocumentTypeAndUserID(@Param("carId") Integer carId,@Param("doctype") String doctype);
+
+    @Query("SELECT b FROM BidCarPhoto b WHERE b.carId = :carId")
+    List<BidCarPhoto> findByCarId(@Param("carId") Integer carId);
 
 }
