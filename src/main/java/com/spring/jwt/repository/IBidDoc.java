@@ -12,10 +12,11 @@ import java.util.List;
 
 @Repository
 public interface IBidDoc extends JpaRepository<BidCarPhoto,Integer> {
-    @Query("SELECT b FROM BidCarPhoto b WHERE b.carId = :carId AND b.doctype = :doctype")
-    List<BidCarPhoto> findByDocumentTypeAndUserID(@Param("carId") Integer carId,@Param("doctype") String doctype);
+    @Query("SELECT b FROM BidCarPhoto b WHERE b.beadingCarId = :beadingCarId AND b.doctype = :doctype")
+    List<BidCarPhoto> findBydocTypeAndbeadingCarId(@Param("beadingCarId") Integer beadingCarId,@Param("doctype") String doctype);
 
-    @Query("SELECT b FROM BidCarPhoto b WHERE b.carId = :carId")
-    List<BidCarPhoto> findByCarId(@Param("carId") Integer carId);
+    @Query("SELECT b FROM BidCarPhoto b WHERE b.beadingCarId = :beadingCarId")
+    List<BidCarPhoto> findByCarId(@Param("beadingCarId") Integer beadingCarId);
 
+    List<BidCarPhoto> findBybeadingCarIdAndDocumentType(Integer beadingCarId, String documentType);
 }
