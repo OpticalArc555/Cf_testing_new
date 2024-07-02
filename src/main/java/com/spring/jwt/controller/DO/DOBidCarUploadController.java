@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,7 +40,7 @@ public class DOBidCarUploadController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer beadingCarId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
@@ -94,7 +95,7 @@ public class DOBidCarUploadController {
                 documentDto.setDoctype(doctype);
                 documentDto.setDocumentType(documentType);
                 documentDto.setSubtype(subtype);
-                documentDto.setCarId(carId);
+                documentDto.setBeadingCarId(beadingCarId);
 
 
 
@@ -163,10 +164,10 @@ public class DOBidCarUploadController {
         }
     }
 
-    @GetMapping("/getByCarID")
-    private ResponseEntity<?> getByCarID(@RequestParam Integer carId) {
+    @GetMapping("/getByBeadingCarId")
+    private ResponseEntity<?> getByCarID(@RequestParam Integer beadingCarId) {
         try {
-            Object documents =iDocument.getByCarID(carId);
+            Object documents =iDocument.getByCarID(beadingCarId);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
@@ -176,10 +177,10 @@ public class DOBidCarUploadController {
 
         }
     }
-    @GetMapping("/getCarIdType")
-    private ResponseEntity<?> getCarIdType(@RequestParam Integer carId,@RequestParam String docType) {
+    @GetMapping("/getBeadingCarIdType")
+    private ResponseEntity<?> getCarIdType(@RequestParam Integer beadingCarId,@RequestParam String doctype) {
         try {
-            Object documents =iDocument.getCarIdType(carId,docType);
+            Object documents =iDocument.getCarIdType(beadingCarId,doctype);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
@@ -187,6 +188,20 @@ public class DOBidCarUploadController {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
+        }
+    }
+
+    @GetMapping("/getByDocumentType")
+    public ResponseEntity<?> getByDocumentType(@RequestParam Integer beadingCarId, @RequestParam String documentType) {
+        try {
+            List<BidCarDto> documents = iDocument.getByDocumentType(beadingCarId, documentType);
+            ResponceDto responceDto = new ResponceDto("success", documents);
+            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", e.getMessage()));
+        } catch (Exception e) {
+            System.err.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to retrieve documents"));
         }
     }
 }
