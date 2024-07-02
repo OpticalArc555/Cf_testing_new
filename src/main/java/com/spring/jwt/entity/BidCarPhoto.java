@@ -20,6 +20,7 @@ public class BidCarPhoto {
 
     @Column(name = "Documentlink", length = 250)
     private String documentLink;
+
     @Column(name = "carId")
     private Integer carId;
 

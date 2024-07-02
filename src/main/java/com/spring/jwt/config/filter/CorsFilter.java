@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class CorsFilter implements Filter {
 
-    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("https://cartechindia.com", "http://localhost:5173");
+    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("https://cartechindia.com", "http://localhost:5173","http://localhost:63342");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
