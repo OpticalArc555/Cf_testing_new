@@ -25,7 +25,8 @@ public class BeadingCarController {
         try {
             String result = beadingCarService.AddBCar(beadingCARDto);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", result));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("error", e.getMessage()));
         }
     }
@@ -123,4 +124,5 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
         }
     }
+
 }

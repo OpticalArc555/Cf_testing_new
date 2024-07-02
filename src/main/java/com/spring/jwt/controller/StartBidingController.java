@@ -35,7 +35,6 @@ public class StartBidingController {
 
     private final BidCarsService bidCarsService;
 
-
     private final JdbcTemplate jdbcTemplate;
 
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
@@ -98,10 +97,14 @@ public class StartBidingController {
             BidCarsDTO bidding = bidCarsService.createBidding(bidCarsDTO);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", bidding));
         } catch (Exception e) {
-            ResponseSingleCarDto responseSingleCarDto = new ResponseSingleCarDto("unsuccess");
-            responseSingleCarDto.setException(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return handleException(e);
         }
+    }
+
+    private ResponseEntity<ResponseSingleCarDto> handleException(Exception e) {
+        ResponseSingleCarDto responseSingleCarDto = new ResponseSingleCarDto("unsuccess");
+        responseSingleCarDto.setException(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSingleCarDto);
     }
 
     @GetMapping("/getById")
