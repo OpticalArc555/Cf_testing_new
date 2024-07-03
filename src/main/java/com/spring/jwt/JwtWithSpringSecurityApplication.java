@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 @SpringBootApplication
+@EnableWebSocketMessageBroker
 @OpenAPIDefinition(info = @Info(title = "CarResell API'S", version = "1.0", description = "Api Documentation"))
 public class JwtWithSpringSecurityApplication {
 	public static void main(String[] args) {

@@ -39,6 +39,10 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
         User byUserId = userRepository.findByUserId(placedBidDTO.getUserId());
 
+        if (byUserId== null) {
+            throw new UserNotFoundExceptions("User Not Found By Id "+ placedBidDTO.getUserId());
+        }
+
         Optional<WalletAccount> accountbalance = accountRepository.findByUserId(placedBidDTO.getUserId());
 
         if (accountbalance.isEmpty()) {
@@ -49,9 +53,6 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             throw new InsufficientBalanceException("Minimum Balance for placing bid should be greater than 2000");
         }
 
-        if (byUserId== null) {
-            throw new UserNotFoundExceptions("User Not Found By Id "+ placedBidDTO.getUserId());
-        }
         if (carbyId.isEmpty()){
             throw new UserNotFoundExceptions("Bid Cannot Be Placed as Car is Not Found in Our Database");
         }
