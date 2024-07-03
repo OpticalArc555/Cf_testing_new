@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class WebSocketBidController {
     private final PlacedBidService placedBidService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    @PreAuthorize("permitAll")
     @MessageMapping("/placeBid")
     @SendTo("/topic/bids")
     public ResponseDto placeBid(PlacedBidDTO placedBidDTO) {
@@ -41,6 +43,8 @@ public class WebSocketBidController {
             return new ResponseDto("error", e.getMessage());
         }
     }
+
+    @PreAuthorize("permitAll")
     @MessageMapping("/topThreeBids")
     @SendTo("/topic/topThreeBids")
     public List<PlacedBidDTO> getTopThreeBids(PlacedBidDTO placedBidDTO) {
