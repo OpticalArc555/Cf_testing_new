@@ -2,11 +2,14 @@ package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.entity.BeadingCAR;
+import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.DealerNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.BeadingCarRepo;
+import com.spring.jwt.repository.BidCarsRepo;
 import com.spring.jwt.repository.DealerRepository;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,6 +33,8 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     private final DealerRepository dealerRepository;
 
     private final UserRepository userRepository;
+
+    private final BidCarsRepo bidCarsRepo;
 
     @Override
     public String AddBCar(BeadingCARDto beadingCARDto) {
@@ -196,4 +204,27 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         return beadingCarRepo.getCountByStatusAndDealerId(carStatus, dealerId);
 //    return 0;
     }
+
+    @Override
+    public List<BidCarsDTO> getAllLiveCars() {
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+        List<BidCars> liveCars = bidCarsRepo.findAllLiveCars(currentTime);
+        return liveCars.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private BidCarsDTO convertToDto(BidCars beadingCar) {
+        BidCarsDTO dto = new BidCarsDTO();
+        dto.setBidCarId(beadingCar.getBidCarId());
+        dto.setBeadingCarId(beadingCar.getBeadingCarId());
+        dto.setCreatedAt(beadingCar.getCreatedAt());
+        dto.setStartTime(beadingCar.getStartTime());
+        dto.setBasePrice(beadingCar.getBasePrice());
+        dto.setUserId(beadingCar.getUserId());
+        dto.setClosingTime(beadingCar.getClosingTime());
+        return dto;
+    }
+
+
 }
