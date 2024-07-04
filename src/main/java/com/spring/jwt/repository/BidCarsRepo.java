@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface BidCarsRepo extends JpaRepository<BidCars, Integer> {
 
-    @Query("SELECT b FROM BidCars b WHERE b.startTime <= :currentTime AND b.closingTime >= :currentTime")
+    @Query("SELECT b FROM BidCars b WHERE b.createdAt <= :currentTime AND b.closingTime >= :currentTime")
     List<BidCars> findAllLiveCars(LocalDateTime currentTime);
 }

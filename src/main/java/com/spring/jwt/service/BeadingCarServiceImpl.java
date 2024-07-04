@@ -202,7 +202,6 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     public Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId) {
 
         return beadingCarRepo.getCountByStatusAndDealerId(carStatus, dealerId);
-//    return 0;
     }
 
     @Override
@@ -219,7 +218,6 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         dto.setBidCarId(beadingCar.getBidCarId());
         dto.setBeadingCarId(beadingCar.getBeadingCarId());
         dto.setCreatedAt(beadingCar.getCreatedAt());
-        dto.setStartTime(beadingCar.getStartTime());
         dto.setBasePrice(beadingCar.getBasePrice());
         dto.setUserId(beadingCar.getUserId());
         dto.setClosingTime(beadingCar.getClosingTime());
