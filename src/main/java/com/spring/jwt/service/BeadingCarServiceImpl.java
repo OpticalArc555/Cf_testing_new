@@ -5,6 +5,8 @@ import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.entity.BidCars;
+import com.spring.jwt.entity.Role;
+import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.DealerNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +41,18 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     @Override
     public String AddBCar(BeadingCARDto beadingCARDto) {
+
+        User byUserId = userRepository.findByUserId(beadingCARDto.getUserId());
+        if(byUserId == null) {
+            throw new UserNotFoundExceptions("User not found");
+        }
+        Set<Role> roles = byUserId.getRoles();
+        System.err.println(roles);
+        boolean isSalesPerson = roles.stream().anyMatch(role -> "INSPECTOR".equals(role.getName()));
+        if(!isSalesPerson) {
+            throw new RuntimeException("You're not authorized to perform this action");
+        }
+
         if (beadingCARDto.getDealerId() == null) {
             throw new DealerNotFoundException("Dealer ID is required for adding a BeadingCAR");
         }

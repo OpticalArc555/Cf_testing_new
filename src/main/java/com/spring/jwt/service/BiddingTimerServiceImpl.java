@@ -2,8 +2,14 @@ package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.dto.BiddingTimerRequestDTO;
+import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.entity.BiddingTimerRequest;
+import com.spring.jwt.entity.Role;
+import com.spring.jwt.entity.User;
+import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.repository.BeadingCarRepo;
 import com.spring.jwt.repository.BiddingTImerRepo;
+import com.spring.jwt.repository.UserRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +22,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -28,15 +36,40 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
     private final JavaMailSender javaMailSender;
 
+    private final UserRepository userRepository;
+
+    private final BeadingCarRepo beadingCarRepo;
+
     private final Logger logger = LoggerFactory.getLogger(BiddingTimerServiceImpl.class);
 
 
 
     @Override
     public BiddingTimerRequestDTO startTimer(BiddingTimerRequestDTO biddingTimerRequest) {
-
+        User byUserId = userRepository.findByUserId(biddingTimerRequest.getUserId());
+        Optional<BeadingCAR> byId = beadingCarRepo.findById(biddingTimerRequest.getBeadingCarId());
+        if(byUserId == null) {
+            throw new UserNotFoundExceptions("User not found");
+        }
+        Set<Role> roles = byUserId.getRoles();
+        System.err.println(roles);
+        boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
+        if(!isSalesPerson) {
+            throw new RuntimeException("You're not authorized to perform this action");
+        }
+        if (byId.isEmpty()) {
+            throw new RuntimeException("Car Not Found in our Database");
+        }
+        BeadingCAR beadingCAR = byId.get();
+        String carStatus = beadingCAR.getCarStatus();
+        System.err.println("Car Status: " + carStatus);
+        if (!"ACTIVE".equals(carStatus)) {
+            throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
+        }
         BiddingTimerRequest biddingTimerRequest1 = convertToEntity(biddingTimerRequest);
         BiddingTimerRequest save = biddingTImerRepo.save(biddingTimerRequest1);
+
+
         BiddingTimerRequestDTO biddingTimerRequestDTO = convertToDto(save);
         return biddingTimerRequestDTO;
     }
