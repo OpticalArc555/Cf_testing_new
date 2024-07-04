@@ -1,6 +1,7 @@
 package com.spring.jwt.dto;
 
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class RegisterDto {
 
 
     public String email;
+    @NotBlank(message = "Password cannot be blank")
     private String password;
     public String mobileNo;
     public String firstName;
