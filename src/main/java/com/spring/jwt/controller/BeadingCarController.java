@@ -2,6 +2,7 @@ package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
@@ -124,5 +125,15 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
         }
     }
+    @GetMapping("/getAllLiveBiddingCars")
+    public ResponseEntity<?> getAllLiveCars() {
+        try {
+            List<BidCarsDTO> beadingCars = beadingCarService.getAllLiveCars();
+            return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars"));
+        }
+    }
 
-}
+   }
+

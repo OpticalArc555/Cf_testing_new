@@ -1,6 +1,7 @@
 package com.spring.jwt.Interfaces;
 
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.CarDto;
 import com.spring.jwt.dto.FilterDto;
 import com.spring.jwt.entity.Status;
@@ -27,4 +28,6 @@ public interface BeadingCarService {
 
 
     Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId);
+
+    public List<BidCarsDTO> getAllLiveCars();
 }

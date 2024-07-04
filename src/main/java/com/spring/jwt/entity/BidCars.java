@@ -22,6 +22,9 @@ public class BidCars {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
     @Column(name= "basePrice")
     private Integer basePrice;
 
@@ -35,10 +38,10 @@ public class BidCars {
     public void prePersist() {
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         if(closingTime == null) {
-            closingTime = localDateTime.plusHours(1);
+            closingTime = startTime.plusHours(1);
         }
-        if(createdAt == null) {
-            createdAt = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+        if(startTime == null) {
+            startTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         }
     }
 }

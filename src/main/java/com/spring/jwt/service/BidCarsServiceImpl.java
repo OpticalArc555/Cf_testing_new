@@ -35,11 +35,11 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     @Override
     public BidCarsDTO createBidding(BidCarsDTO bidCarsDTO) {
+
         User byUserId = userRepository.findByUserId(bidCarsDTO.getUserId());
 
         if(byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
-
         }
         Set<Role> roles = byUserId.getRoles();
         System.err.println(roles);
