@@ -9,12 +9,16 @@ import java.time.LocalDateTime;
 public class BidCarsDTO {
 
     private Integer bidCarId;
+
     private Integer beadingCarId;
-    private LocalDateTime createdAt;
-    private LocalDateTime startTime;
-    private Integer basePrice;
-    private Integer userId;
+
     private LocalDateTime closingTime;
+
+    private LocalDateTime createdAt;
+
+    private Integer basePrice;
+
+    private Integer userId;
 
 
     public BidCarsDTO(BeadingCAR beadingCAR) {
