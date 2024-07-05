@@ -108,7 +108,7 @@ public class BeadingCAR {
         this.carInsurance = beadingCARDto.getCarInsurance();
         this.area = beadingCARDto.getArea();
         this.brand = beadingCARDto.getBrand();
-        this.carStatus = beadingCARDto.getCarStatus();
+        this.carStatus = beadingCARDto.getCarStatus() != null ? beadingCARDto.getCarStatus() : "pending";
         this.city = beadingCARDto.getCity();
         this.color = beadingCARDto.getColor();
         this.description = beadingCARDto.getDescription();

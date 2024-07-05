@@ -2,16 +2,30 @@ package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.entity.BeadingCAR;
+import com.spring.jwt.entity.BidCars;
+import com.spring.jwt.entity.Role;
+import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
+import com.spring.jwt.exception.DealerNotFoundException;
+import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.BeadingCarRepo;
+import com.spring.jwt.repository.BidCarsRepo;
+import com.spring.jwt.repository.DealerRepository;
+import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,19 +33,42 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     private final BeadingCarRepo beadingCarRepo;
 
-//    @Override
-//    public String AddBCar(BeadingCARDto beadingCARDto) {
-//        BeadingCAR beadingCAR = new  BeadingCAR(beadingCARDto);
-//        beadingCarRepo.save(beadingCAR);
-//        return "beadingCAR added";
-//    }
-@Override
-public String AddBCar(BeadingCARDto beadingCARDto) {
-    BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
-    beadingCAR = beadingCarRepo.save(beadingCAR); // Save the entity and get the updated object
+    private final DealerRepository dealerRepository;
 
-    return "BeadingCarId:" + beadingCAR.getBeadingCarId();
-}
+    private final UserRepository userRepository;
+
+    private final BidCarsRepo bidCarsRepo;
+
+    @Override
+    public String AddBCar(BeadingCARDto beadingCARDto) {
+
+        User byUserId = userRepository.findByUserId(beadingCARDto.getUserId());
+        if(byUserId == null) {
+            throw new UserNotFoundExceptions("User not found");
+        }
+        Set<Role> roles = byUserId.getRoles();
+        System.err.println(roles);
+        boolean isSalesPerson = roles.stream().anyMatch(role -> "INSPECTOR".equals(role.getName()));
+        if(!isSalesPerson) {
+            throw new RuntimeException("You're not authorized to perform this action");
+        }
+
+        if (beadingCARDto.getDealerId() == null) {
+            throw new DealerNotFoundException("Dealer ID is required for adding a BeadingCAR");
+        }
+        if (!userRepository.existsById(beadingCARDto.getUserId())) {
+            throw new UserNotFoundExceptions("User not found with ID: " + beadingCARDto.getUserId());
+        }
+        if (!dealerRepository.existsById(beadingCARDto.getDealerId())) {
+            throw new DealerNotFoundException("Dealer not found with ID: " + beadingCARDto.getDealerId());
+        }
+        BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
+        beadingCAR.setCarStatus("pending");
+        beadingCAR = beadingCarRepo.save(beadingCAR);
+        return "BeadingCarId:" + beadingCAR.getBeadingCarId();
+    }
+
+
     @Override
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
@@ -180,6 +217,27 @@ public String AddBCar(BeadingCARDto beadingCARDto) {
     public Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId) {
 
         return beadingCarRepo.getCountByStatusAndDealerId(carStatus, dealerId);
-//    return 0;
     }
+
+    @Override
+    public List<BidCarsDTO> getAllLiveCars() {
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+        List<BidCars> liveCars = bidCarsRepo.findAllLiveCars(currentTime);
+        return liveCars.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private BidCarsDTO convertToDto(BidCars beadingCar) {
+        BidCarsDTO dto = new BidCarsDTO();
+        dto.setBidCarId(beadingCar.getBidCarId());
+        dto.setBeadingCarId(beadingCar.getBeadingCarId());
+        dto.setCreatedAt(beadingCar.getCreatedAt());
+        dto.setBasePrice(beadingCar.getBasePrice());
+        dto.setUserId(beadingCar.getUserId());
+        dto.setClosingTime(beadingCar.getClosingTime());
+        return dto;
+    }
+
+
 }

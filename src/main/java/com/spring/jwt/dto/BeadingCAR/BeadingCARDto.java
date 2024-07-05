@@ -11,72 +11,47 @@ public class BeadingCARDto {
 
     private Integer beadingCarId;
 
-
     private Boolean acFeature;
-
 
     private Boolean musicFeature;
 
-
     private String area;
-
 
     private String brand;
 
-
     private Boolean carInsurance;
-
 
     private String carStatus;
 
-
     private String city;
-
 
     private String color;
 
-
     private String description;
-
 
     private String fuelType;
 
-
     private Integer kmDriven;
-
 
     private String model;
 
-
-
     private Integer ownerSerial;
-
 
     private Boolean powerWindowFeature;
 
-
     private Integer price;
-
 
     private Boolean rearParkingCameraFeature;
 
-
     private String registration;
-
-
 
     private String transmission;
 
-
-
     private Integer year;
-
 
     private LocalDate date;
 
-
     private int userId;
-
 
     private String variant;
 

@@ -5,9 +5,7 @@ import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.BidDetailsDTO;
 import com.spring.jwt.dto.ResDtos;
-import com.spring.jwt.entity.BeadingCAR;
-import com.spring.jwt.entity.BidCars;
-import com.spring.jwt.entity.User;
+import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.BeadingCarRepo;
@@ -21,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +35,28 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     @Override
     public BidCarsDTO createBidding(BidCarsDTO bidCarsDTO) {
+
+        User byUserId = userRepository.findByUserId(bidCarsDTO.getUserId());
+
+        if(byUserId == null) {
+            throw new UserNotFoundExceptions("User not found");
+        }
+        Set<Role> roles = byUserId.getRoles();
+        System.err.println(roles);
+        boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
+        if(!isSalesPerson) {
+            throw new RuntimeException("You're not authorized to perform this action");
+        }
         Optional<BeadingCAR> byId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId());
-        if (!byId.isPresent()) {
+        if (byId.isEmpty()) {
             throw new RuntimeException("Car Not Found");
+        }
+
+        BeadingCAR beadingCAR = byId.get();
+        String carStatus = beadingCAR.getCarStatus();
+        System.err.println("Car Status: " + carStatus);
+        if (!"ACTIVE".equals(carStatus)) {
+            throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
         BidCars bidCars = convertToEntity(bidCarsDTO);
         BidCars save = bidCarsRepo.save(bidCars);

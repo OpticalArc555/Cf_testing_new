@@ -14,4 +14,8 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
     Optional<InspectionReport> findByBeadingCarId(Integer beadingCarId);
 
     List<InspectionReport> findByUserId(Integer userId);
+
+    boolean existsByBeadingCarId(Integer beadingCarId);
+
+
 }

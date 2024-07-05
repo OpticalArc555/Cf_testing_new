@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaSpecificationExecutor<BeadingCAR> {
@@ -19,5 +20,6 @@ public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaS
     List<BeadingCAR> findByCarStatus(String carStatus);
     @Query("SELECT COUNT(b) FROM BeadingCAR b WHERE b.carStatus = :carStatus AND b.dealerId = :dealerId")
     Integer getCountByStatusAndDealerId(@Param("carStatus") String carStatus, @Param("dealerId") Integer dealerId);
+
 
 }

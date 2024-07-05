@@ -116,6 +116,7 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     private SalesPersonDto convertToDto(SalesPerson salesPerson) {
         SalesPersonDto dto = new SalesPersonDto();
+        dto.setSalesPersonId(salesPerson.getSalesPersonId());
         dto.setAddress(salesPerson.getAddress());
         dto.setCity(salesPerson.getCity());
         dto.setFirstName(salesPerson.getFirstName());
@@ -124,10 +125,13 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         dto.setDocumentId(salesPerson.getDocumentId());
         dto.setJoiningdate(salesPerson.getJoiningdate());
         dto.setStatus(salesPerson.getStatus());
+
         User user = salesPerson.getUser();
         if (user != null) {
+            dto.setUserId(user.getId());
             dto.setEmail(user.getEmail());
             dto.setMobileNo(user.getMobileNo());
+
         }
         return dto;
     }
