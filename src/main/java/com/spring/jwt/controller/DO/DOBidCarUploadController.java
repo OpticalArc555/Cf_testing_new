@@ -193,32 +193,8 @@ public class DOBidCarUploadController {
         }
     }
 
-    @GetMapping("/getByCarID")
-    private ResponseEntity<?> getByCarID(@RequestParam Integer carId) {
-        try {
-            Object documents =iDocument.getByCarID(carId);
-            ResponceDto responceDto = new ResponceDto("success",documents);
-            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
-        } catch (Exception e) {
-            System.err.println(e);
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
-        }
-    }
-    @GetMapping("/getCarIdType")
-    private ResponseEntity<?> getCarIdType(@RequestParam Integer carId,@RequestParam String docType) {
-        try {
-            Object documents =iDocument.getCarIdType(carId,docType);
-            ResponceDto responceDto = new ResponceDto("success",documents);
-            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
-        } catch (Exception e) {
-            System.err.println(e);
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
-
-        }
-    }
     @PatchMapping("/update")
     private ResponseEntity<?> update(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer bidDocumentId) {
         try {
