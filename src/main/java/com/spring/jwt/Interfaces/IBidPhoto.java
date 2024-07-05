@@ -14,4 +14,6 @@ public interface IBidPhoto {
     Object getCarIdType(Integer carId, String docType);
 
     Object getById(Integer documentId);
+
+    public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) ;
 }

@@ -37,7 +37,40 @@ public class DOBidCarUploadController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @PostMapping("/addWithoutPhoto")
+    public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+        try {
+            String serviceResponse = null;
 
+
+
+              BidCarDto documentDto = new BidCarDto();
+                documentDto.setComment(comment);
+                documentDto.setDoctype(doctype);
+                documentDto.setSubtype(subtype);
+                documentDto.setCarId(carId);
+
+
+
+
+                serviceResponse = iDocument.addDocument(documentDto);
+
+
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
+        } catch (RuntimeException e) {
+//            System.err.println(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }  catch (Exception e) {
+
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
+
+        }
+
+    }
     @PostMapping("/add")
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
@@ -92,7 +125,6 @@ public class DOBidCarUploadController {
                 BidCarDto documentDto = new BidCarDto();
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
-                documentDto.setDocumentType(documentType);
                 documentDto.setSubtype(subtype);
                 documentDto.setCarId(carId);
 
@@ -180,6 +212,19 @@ public class DOBidCarUploadController {
     private ResponseEntity<?> getCarIdType(@RequestParam Integer carId,@RequestParam String docType) {
         try {
             Object documents =iDocument.getCarIdType(carId,docType);
+            ResponceDto responceDto = new ResponceDto("success",documents);
+            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
+        } catch (Exception e) {
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }
+    }
+    @PatchMapping("/update")
+    private ResponseEntity<?> update(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer bidDocumentId) {
+        try {
+            String documents =iDocument.update( doc,doctype,subtype, comment,bidDocumentId);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {

@@ -45,4 +45,16 @@ public class BidPhotoImp implements IBidPhoto {
     public Object getById(Integer documentId) {
         return iBidDoc.findById(documentId);
     }
+
+    @Override
+    public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) {
+        BidCarPhoto bidCarPhoto = iBidDoc.findById(bidDocumentId).orElseThrow(()->new RuntimeException("invalid bid document id"));
+        if(!doctype.isEmpty())bidCarPhoto.setDoctype(doctype);
+        if(!doc.isEmpty())bidCarPhoto.setDoc(doc);
+        if(!subtype.isEmpty())bidCarPhoto.setSubtype(subtype);
+        if(!comment.isEmpty())bidCarPhoto.setComment(comment);
+        iBidDoc.save(bidCarPhoto);
+        return "updated";
+
+    }
 }
