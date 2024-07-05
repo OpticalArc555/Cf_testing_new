@@ -15,12 +15,13 @@ public class BidCarPhoto {
     @Column(name = "DocumentId", nullable = false)
     private Integer DocumentId;
 
-    @Column(name = "doc", length = 250)
-    private String doc;
+    @Column(name = "DocumentType", length = 250)
+    private String documentType;
 
     @Column(name = "Documentlink", length = 250)
     private String documentLink;
-
+    @Column(name = "doc", length = 250)
+    private String doc;
     @Column(name = "beadingCarId")
     private Integer beadingCarId;
 

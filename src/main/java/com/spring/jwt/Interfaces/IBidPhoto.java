@@ -2,6 +2,8 @@ package com.spring.jwt.Interfaces;
 
 import com.spring.jwt.dto.BidCarDto;
 
+import java.util.List;
+
 public interface IBidPhoto {
     String addDocument(BidCarDto documentDto);
 
@@ -9,11 +11,11 @@ public interface IBidPhoto {
 
 
 
-    Object getByCarID(Integer carId);
 
-    Object getCarIdType(Integer carId, String docType);
 
     Object getById(Integer documentId);
 
     public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) ;
-}
+    public List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType);
+
+    }

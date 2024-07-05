@@ -48,7 +48,6 @@ public class DOBidCarUploadController {
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
-                documentDto.setCarId(carId);
 
 
 
@@ -126,7 +125,6 @@ public class DOBidCarUploadController {
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
-                documentDto.setCarId(carId);
 
 
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BidPhotoImp implements IBidPhoto {
@@ -27,20 +28,28 @@ public class BidPhotoImp implements IBidPhoto {
     }
 
 
-    @Override
-    public Object getByCarID(Integer carId) {
-         List<BidCarPhoto> object = iBidDoc.findByCarId(carId);
-        if (object.size() == 0)throw new RuntimeException("invalid carid");
-        return object;
-    }
+
+
 
     @Override
-    public Object getCarIdType(Integer carId, String docType) {
-        List<BidCarPhoto> object = iBidDoc.findByDocumentTypeAndUserID(carId,docType);
-        if (object.size() == 0)throw new RuntimeException("invalid carid or doctype");
-        return object;
+    public List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType) {
+        List<BidCarPhoto> bidCarPhotos = iBidDoc.findBybeadingCarIdAndDocumentType(beadingCarId, documentType);
+        if (bidCarPhotos.isEmpty()) {
+            throw new RuntimeException("No documents found for the given car ID and document type");
+        }
+        return bidCarPhotos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
-
+    private BidCarDto convertToDto(BidCarPhoto bidCarPhoto) {
+        BidCarDto bidCarDto = new BidCarDto();
+        bidCarDto.setBeadingCarId(bidCarPhoto.getBeadingCarId());
+        bidCarDto.setDocumentLink(bidCarPhoto.getDocumentLink());
+        bidCarDto.setDoctype(bidCarPhoto.getDoctype());
+        bidCarDto.setSubtype(bidCarPhoto.getSubtype());
+        bidCarDto.setComment(bidCarPhoto.getComment());
+        return bidCarDto;
+    }
     @Override
     public Object getById(Integer documentId) {
         return iBidDoc.findById(documentId);
