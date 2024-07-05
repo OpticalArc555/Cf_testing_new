@@ -20,7 +20,8 @@ public class BidCarPhoto {
 
     @Column(name = "Documentlink", length = 250)
     private String documentLink;
-
+    @Column(name = "doc", length = 250)
+    private String doc;
     @Column(name = "beadingCarId")
     private Integer beadingCarId;
 
@@ -40,7 +41,6 @@ public class BidCarPhoto {
         this.doctype = documentDto.getDoctype();
         this.beadingCarId = documentDto.getBeadingCarId();
         this.documentLink = documentDto.getDocumentLink();
-        this.documentType = documentDto.getDocumentType();
     }
 
 

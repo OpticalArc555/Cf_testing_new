@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,9 +37,41 @@ public class DOBidCarUploadController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @PostMapping("/addWithoutPhoto")
+    public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+        try {
+            String serviceResponse = null;
 
+
+
+              BidCarDto documentDto = new BidCarDto();
+                documentDto.setComment(comment);
+                documentDto.setDoctype(doctype);
+                documentDto.setSubtype(subtype);
+
+
+
+
+                serviceResponse = iDocument.addDocument(documentDto);
+
+
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
+        } catch (RuntimeException e) {
+//            System.err.println(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }  catch (Exception e) {
+
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
+
+        }
+
+    }
     @PostMapping("/add")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer beadingCarId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
@@ -93,9 +124,7 @@ public class DOBidCarUploadController {
                 BidCarDto documentDto = new BidCarDto();
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
-                documentDto.setDocumentType(documentType);
                 documentDto.setSubtype(subtype);
-                documentDto.setBeadingCarId(beadingCarId);
 
 
 
@@ -164,10 +193,10 @@ public class DOBidCarUploadController {
         }
     }
 
-    @GetMapping("/getByBeadingCarId")
-    private ResponseEntity<?> getByCarID(@RequestParam Integer beadingCarId) {
+    @GetMapping("/getByCarID")
+    private ResponseEntity<?> getByCarID(@RequestParam Integer carId) {
         try {
-            Object documents =iDocument.getByCarID(beadingCarId);
+            Object documents =iDocument.getByCarID(carId);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
@@ -177,10 +206,10 @@ public class DOBidCarUploadController {
 
         }
     }
-    @GetMapping("/getBeadingCarIdType")
-    private ResponseEntity<?> getCarIdType(@RequestParam Integer beadingCarId,@RequestParam String doctype) {
+    @GetMapping("/getCarIdType")
+    private ResponseEntity<?> getCarIdType(@RequestParam Integer carId,@RequestParam String docType) {
         try {
-            Object documents =iDocument.getCarIdType(beadingCarId,doctype);
+            Object documents =iDocument.getCarIdType(carId,docType);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
@@ -190,18 +219,17 @@ public class DOBidCarUploadController {
 
         }
     }
-
-    @GetMapping("/getByDocumentType")
-    public ResponseEntity<?> getByDocumentType(@RequestParam Integer beadingCarId, @RequestParam String documentType) {
+    @PatchMapping("/update")
+    private ResponseEntity<?> update(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer bidDocumentId) {
         try {
-            List<BidCarDto> documents = iDocument.getByDocumentType(beadingCarId, documentType);
-            ResponceDto responceDto = new ResponceDto("success", documents);
+            String documents =iDocument.update( doc,doctype,subtype, comment,bidDocumentId);
+            ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", e.getMessage()));
         } catch (Exception e) {
             System.err.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to retrieve documents"));
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
         }
     }
 }

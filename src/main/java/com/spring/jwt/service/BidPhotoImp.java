@@ -28,24 +28,8 @@ public class BidPhotoImp implements IBidPhoto {
     }
 
 
-    @Override
-    public Object getByCarID(Integer beadingCarId) {
-         List<BidCarPhoto> object = iBidDoc.findByCarId(beadingCarId);
-        if (object.size() == 0)throw new RuntimeException("invalid beadingCarId");
-        return object;
-    }
 
-    @Override
-    public Object getCarIdType(Integer beadingCarId, String doctype) {
-        List<BidCarPhoto> object = iBidDoc.findBydocTypeAndbeadingCarId(beadingCarId,doctype);
-        if (object.size() == 0)throw new RuntimeException("invalid beadingCarId or doctype");
-        return object;
-    }
 
-    @Override
-    public Object getById(Integer documentId) {
-        return iBidDoc.findById(documentId);
-    }
 
     @Override
     public List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType) {
@@ -60,13 +44,26 @@ public class BidPhotoImp implements IBidPhoto {
     private BidCarDto convertToDto(BidCarPhoto bidCarPhoto) {
         BidCarDto bidCarDto = new BidCarDto();
         bidCarDto.setBeadingCarId(bidCarPhoto.getBeadingCarId());
-        bidCarDto.setDocumentType(bidCarPhoto.getDocumentType());
         bidCarDto.setDocumentLink(bidCarPhoto.getDocumentLink());
         bidCarDto.setDoctype(bidCarPhoto.getDoctype());
         bidCarDto.setSubtype(bidCarPhoto.getSubtype());
         bidCarDto.setComment(bidCarPhoto.getComment());
         return bidCarDto;
     }
+    @Override
+    public Object getById(Integer documentId) {
+        return iBidDoc.findById(documentId);
+    }
 
+    @Override
+    public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) {
+        BidCarPhoto bidCarPhoto = iBidDoc.findById(bidDocumentId).orElseThrow(()->new RuntimeException("invalid bid document id"));
+        if(!doctype.isEmpty())bidCarPhoto.setDoctype(doctype);
+        if(!doc.isEmpty())bidCarPhoto.setDoc(doc);
+        if(!subtype.isEmpty())bidCarPhoto.setSubtype(subtype);
+        if(!comment.isEmpty())bidCarPhoto.setComment(comment);
+        iBidDoc.save(bidCarPhoto);
+        return "updated";
 
+    }
 }

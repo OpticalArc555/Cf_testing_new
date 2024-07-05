@@ -10,11 +10,12 @@ public interface IBidPhoto {
     String deleteById(Integer documentId);
 
 
-    Object getByCarID(Integer beadingCarId);
 
-    Object getCarIdType(Integer beadingCarId, String doctype);
+
 
     Object getById(Integer documentId);
 
-    List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType);
-}
+    public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) ;
+    public List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType);
+
+    }
