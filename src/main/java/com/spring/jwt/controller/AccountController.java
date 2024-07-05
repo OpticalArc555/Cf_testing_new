@@ -37,14 +37,6 @@ public class AccountController {
             return ResponseEntity.badRequest().body(new BaseResponseDTO("Unsuccessful", "Invalid role"));
         } catch (UnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponseDTO("Unsuccessful", e.getMessage()));
-        }catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseResponseDTO("Unsuccessful", e.getMessage()));
         }
-    }
-
-    private String processFieldErrors(List<FieldError> fieldErrors) {
-        return fieldErrors.stream()
-                .map(error -> error.getField() + " " + error.getDefaultMessage())
-                .collect(Collectors.joining("; "));
     }
 }

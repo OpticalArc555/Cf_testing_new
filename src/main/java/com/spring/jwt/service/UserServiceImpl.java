@@ -44,9 +44,6 @@ public class UserServiceImpl implements UserService {
 
         BaseResponseDTO response = new BaseResponseDTO();
 
-        if(registerDto.getPassword().isEmpty()) {
-            throw new RuntimeException("Password cannot be null");
-        }
         validateAccount(registerDto);
 
 //        if (registerDto.getRoles().equalsIgnoreCase("ADMIN")) {

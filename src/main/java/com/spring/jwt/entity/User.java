@@ -6,7 +6,9 @@ import com.spring.jwt.dto.DealerDto;
 import com.spring.jwt.dto.RegisterDto;
 import com.spring.jwt.dto.UserProfileDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,9 +28,12 @@ public class User {
     private Integer id;
 
     @NotBlank(message = "Email cannot be blank")
+    @Email
     @Column(name = "email", nullable = false, length = 250)
     private String email;
 
+    @NotBlank(message = "Mobile number Cannot be blank")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be of 10 digits")
     @Column(name = "mobile_no")
     private String mobileNo;
 
