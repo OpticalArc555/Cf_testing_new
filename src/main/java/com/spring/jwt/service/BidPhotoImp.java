@@ -41,6 +41,21 @@ public class BidPhotoImp implements IBidPhoto {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Object getBidCarIdType(Integer bidCarId, String docType) {
+        List<BidCarPhoto> bidCarPhoto= iBidDoc.findBydocTypeAndbeadingCarId(bidCarId,docType);
+        if (bidCarPhoto.size() == 0)throw new RuntimeException("bid car or doc type invalid");
+        return bidCarPhoto;
+    }
+
+    @Override
+    public Object getByBidCarID(Integer bidCarId) {
+        List<BidCarPhoto> bidCarPhoto= iBidDoc.findByCarId(bidCarId);
+        if (bidCarPhoto.size() == 0)throw new RuntimeException("bid car id invalid");
+        return bidCarPhoto;
+    }
+
     private BidCarDto convertToDto(BidCarPhoto bidCarPhoto) {
         BidCarDto bidCarDto = new BidCarDto();
         bidCarDto.setDocumentLink(bidCarPhoto.getDocumentLink());

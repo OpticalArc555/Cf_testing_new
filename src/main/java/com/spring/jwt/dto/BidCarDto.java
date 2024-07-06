@@ -11,5 +11,7 @@ public class BidCarDto {
     private String doctype;
     private String subtype;
     private String comment;
+    private String doc;
+
 
 }
