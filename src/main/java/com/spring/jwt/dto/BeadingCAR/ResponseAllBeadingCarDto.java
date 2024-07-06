@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ResponseAllBeadingCarDto {
     private String message;
-    private List<BeadingCARDto> list;
+    private List<BeadingCarWithInsDto> list;
     private String exception;
 
     public ResponseAllBeadingCarDto(String message){

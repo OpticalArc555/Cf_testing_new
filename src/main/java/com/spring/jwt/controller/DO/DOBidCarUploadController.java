@@ -155,7 +155,7 @@ documentDto.setBeadingCarId(beadingCarId);
         }
 
     }
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     private ResponseEntity<?> delete(@RequestParam Integer DocumentId) {
         try {
             String documents =iDocument.deleteById(DocumentId);

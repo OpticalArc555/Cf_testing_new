@@ -95,6 +95,9 @@ public class BeadingCAR {
     @Column(name = "dealer_id")
     private Integer dealerId;
 
+    @Column(name = "inspectionReportId")
+    private Integer inspectionReportId;
+
 
 
 

@@ -2,6 +2,7 @@ package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BeadingCAR.BeadingCarWithInsDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.entity.BidCars;
@@ -150,11 +151,11 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
 
     @Override
-    public List<BeadingCARDto> getAllBeadingCars() {
+    public List<BeadingCarWithInsDto> getAllBeadingCars() {
         List<BeadingCAR> beadingCars = beadingCarRepo.findAll();
-        List<BeadingCARDto> dtos = new ArrayList<>();
+        List<BeadingCarWithInsDto> dtos = new ArrayList<>();
         for (BeadingCAR beadingCAR : beadingCars) {
-            dtos.add(new BeadingCARDto(beadingCAR));
+            dtos.add(new BeadingCarWithInsDto(beadingCAR));
         }
         return dtos;
     }
@@ -166,10 +167,10 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     }
 
     @Override
-    public BeadingCARDto getBCarById(Integer beadingCarId) {
+    public BeadingCarWithInsDto getBCarById(Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
                 .orElseThrow(() -> new BeadingCarNotFoundException("Beading car not found with id: " + beadingCarId, HttpStatus.NOT_FOUND));
-        return new BeadingCARDto(beadingCAR);
+        return new BeadingCarWithInsDto(beadingCAR);
     }
 
     @Override
