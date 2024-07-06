@@ -76,37 +76,36 @@ public class CarRegisterImp implements ICarRegister {
 
     @Override
     public String editCarDetails(CarDto carDto, int id) {
-        System.err.println(carDto.getCarStatus()+""+id);
-        Car car = carRepo.findById(id).orElseThrow(()->new CarNotFoundException(("car not found"),HttpStatus.NOT_FOUND));
+        System.err.println(carDto.getCarStatus() + "" + id);
+        Car car = carRepo.findById(id).orElseThrow(() -> new CarNotFoundException("car not found", HttpStatus.NOT_FOUND));
 
-        car.setAcFeature(carDto.getAcFeature());
-        car.setMusicFeature(carDto.getMusicFeature());
-        car.setArea(carDto.getArea());
-        car.setDate(carDto.getDate());
-        car.setBrand(carDto.getBrand());
-        car.setCarInsurance(carDto.getCarInsurance());
-        car.setCarStatus(carDto.getCarStatus());
-        car.setCity(carDto.getCity());
-        car.setColor(carDto.getColor());
-        car.setDescription(carDto.getDescription());
-        car.setFuelType(carDto.getFuelType());
-        car.setKmDriven(carDto.getKmDriven());
-        car.setModel(carDto.getModel());
-        car.setPowerWindowFeature(carDto.getPowerWindowFeature());
-        car.setOwnerSerial(carDto.getOwnerSerial());
-        car.setPowerWindowFeature(carDto.getPowerWindowFeature());
-        car.setPrice(carDto.getPrice());
-        car.setRearParkingCameraFeature(carDto.getRearParkingCameraFeature());
-        car.setRegistration(carDto.getRegistration());
-        car.setCarInsuranceDate(carDto.getCarInsuranceDate());
-        car.setTitle(carDto.getTitle());
-        car.setVariant(carDto.getVariant());
-        car.setTransmission(carDto.getTransmission());
-        car.setYear(carDto.getYear());
+        if (carDto.getAcFeature() != null) car.setAcFeature(carDto.getAcFeature());
+        if (carDto.getMusicFeature() != null) car.setMusicFeature(carDto.getMusicFeature());
+        if (carDto.getArea() != null) car.setArea(carDto.getArea());
+        if (carDto.getDate() != null) car.setDate(carDto.getDate());
+        if (carDto.getBrand() != null) car.setBrand(carDto.getBrand());
+        if (carDto.getCarInsurance() != null) car.setCarInsurance(carDto.getCarInsurance());
+        if (carDto.getCarStatus() != null) car.setCarStatus(carDto.getCarStatus());
+        if (carDto.getCity() != null) car.setCity(carDto.getCity());
+        if (carDto.getColor() != null) car.setColor(carDto.getColor());
+        if (carDto.getDescription() != null) car.setDescription(carDto.getDescription());
+        if (carDto.getFuelType() != null) car.setFuelType(carDto.getFuelType());
+        if (carDto.getKmDriven() != 0) car.setKmDriven(carDto.getKmDriven()); // assuming kmDriven cannot be null
+        if (carDto.getModel() != null) car.setModel(carDto.getModel());
+        if (carDto.getPowerWindowFeature() != null) car.setPowerWindowFeature(carDto.getPowerWindowFeature());
+        if (carDto.getOwnerSerial() != 0) car.setOwnerSerial(carDto.getOwnerSerial()); // assuming ownerSerial cannot be null
+        if (carDto.getPrice() != 0) car.setPrice(carDto.getPrice()); // assuming price cannot be null
+        if (carDto.getRearParkingCameraFeature() != null) car.setRearParkingCameraFeature(carDto.getRearParkingCameraFeature());
+        if (carDto.getRegistration() != null) car.setRegistration(carDto.getRegistration());
+        if (carDto.getCarInsuranceDate() != null) car.setCarInsuranceDate(carDto.getCarInsuranceDate());
+        if (carDto.getTitle() != null) car.setTitle(carDto.getTitle());
+        if (carDto.getVariant() != null) car.setVariant(carDto.getVariant());
+        if (carDto.getTransmission() != null) car.setTransmission(carDto.getTransmission());
+        if (carDto.getYear() != 0) car.setYear(carDto.getYear()); // assuming year cannot be null
 
         carRepo.save(car);
-        return "Car Updated"+id;
-     }
+        return "Car Updated " + id;
+    }
 
     @Override
     public List<CarDto> getAllCarsWithPages(int pageNo, int pageSize) {
