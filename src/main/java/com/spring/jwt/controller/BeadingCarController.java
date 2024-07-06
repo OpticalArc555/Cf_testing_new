@@ -2,6 +2,7 @@ package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BeadingCAR.BeadingCarWithInsDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.ResponseDto;
@@ -35,7 +36,7 @@ public class BeadingCarController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllBeadingCars() {
         try {
-            List<BeadingCARDto> beadingCars = beadingCarService.getAllBeadingCars();
+            List<BeadingCarWithInsDto> beadingCars = beadingCarService.getAllBeadingCars();
             return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars"));
@@ -45,7 +46,7 @@ public class BeadingCarController {
     @GetMapping("getbyId/{id}")
     public ResponseEntity<?> getBeadingCarById(@PathVariable("id") Integer beadingCarId) {
         try {
-            BeadingCARDto beadingCar = beadingCarService.getBCarById(beadingCarId);
+            BeadingCarWithInsDto beadingCar = beadingCarService.getBCarById(beadingCarId);
             return ResponseEntity.status(HttpStatus.OK).body(beadingCar);
         } catch (BeadingCarNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "Beading car not found"));

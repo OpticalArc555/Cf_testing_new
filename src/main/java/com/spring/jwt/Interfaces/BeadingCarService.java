@@ -1,6 +1,7 @@
 package com.spring.jwt.Interfaces;
 
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
+import com.spring.jwt.dto.BeadingCAR.BeadingCarWithInsDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.CarDto;
 import com.spring.jwt.dto.FilterDto;
@@ -14,11 +15,11 @@ public interface BeadingCarService {
 
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId);
 
-    public List<BeadingCARDto> getAllBeadingCars();
+    public List<BeadingCarWithInsDto> getAllBeadingCars();
 
     public String deleteBCar(Integer beadingCarId);
 
-   public BeadingCARDto getBCarById(Integer beadingCarId);
+   public BeadingCarWithInsDto getBCarById(Integer beadingCarId);
 
    public List<BeadingCARDto>getByUserId(int UserId);
 

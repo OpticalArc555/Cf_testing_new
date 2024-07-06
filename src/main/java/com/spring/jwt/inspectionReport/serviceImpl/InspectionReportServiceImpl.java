@@ -47,6 +47,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         InspectionReport savedReport = inspectionReportRepository.save(inspectionReport);
         BeadingCAR beadingCar = beadingCarOptional.get();
         beadingCar.setCarStatus("active");
+        beadingCar.setInspectionReportId(savedReport.getInspectionReportId());
         beadingCarRepo.save(beadingCar);
         return convertToDto(savedReport);
     }
