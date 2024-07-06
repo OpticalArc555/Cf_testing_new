@@ -169,20 +169,20 @@ documentDto.setBeadingCarId(beadingCarId);
         }
     }
 
-//    @GetMapping("/getDocuments")
-//    private ResponseEntity<?> getDocumentByUserIdAndDocId(@RequestParam Integer carId, @RequestParam String DocumentType) {
-//        try {
-//            Object documents = iDocument.getAllDocument(carId, DocumentType);
-//            ResponceDto responceDto = new ResponceDto("success",documents);
-//            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
-//        } catch (Exception e) {
-//            System.err.println(e);
-//
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
-//
-//        }
-//    }
-//
+    @GetMapping("/getDocuments")
+    private ResponseEntity<?> getDocumentByUserIdAndDocId(@RequestParam Integer beadingCarId, @RequestParam String DocumentType) {
+        try {
+            Object documents = iDocument.getByDocumentType(beadingCarId, DocumentType);
+            ResponceDto responceDto = new ResponceDto("success",documents);
+            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
+        } catch (Exception e) {
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }
+    }
+
     @GetMapping("/getById")
     private ResponseEntity<?> getById(@RequestParam Integer documentId) {
         try {
@@ -198,9 +198,9 @@ documentDto.setBeadingCarId(beadingCarId);
     }
 
     @GetMapping("/getByBidCarID")
-    private ResponseEntity<?> getByBidCarID(@RequestParam Integer bidCarId) {
+    private ResponseEntity<?> getByBidCarID(@RequestParam Integer beadingCarId) {
         try {
-            Object documents =iDocument.getByBidCarID(bidCarId);
+            Object documents =iDocument.getByBidCarID(beadingCarId);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
@@ -211,9 +211,9 @@ documentDto.setBeadingCarId(beadingCarId);
         }
     }
     @GetMapping("/getBidCarIdType")
-    private ResponseEntity<?> getBidCarIdType(@RequestParam Integer bidCarId,@RequestParam String docType) {
+    private ResponseEntity<?> getBidCarIdType(@RequestParam Integer beadingCarId,@RequestParam String docType) {
         try {
-            Object documents =iDocument.getBidCarIdType(bidCarId,docType);
+            Object documents =iDocument.getBidCarIdType(beadingCarId,docType);
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {

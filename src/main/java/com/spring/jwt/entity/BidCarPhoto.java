@@ -20,15 +20,19 @@ public class BidCarPhoto {
 
     @Column(name = "Documentlink", length = 250)
     private String documentLink;
+
     @Column(name = "doc", length = 250)
     private String doc;
+
     @Column(name = "beadingCarId")
     private Integer beadingCarId;
 
     @Column(name = "doctype", length = 250)
     private String doctype;
+
     @Column(name = "subtype", length = 250)
     private String subtype;
+
     @Column(name = "comment", length = 250)
     private String comment;
 

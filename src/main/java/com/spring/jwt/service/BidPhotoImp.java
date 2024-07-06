@@ -43,15 +43,15 @@ public class BidPhotoImp implements IBidPhoto {
     }
 
     @Override
-    public Object getBidCarIdType(Integer bidCarId, String docType) {
-        List<BidCarPhoto> bidCarPhoto= iBidDoc.findBydocTypeAndbeadingCarId(bidCarId,docType);
+    public Object getBidCarIdType(Integer beadingCarId, String docType) {
+        List<BidCarPhoto> bidCarPhoto= iBidDoc.findBydocTypeAndbeadingCarId(beadingCarId,docType);
         if (bidCarPhoto.size() == 0)throw new RuntimeException("bid car or doc type invalid");
         return bidCarPhoto;
     }
 
     @Override
-    public Object getByBidCarID(Integer bidCarId) {
-        List<BidCarPhoto> bidCarPhoto= iBidDoc.findByCarId(bidCarId);
+    public Object getByBidCarID(Integer beadingCarId) {
+        List<BidCarPhoto> bidCarPhoto= iBidDoc.findByCarId(beadingCarId);
         if (bidCarPhoto.size() == 0)throw new RuntimeException("bid car id invalid");
         return bidCarPhoto;
     }
