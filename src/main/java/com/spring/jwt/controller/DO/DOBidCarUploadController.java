@@ -48,6 +48,7 @@ public class DOBidCarUploadController {
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
+documentDto.setDoc(doc);
 documentDto.setBeadingCarId(beadingCarId);
 
 
@@ -125,6 +126,8 @@ documentDto.setBeadingCarId(beadingCarId);
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
+                documentDto.setDoc(doc);
+
                 documentDto.setBeadingCarId(beadingCarId);
 
 
@@ -179,7 +182,7 @@ documentDto.setBeadingCarId(beadingCarId);
 //
 //        }
 //    }
-
+//
     @GetMapping("/getById")
     private ResponseEntity<?> getById(@RequestParam Integer documentId) {
         try {
@@ -194,6 +197,32 @@ documentDto.setBeadingCarId(beadingCarId);
         }
     }
 
+    @GetMapping("/getByBidCarID")
+    private ResponseEntity<?> getByBidCarID(@RequestParam Integer bidCarId) {
+        try {
+            Object documents =iDocument.getByBidCarID(bidCarId);
+            ResponceDto responceDto = new ResponceDto("success",documents);
+            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
+        } catch (Exception e) {
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }
+    }
+    @GetMapping("/getBidCarIdType")
+    private ResponseEntity<?> getBidCarIdType(@RequestParam Integer bidCarId,@RequestParam String docType) {
+        try {
+            Object documents =iDocument.getBidCarIdType(bidCarId,docType);
+            ResponceDto responceDto = new ResponceDto("success",documents);
+            return ResponseEntity.status(HttpStatus.OK).body(responceDto);
+        } catch (Exception e) {
+            System.err.println(e);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
+
+        }
+    }
 
 
     @PatchMapping("/update")

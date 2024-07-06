@@ -18,4 +18,7 @@ public interface IBidPhoto {
     public String update( String doc, String doctype, String subtype, String comment,Integer bidDocumentId) ;
     public List<BidCarDto> getByDocumentType(Integer beadingCarId, String documentType);
 
-    }
+    Object getBidCarIdType(Integer bidCarId, String docType);
+
+    Object getByBidCarID(Integer bidCarId);
+}
