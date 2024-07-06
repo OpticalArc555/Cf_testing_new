@@ -43,7 +43,6 @@ public class BidPhotoImp implements IBidPhoto {
     }
     private BidCarDto convertToDto(BidCarPhoto bidCarPhoto) {
         BidCarDto bidCarDto = new BidCarDto();
-        bidCarDto.setBeadingCarId(bidCarPhoto.getBeadingCarId());
         bidCarDto.setDocumentLink(bidCarPhoto.getDocumentLink());
         bidCarDto.setDoctype(bidCarPhoto.getDoctype());
         bidCarDto.setSubtype(bidCarPhoto.getSubtype());

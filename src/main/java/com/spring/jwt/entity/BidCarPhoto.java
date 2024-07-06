@@ -39,7 +39,6 @@ public class BidCarPhoto {
         this.comment = documentDto.getComment();
         this.subtype = documentDto.getSubtype();
         this.doctype = documentDto.getDoctype();
-        this.beadingCarId = documentDto.getBeadingCarId();
         this.documentLink = documentDto.getDocumentLink();
     }
 

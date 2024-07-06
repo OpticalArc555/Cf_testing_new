@@ -7,7 +7,6 @@ public class BidCarDto {
 
 
     private String documentLink;
-    private Integer beadingCarId;
 
     private String doctype;
     private String subtype;
