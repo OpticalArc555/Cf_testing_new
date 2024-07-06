@@ -38,7 +38,7 @@ public class DOBidCarUploadController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/addWithoutPhoto")
-    public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadWithoutImage(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String serviceResponse = null;
 
@@ -71,7 +71,7 @@ public class DOBidCarUploadController {
 
     }
     @PostMapping("/add")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String documentType,@RequestParam Integer carId,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
