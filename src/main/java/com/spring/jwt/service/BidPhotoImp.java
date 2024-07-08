@@ -62,6 +62,7 @@ public class BidPhotoImp implements IBidPhoto {
         bidCarDto.setDoctype(bidCarPhoto.getDoctype());
         bidCarDto.setSubtype(bidCarPhoto.getSubtype());
         bidCarDto.setComment(bidCarPhoto.getComment());
+        bidCarDto.setDocumentType(bidCarPhoto.getDocumentType());
         return bidCarDto;
     }
     @Override

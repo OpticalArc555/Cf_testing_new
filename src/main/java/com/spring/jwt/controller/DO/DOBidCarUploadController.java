@@ -128,7 +128,6 @@ public class DOBidCarUploadController {
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
                 documentDto.setDoc(doc);
-
                 documentDto.setBeadingCarId(beadingCarId);
                 documentDto.setDocumentType(documentType);
 
