@@ -38,7 +38,7 @@ public class DOBidCarUploadController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/addWithoutPhoto")
-    public ResponseEntity<?> uploadWithoutImage(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String serviceResponse = null;
 
@@ -48,8 +48,9 @@ public class DOBidCarUploadController {
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
                 documentDto.setSubtype(subtype);
-documentDto.setDoc(doc);
-documentDto.setBeadingCarId(beadingCarId);
+                documentDto.setDoc(doc);
+                documentDto.setBeadingCarId(beadingCarId);
+                documentDto.setDocumentType(documentType);
 
 
 
@@ -72,7 +73,7 @@ documentDto.setBeadingCarId(beadingCarId);
 
     }
     @PostMapping("/add")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file,@RequestParam String documentType, @RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
@@ -129,6 +130,7 @@ documentDto.setBeadingCarId(beadingCarId);
                 documentDto.setDoc(doc);
 
                 documentDto.setBeadingCarId(beadingCarId);
+                documentDto.setDocumentType(documentType);
 
 
 
