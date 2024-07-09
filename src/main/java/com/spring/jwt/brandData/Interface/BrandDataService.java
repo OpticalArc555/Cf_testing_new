@@ -3,11 +3,12 @@ package com.spring.jwt.brandData.Interface;
 import com.spring.jwt.brandData.Dto.BrandDataDto;
 import com.spring.jwt.brandData.Dto.onlyBrandDto;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public interface BrandDataService {
 
-    BrandDataDto addBrand(BrandDataDto brandDataDto);
+    BrandDataDto addBrand(BrandDataDto brandDataDto) throws SQLIntegrityConstraintViolationException;
 
     List<BrandDataDto> GetAllBrands();
 
