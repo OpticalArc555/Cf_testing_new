@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -27,8 +28,11 @@ public class BrandDataController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", "Brand added successfully"));
         } catch (BrandNotFoundException brandNotFoundException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("error", brandNotFoundException.getMessage()));
+        } catch (SQLIntegrityConstraintViolationException brandExistsException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("error", brandExistsException.getMessage()));
         }
     }
+
 
     @GetMapping("/getAll")
     public ResponseEntity<AllBrandDataDto> getAllBrands() {

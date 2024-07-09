@@ -9,7 +9,9 @@ import lombok.Setter;
 @Getter
 @Entity
 @AllArgsConstructor
-@Table(name = "BrandData")
+@Table(name = "BrandData", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"brand", "variant", "subVariant"})
+})
 public class BrandData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
