@@ -129,6 +129,7 @@ public class AppConfig {
                 .requestMatchers("/transactions/**").permitAll()
                 .requestMatchers("/uploadFileBidCar/**").permitAll()
                 .requestMatchers("/inspectionReport/**").permitAll()
+                .requestMatchers("/saveCar/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)
@@ -153,7 +154,7 @@ public class AppConfig {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Arrays.asList("https://cartechindia.com", "http://localhost:5173", "http://localhost:63342"));
+                config.setAllowedOrigins(Arrays.asList("https://cartechindia.com", "http://localhost:5173", "http://localhost:63342","https://cffffftasting-production.up.railway.app"));
                 config.setAllowedMethods(Collections.singletonList("*"));
                 config.setAllowCredentials(true);
                 config.setAllowedHeaders(Collections.singletonList("*"));
