@@ -9,6 +9,7 @@ import com.spring.jwt.brandData.Reposiory.BrandDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,19 +21,22 @@ public class BrandDataServiceImpl implements BrandDataService {
     private BrandDataRepository brandDataRepository;
 
     @Override
-    public BrandDataDto addBrand(BrandDataDto brandDataDto) {
-        Optional<BrandData> existingBrand = brandDataRepository.findById(brandDataDto.getBrandDataId());
+    public BrandDataDto addBrand(BrandDataDto brandDataDto) throws SQLIntegrityConstraintViolationException {
+        Optional<BrandData> existingBrand = brandDataRepository.findByBrandAndVariantAndSubVariant(
+                brandDataDto.getBrand(), brandDataDto.getVariant(), brandDataDto.getSubVariant());
+
         if (existingBrand.isPresent()) {
-            throw new BrandNotFoundException("Brand with ID " + brandDataDto.getBrandDataId() + " already exists");
+            throw new SQLIntegrityConstraintViolationException("Brand with the same combination of brand, variant, and sub-variant already exists");
         }
+
         BrandData brandData = new BrandData();
-        brandData.setBrandDataId(brandDataDto.getBrandDataId());
         brandData.setBrand(brandDataDto.getBrand());
         brandData.setVariant(brandDataDto.getVariant());
         brandData.setSubVariant(brandDataDto.getSubVariant());
         brandDataRepository.save(brandData);
         return brandDataDto;
     }
+
 
     @Override
     public List<BrandDataDto> GetAllBrands() {
