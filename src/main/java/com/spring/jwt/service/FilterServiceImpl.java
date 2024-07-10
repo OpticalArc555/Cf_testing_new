@@ -117,7 +117,6 @@ public class FilterServiceImpl implements FilterService {
             }
         }
 
-//        System.out.println(listOfCar);
         if(listOfCarDto.isEmpty()){
             throw new PageNotFoundException("page not found ..");
         }
