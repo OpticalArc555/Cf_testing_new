@@ -19,6 +19,8 @@ public class InspectorProfileDto {
 
         private String email;
 
+        private boolean status;
+
         private String mobileNo;
 
         private Integer UserId;

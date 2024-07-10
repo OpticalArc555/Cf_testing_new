@@ -9,4 +9,6 @@ public interface FilterService {
     public List<CarDto> searchByFilter(FilterDto filterDto);
 
     public List<CarDto> getAllCarsWithPages(int PageNo);
+
+    public List<CarDto> searchBarFilter(String searchBarInput);
 }

@@ -1,5 +1,6 @@
 package com.spring.jwt.controller;
 
+import com.spring.jwt.Bidding.Interface.SmsService;
 import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.dto.*;
@@ -37,13 +38,15 @@ public class StartBidingController {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final SmsService smsService;
+
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
 
     @PostMapping("/SetTime")
     public ResponseEntity<?> setTimer(@RequestBody BiddingTimerRequestDTO biddingTimerRequest) {
         Optional<User> user = userRepository.findById(biddingTimerRequest.getUserId());
         if(!user.isPresent()) {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
         }
         try {
             int durationMinutes = biddingTimerRequest.getDurationMinutes();
@@ -57,38 +60,44 @@ public class StartBidingController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
     private void startCountdown(int durationMinutes) {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.schedule(() -> {
             pushNotificationToAllUsers();
         }, durationMinutes, TimeUnit.MINUTES);
     }
-//    private void sendBulkNotification() {
-//        try {
-//            List<String> recipients = jdbcTemplate.queryForList("CALL send_emails()", String.class);
-//            logger.info("Bulk notification sent successfully to recipients: " + recipients);
-//        } catch (Exception e) {
-//            logger.error("Failed to send bulk notification.", e);
-//        }
-//    }
 
     private void pushNotificationToAllUsers() {
-
         List<User> allUsers = userRepository.findAll();
         List<String> dealerEmails = allUsers.stream()
                 .filter(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("DEALER")))
                 .map(User::getEmail)
                 .collect(Collectors.toList());
 
+        List<String> dealerMobileNumbers = allUsers.stream()
+                .filter(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("DEALER")))
+                .map(User::getMobileNo)
+                .collect(Collectors.toList());
+
         try {
             sendNotification(dealerEmails, "Hurry Up Bidding is Started!");
+            sendSmsNotification(dealerMobileNumbers, "Hurry Up Bidding is Started!");
             logger.info("Notification sent to users: " + dealerEmails);
         } catch (Exception e) {
             logger.error("Failed to send notification to users: " + dealerEmails, e);
         }
     }
+
     private void sendNotification(List<String> recipients, String message) {
         biddingTimerService.sendBulkEmails(recipients, message);
+    }
+
+    private void sendSmsNotification(List<String> mobileNumbers, String message) {
+        String apiKey = "QYX1V75W9cI3fhegGSonlzrktEBOjKZb4CuvpxPdiN68JUFLDM6EBkZzrWM3FdHTaLo8epOJ7vRQDqnV";
+        for (String mobileNumber : mobileNumbers) {
+            smsService.sendSms(message, String.valueOf(mobileNumber), apiKey);
+        }
     }
 
     @PostMapping("/CreateBidding")
@@ -108,11 +117,10 @@ public class StartBidingController {
     }
 
     @GetMapping("/getById")
-     public ResponseEntity<?> getbiddingcar (@RequestParam Integer bidCarId,@RequestParam  Integer beadingCarId) {
-         BidDetailsDTO bidDetailsDTO = bidCarsService.getbyBidId(bidCarId, beadingCarId);
+    public ResponseEntity<?> getbiddingcar (@RequestParam Integer bidCarId,@RequestParam  Integer beadingCarId) {
+        BidDetailsDTO bidDetailsDTO = bidCarsService.getbyBidId(bidCarId, beadingCarId);
         return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("Success", bidDetailsDTO));
-     }
-
+    }
 
     @GetMapping("/beadCarByUserId")
     public ResponseEntity<ResponseAllBidCarsDTO> getByUserId(@RequestParam Integer userId) {
@@ -133,5 +141,4 @@ public class StartBidingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
-
 }
