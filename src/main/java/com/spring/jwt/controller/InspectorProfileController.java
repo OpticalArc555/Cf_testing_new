@@ -26,6 +26,9 @@ public class InspectorProfileController {
     @PatchMapping("/update")
     public ResponseEntity<ResponseDto> updateProfile(@RequestBody InspectorProfileDto inspectorProfileDto, @RequestParam Integer inspectorProfileId) {
         try {
+            if (inspectorProfileDto.getStatus() != null) {
+                inspectorProfileDto.setStatusProvided(true);
+            }
             String result = inspectorProfileService.updateProfile(inspectorProfileDto, inspectorProfileId);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", result));
         } catch (UserNotFoundExceptions  profileNotFoundException) {

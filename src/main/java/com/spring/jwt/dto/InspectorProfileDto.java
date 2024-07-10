@@ -19,9 +19,17 @@ public class InspectorProfileDto {
 
         private String email;
 
-        private boolean status;
+        private Boolean status;
+
+        private boolean isStatusProvided = false;
 
         private String mobileNo;
 
         private Integer UserId;
+
+
+        public void setStatus(boolean status) {
+                this.status = status;
+                this.isStatusProvided = true;
+        }
 }

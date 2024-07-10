@@ -46,6 +46,9 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         if (inspectorProfileDto.getLastName() != null) {
             profile.setLastName(inspectorProfileDto.getLastName());
         }
+        if (inspectorProfileDto.isStatusProvided()) {
+            profile.setStatus(inspectorProfileDto.getStatus());
+        }
 
         inspectorProfileRepo.save(profile);
 
