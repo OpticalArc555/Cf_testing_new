@@ -102,6 +102,11 @@ public class JwtServiceImpl implements JwtService {
             userProfileId = userDetailsCustom.getUserProfileId();
         }
         if (roles.contains("INSPECTOR")) {
+            User Inspector= userRepository.findByEmail(userDetailsCustom.getUsername());
+            InspectorProfile inspectorProfile = Inspector.getInspectorProfile();
+            if(inspectorProfile.getStatus().toString().equals("false")) {
+                throw new BaseException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Your Account is Not Active Please Contact The Administrator");
+            }
             userId = userDetailsCustom.getUserId();
             inspectorProfileId = userDetailsCustom.getInspectorProfileId();
         }
