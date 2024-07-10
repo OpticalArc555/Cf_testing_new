@@ -61,6 +61,20 @@ public class FilterController {
         }
     }
 
+    @GetMapping("/searchBarFilter")
+    public ResponseEntity<?> searchBarFilter(@RequestParam String searchBarInput) {
+        try {
+            List<CarDto> listOfJob = filterService.searchBarFilter(searchBarInput);
+            ResponseAllCarDto responseGetAllJobDto = new ResponseAllCarDto("success");
+            responseGetAllJobDto.setList(listOfJob);
+            return ResponseEntity.status(HttpStatus.OK).body(responseGetAllJobDto);
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseAllCarDto responseGetAllJobDto = new ResponseAllCarDto("unsuccess");
+            responseGetAllJobDto.setException(String.valueOf(pageNotFoundException));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseGetAllJobDto);
+        }
+    }
+
 
     /**
      * Retrieves a single car by its ID.
@@ -146,6 +160,11 @@ public class FilterController {
         } catch (UserNotFoundExceptions e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("Unsuccessful", "Something went wrong"));
         }
+    }
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<String>> autocomplete(@RequestParam String query) {
+        List<String> suggestions = iCarRegister.getAutocompleteSuggestions(query);
+        return ResponseEntity.ok(suggestions);
     }
 
 }

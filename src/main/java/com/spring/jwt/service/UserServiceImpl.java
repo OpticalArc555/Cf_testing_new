@@ -124,6 +124,7 @@ public class UserServiceImpl implements UserService {
             inspectorProfile.setCity(registerDto.getCity());
             inspectorProfile.setFirstName(registerDto.getFirstName());
             inspectorProfile.setLastName(registerDto.getLastName());
+            inspectorProfile.setStatus(registerDto.status);
             user.setInspectorProfile(inspectorProfile);
             inspectorProfile.setUser(user);
 

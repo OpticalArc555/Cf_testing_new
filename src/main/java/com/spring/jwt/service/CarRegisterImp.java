@@ -24,9 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CarRegisterImp implements ICarRegister {
@@ -233,6 +231,21 @@ public class CarRegisterImp implements ICarRegister {
         carDto.setCarId(carId);
         return carDto;
     }
+
+    @Override
+    public List<String> getAutocompleteSuggestions(String query) {
+        List<String> modelSuggestions = carRepo.findByModelContaining(query);
+        List<String> brandSuggestions = carRepo.findByBrandContaining(query);
+        List<String> citySuggestions = carRepo.findByCityContaining(query);
+
+        Set<String> suggestions = new LinkedHashSet<>();
+        suggestions.addAll(modelSuggestions);
+        suggestions.addAll(brandSuggestions);
+        suggestions.addAll(citySuggestions);
+
+        return new ArrayList<>(suggestions);
+    }
+
 
     @Override
     public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo) {

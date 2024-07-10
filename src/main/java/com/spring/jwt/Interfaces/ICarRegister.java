@@ -26,4 +26,6 @@ public interface ICarRegister {
     public String editCarDetails(CarDto carDto);
 
     public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo);
+
+    public List<String> getAutocompleteSuggestions(String query );
 }

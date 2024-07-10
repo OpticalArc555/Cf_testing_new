@@ -58,7 +58,9 @@ public class BidCarsServiceImpl implements BidCarsService {
         if (!"ACTIVE".equals(carStatus)) {
             throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
+
         BidCars bidCars = convertToEntity(bidCarsDTO);
+
         BidCars save = bidCarsRepo.save(bidCars);
         return convertToDto(save);
     }
