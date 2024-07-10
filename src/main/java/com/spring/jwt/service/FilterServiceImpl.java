@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FilterServiceImpl implements FilterService {
@@ -105,9 +106,6 @@ public class FilterServiceImpl implements FilterService {
 
             if(pageStart>listOfCar.size()){break;}
 
-
-
-
             CarDto carDto = new CarDto(listOfCar.get(counter));
             carDto.setCarId(listOfCar.get(counter).getId());
             listOfCarDto.add(carDto);
@@ -126,5 +124,23 @@ public class FilterServiceImpl implements FilterService {
         return listOfCarDto;
     }
 
+    @Override
+    public List<CarDto> searchBarFilter(String searchBarInput) {
+        List<Car> cars = carRepo.searchCarsByKeyword(searchBarInput.toLowerCase());
+        return cars.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
 
+    private CarDto convertToDto(Car car) {
+        CarDto carDto = new CarDto();
+        carDto.setCarId(car.getId());
+        carDto.setBrand(car.getBrand());
+        carDto.setModel(car.getModel());
+        carDto.setYear(car.getYear());
+        carDto.setPrice(car.getPrice());
+        carDto.setArea(car.getArea());
+        carDto.setFuelType(car.getFuelType());
+        carDto.setTransmission(car.getTransmission());
+
+        return carDto;
+    }
 }

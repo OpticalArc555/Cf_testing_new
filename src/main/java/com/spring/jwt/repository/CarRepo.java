@@ -38,6 +38,22 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
     @Query("SELECT c FROM Car c WHERE c.carStatus IN ('PENDING', 'ACTIVE') ORDER BY c.id DESC")
     List<Car> getPendingAndActivateCarOrderedByIdDesc();
 
+    @Query("SELECT c.model FROM Car c WHERE c.model LIKE %:query%")
+    List<String> findByModelContaining(String query);
+
+    @Query("SELECT DISTINCT c.brand FROM Car c WHERE c.brand LIKE %:query%")
+    List<String> findByBrandContaining(@Param("query") String query);
+
+    @Query("SELECT DISTINCT c.city FROM Car c WHERE c.city LIKE %:query%")
+    List<String> findByCityContaining(@Param("query") String query);
+
+    @Query("SELECT c FROM Car c WHERE LOWER(c.area) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(c.brand) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(c.model) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(c.fuelType) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(c.transmission) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Car> searchCarsByKeyword(@Param("keyword") String keyword);
+
 }
 
 

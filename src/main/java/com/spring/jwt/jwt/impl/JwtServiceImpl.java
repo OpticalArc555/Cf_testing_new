@@ -1,10 +1,15 @@
 package com.spring.jwt.jwt.impl;
 
 import com.spring.jwt.entity.Dealer;
+import com.spring.jwt.entity.InspectorProfile;
+import com.spring.jwt.entity.SalesPerson;
+import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.jwt.JwtConfig;
 import com.spring.jwt.jwt.JwtService;
 import com.spring.jwt.repository.DealerRepository;
+import com.spring.jwt.repository.InspectorProfileRepo;
+import com.spring.jwt.repository.UserRepository;
 import com.spring.jwt.security.UserDetailsCustom;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -33,6 +38,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class JwtServiceImpl implements JwtService {
+    private final UserRepository userRepository;
 
     private final JwtConfig jwtConfig;
 
@@ -41,10 +47,12 @@ public class JwtServiceImpl implements JwtService {
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public JwtServiceImpl(@Lazy JwtConfig jwtConfig, UserDetailsService userDetailsService, DealerRepository dealerRepository) {
+    public JwtServiceImpl(@Lazy JwtConfig jwtConfig, UserDetailsService userDetailsService, DealerRepository dealerRepository,
+                          UserRepository userRepository) {
         this.jwtConfig = jwtConfig;
         this.userDetailsService = userDetailsService;
         this.dealerRepository = dealerRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -89,18 +97,20 @@ public class JwtServiceImpl implements JwtService {
             dealerId = userDetailsCustom.getDealerId();
             userId = userDetailsCustom.getUserId();
         }
-
         if (roles.contains("USER")) {
             userId = userDetailsCustom.getUserId();
             userProfileId = userDetailsCustom.getUserProfileId();
         }
-
         if (roles.contains("INSPECTOR")) {
             userId = userDetailsCustom.getUserId();
             inspectorProfileId = userDetailsCustom.getInspectorProfileId();
         }
-
         if (roles.contains("SALESPERSON")) {
+            User salesPerson = userRepository.findByEmail(userDetailsCustom.getUsername());
+            SalesPerson sales = salesPerson.getSalesPerson();
+            if (sales.getStatus().toString().equals("false") ){
+                throw new BaseException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Your Account is Not Active Please Contact The Administrator");
+            }
             userId = userDetailsCustom.getUserId();
             salesPersonId = userDetailsCustom.getSalesPersonId();
         }
