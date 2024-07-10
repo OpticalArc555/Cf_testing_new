@@ -128,6 +128,7 @@ public class AppConfig {
                 .requestMatchers("/transactions/**").permitAll()
                 .requestMatchers("/uploadFileBidCar/**").permitAll()
                 .requestMatchers("/inspectionReport/**").permitAll()
+                .requestMatchers("/saveCar/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)
