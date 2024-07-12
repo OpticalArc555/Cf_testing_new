@@ -2,12 +2,10 @@ package com.spring.jwt.controller;
 
 
 import com.spring.jwt.Interfaces.BookingService;
-import com.spring.jwt.dto.BookingDto;
-import com.spring.jwt.dto.BookingResponse;
-import com.spring.jwt.dto.ResponseAllBookingDto;
-import com.spring.jwt.dto.ResponseBookingDto;
+import com.spring.jwt.dto.*;
 import com.spring.jwt.exception.BookingException;
 import com.spring.jwt.exception.BookingNotFoundException;
+import com.spring.jwt.exception.CarNotFoundException;
 import com.spring.jwt.exception.PageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +103,21 @@ public class BookingController {
             BookingResponse bookingResponse= new BookingResponse("Unsuccessful");
             bookingResponse.setException(String.valueOf(e));
             return ResponseEntity.status(HttpStatus.OK).body(bookingResponse);
+        }
+    }
+
+    @PutMapping("/cancelStatusSet")
+    public ResponseEntity<ResponseDto> cancelBooking(@RequestParam int id) {
+        try {
+            String resultMessage = bookingService.editById(id);
+            ResponseDto response = new ResponseDto(resultMessage, "updated");
+            return ResponseEntity.ok(response);
+        } catch (BookingNotFoundException | CarNotFoundException e) {
+            ResponseDto response = new ResponseDto(e.getMessage(), null);
+            return ResponseEntity.status(404).body(response);
+        } catch (Exception e) {
+            ResponseDto response = new ResponseDto("An error occurred while updating the booking.", null);
+            return ResponseEntity.status(500).body(response);
         }
     }
 }

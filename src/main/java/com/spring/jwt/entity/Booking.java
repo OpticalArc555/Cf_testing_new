@@ -30,6 +30,9 @@ public class Booking {
     @Column(name = "carId", length = 45)
     private Integer carId;
 
+    @Column(name = "status", length = 45)
+    private String status;
+
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "pending_booking")
 //    private PendingBooking pendingBooking;
