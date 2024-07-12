@@ -13,4 +13,9 @@ public interface BiddingTimerService {
 
     void sendBulkEmails(List<String> recipients, String message);
 
+    BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest);
+
+//    BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest);
+
+
 }

@@ -49,14 +49,14 @@ public class CarRegisterImp implements ICarRegister {
 //        List<Car> dealerCar = new ArrayList<>();
 
 
-              Car car =new Car(carDto);
+        Car car =new Car(carDto);
 //              car.setDealer(dealer);
 //              dealerCar=dealer.getCars();
 
 //              dealer.setCars(dealerCar);
 //              dealerRepo.save(dealer);
-              carRepo.save(car);
-              return "car Added";
+        carRepo.save(car);
+        return "car Added";
 
 
 

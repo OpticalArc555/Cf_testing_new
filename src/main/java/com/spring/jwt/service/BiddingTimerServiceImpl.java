@@ -6,6 +6,7 @@ import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.entity.BiddingTimerRequest;
 import com.spring.jwt.entity.Role;
 import com.spring.jwt.entity.User;
+import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.BeadingCarRepo;
 import com.spring.jwt.repository.BiddingTImerRepo;
@@ -43,7 +44,6 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
     private final Logger logger = LoggerFactory.getLogger(BiddingTimerServiceImpl.class);
 
 
-
     @Override
     public BiddingTimerRequestDTO startTimer(BiddingTimerRequestDTO biddingTimerRequest) {
         User byUserId = userRepository.findByUserId(biddingTimerRequest.getUserId());
@@ -72,6 +72,26 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
         BiddingTimerRequestDTO biddingTimerRequestDTO = convertToDto(save);
         return biddingTimerRequestDTO;
+    }
+
+    @Override
+    public BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest) {
+        User user = userRepository.findByUserId(updateBiddingTimeRequest.getUserId());
+        if (user == null) {
+            throw new UserNotFoundExceptions("User not found");
+        }
+
+        Optional<BiddingTimerRequest> optionalCar = biddingTImerRepo.findById(updateBiddingTimeRequest.getBeadingCarId());
+        if (optionalCar.isEmpty()) {
+            throw new BeadingCarNotFoundException("Car not found");
+        }
+
+        BiddingTimerRequest beadingCAR = optionalCar.get();
+        beadingCAR.setDurationMinutes(updateBiddingTimeRequest.getDurationMinutes());
+
+        biddingTImerRepo.save(beadingCAR);
+
+        return modelMapper.map(beadingCAR, BiddingTimerRequestDTO.class);
     }
 
 //    @Override

@@ -18,67 +18,43 @@ public class BidDetailsDTO {
 
     private LocalDateTime createdAt;
 
-
     private Boolean musicFeature;
-
 
     private String area;
 
-
-
     private String brand;
-
 
     private Boolean carInsurance;
 
-
     private String carStatus;
-
 
     private String city;
 
-
     private String color;
-
 
     private String description;
 
-
     private String fuelType;
-
 
     private int kmDriven;
 
-
     private String model;
-
-
 
     private int ownerSerial;
 
-
     private Boolean powerWindowFeature;
-
 
     private int price;
 
-
     private Boolean rearParkingCameraFeature;
-
 
     private String registration;
 
-
-
     private String transmission;
-
-
 
     private int year;
 
-
     private LocalDate date;
-
 
     private int userId;
 

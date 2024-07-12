@@ -47,6 +47,9 @@ public class Car {
     @Enumerated(EnumType.STRING)
     private Status carStatus;
 
+    @Column(name = "pending_approval", nullable = false)
+    private boolean pendingApproval;
+
     @Column(name = "city", length = 50)
     private String city;
 
