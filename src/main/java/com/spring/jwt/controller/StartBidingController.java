@@ -19,9 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,41 +30,47 @@ import java.util.stream.Collectors;
 public class StartBidingController {
 
     private final BiddingTimerService biddingTimerService;
-
     private final UserRepository userRepository;
-
     private final BidCarsService bidCarsService;
-
-    private final JdbcTemplate jdbcTemplate;
-
     private final SmsService smsService;
-
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
+
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+    private final ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
 
     @PostMapping("/SetTime")
     public ResponseEntity<?> setTimer(@RequestBody BiddingTimerRequestDTO biddingTimerRequest) {
         Optional<User> user = userRepository.findById(biddingTimerRequest.getUserId());
-        if(!user.isPresent()) {
+        if (!user.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
         }
         try {
             int durationMinutes = biddingTimerRequest.getDurationMinutes();
-            startCountdown(durationMinutes);
 
-            BiddingTimerRequestDTO biddingTimerRequestDTO = biddingTimerService.startTimer(biddingTimerRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", biddingTimerRequestDTO));
+            BiddingTimerRequestDTO savedRequest = biddingTimerService.startTimer(biddingTimerRequest);
+
+            startCountdown(savedRequest.getBiddingTimerId(), durationMinutes);
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", savedRequest));
         } catch (Exception e) {
-            ResponseSingleCarDto responseSingleCarDto = new ResponseSingleCarDto("unsuccess");
-            responseSingleCarDto.setException(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return handleException(e);
         }
     }
 
-    private void startCountdown(int durationMinutes) {
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.schedule(() -> {
+    private void startCountdown(int biddingTimerId, int durationMinutes) {
+        ScheduledFuture<?> scheduledTask = executorService.schedule(() -> {
             pushNotificationToAllUsers();
         }, durationMinutes, TimeUnit.MINUTES);
+
+        scheduledTasks.put(biddingTimerId, scheduledTask);
+    }
+
+
+    private void cancelExistingTask(int biddingTimerId) {
+        ScheduledFuture<?> existingTask = scheduledTasks.get(biddingTimerId);
+        if (existingTask != null && !existingTask.isDone()) {
+            existingTask.cancel(true);
+        }
     }
 
     private void pushNotificationToAllUsers() {
@@ -82,7 +87,7 @@ public class StartBidingController {
 
         try {
             sendNotification(dealerEmails, "Hurry Up Bidding is Started!");
-            sendSmsNotification(dealerMobileNumbers, "Hurry Up Bidding is Started!");
+//            sendSmsNotification(dealerMobileNumbers, "Hurry Up Bidding is Started!");
             logger.info("Notification sent to users: " + dealerEmails);
         } catch (Exception e) {
             logger.error("Failed to send notification to users: " + dealerEmails, e);
@@ -91,13 +96,6 @@ public class StartBidingController {
 
     private void sendNotification(List<String> recipients, String message) {
         biddingTimerService.sendBulkEmails(recipients, message);
-    }
-
-    private void sendSmsNotification(List<String> mobileNumbers, String message) {
-        String apiKey = "QYX1V75W9cI3fhegGSonlzrktEBOjKZb4CuvpxPdiN68JUFLDM6EBkZzrWM3FdHTaLo8epOJ7vRQDqnV";
-        for (String mobileNumber : mobileNumbers) {
-            smsService.sendSms(message, String.valueOf(mobileNumber), apiKey);
-        }
     }
 
     @PostMapping("/CreateBidding")
@@ -116,8 +114,24 @@ public class StartBidingController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSingleCarDto);
     }
 
+    @PostMapping("/UpdateBiddingTime")
+    public ResponseEntity<?> updateBiddingTime(@RequestBody BiddingTimerRequestDTO updateBiddingTimeRequest) {
+        try {
+            BiddingTimerRequestDTO updatedTimerRequest = biddingTimerService.updateBiddingTime(updateBiddingTimeRequest);
+            if (updatedTimerRequest.getBiddingTimerId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BiddingTimerId is null or not properly set");
+            }
+            startCountdown(updatedTimerRequest.getBiddingTimerId(), updateBiddingTimeRequest.getDurationMinutes());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", updatedTimerRequest));
+        } catch (UserNotFoundExceptions | BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseSingleCarDto("User not found"));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
     @GetMapping("/getById")
-    public ResponseEntity<?> getbiddingcar (@RequestParam Integer bidCarId,@RequestParam  Integer beadingCarId) {
+    public ResponseEntity<?> getbiddingcar(@RequestParam Integer bidCarId, @RequestParam Integer beadingCarId) {
         BidDetailsDTO bidDetailsDTO = bidCarsService.getbyBidId(bidCarId, beadingCarId);
         return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("Success", bidDetailsDTO));
     }

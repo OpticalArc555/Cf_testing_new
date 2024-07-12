@@ -1,6 +1,8 @@
 package com.spring.jwt.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.Status;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CarDto {
     private int carId;
 
@@ -67,6 +70,7 @@ public class CarDto {
 
     private int dealer_id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd") // Define the date format
     private LocalDate date;
 
 

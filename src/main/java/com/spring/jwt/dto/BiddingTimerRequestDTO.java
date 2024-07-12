@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class BiddingTimerRequestDTO {
-    private Integer BiddingTimerId;
+
+    private Integer biddingTimerId;
 
     private Integer beadingCarId;
 

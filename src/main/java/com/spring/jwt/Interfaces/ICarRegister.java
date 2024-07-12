@@ -27,5 +27,5 @@ public interface ICarRegister {
 
     public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo);
 
-    public List<String> getAutocompleteSuggestions(String query );
+    List<String> getAutocompleteSuggestions(String query);
 }
