@@ -112,6 +112,7 @@ public class StartBidingController {
         ResponseSingleCarDto responseSingleCarDto = new ResponseSingleCarDto("unsuccess");
         responseSingleCarDto.setException(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSingleCarDto);
+
     }
 
     @PostMapping("/UpdateBiddingTime")
