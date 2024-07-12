@@ -14,6 +14,7 @@ public class BookingDto {
         private int carId;
         private int userId;
         private int dealerId;
+        private String status;
 
         public BookingDto(Booking booking, Booking booking1) {
         }
@@ -31,5 +32,6 @@ public class BookingDto {
                 this.userId = booking.getUserId();
                 this.dealerId = booking.getDealerId();
                 this.carId = booking.getCarId();
+                this.status= booking.getStatus();
         }
 }
