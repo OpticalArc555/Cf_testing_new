@@ -16,4 +16,7 @@ public interface BookingService {
     List<BookingDto> getAllBookingsByDealerId(int dealerId,int pageNo);
 
     BookingDto getBookingById(int id);
+
+    public String editById(int id);
+
 }

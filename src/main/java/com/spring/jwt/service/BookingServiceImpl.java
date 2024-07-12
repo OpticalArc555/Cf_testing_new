@@ -49,7 +49,9 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = new Booking();
         BeanUtils.copyProperties(bookingDto, booking);
+        booking.setStatus("confirm"); // Set default status to "confirm"
         booking = bookingRepository.save(booking);
+
         List<PendingBooking> pendingBookings = pendingBookingRepository.findByCarCarId(bookingDto.getCarId());
         if (!pendingBookings.isEmpty()) {
             Car carEntity = carRepo.findById(bookingDto.getCarId())
@@ -65,6 +67,35 @@ public class BookingServiceImpl implements BookingService {
         BeanUtils.copyProperties(booking, savedBookingDto);
         return savedBookingDto;
     }
+
+//    public BookingDto saveBooking(BookingDto bookingDto) {
+//        CarDto car = iCarRegister.findById(bookingDto.getCarId());
+//        if (car == null) {
+//            throw new EntityNotFoundException("Car not found with ID: " + bookingDto.getCarId());
+//        }
+//
+//        if (car.getCarStatus() == Status.SOLD) {
+//            throw new BookingException("Car is not available for booking as it's already sold.");
+//        }
+//
+//        Booking booking = new Booking();
+//        BeanUtils.copyProperties(bookingDto, booking);
+//        booking = bookingRepository.save(booking);
+//        List<PendingBooking> pendingBookings = pendingBookingRepository.findByCarCarId(bookingDto.getCarId());
+//        if (!pendingBookings.isEmpty()) {
+//            Car carEntity = carRepo.findById(bookingDto.getCarId())
+//                    .orElseThrow(() -> new EntityNotFoundException("Car not found with ID: " + bookingDto.getCarId()));
+//            carEntity.setCarStatus(Status.SOLD);
+//            carRepo.save(carEntity);
+//
+//            pendingBookingRepository.deleteAll(pendingBookings);
+//        }
+//
+//        pendingBookingRepository.deleteByCarCarId(bookingDto.getCarId());
+//        BookingDto savedBookingDto = new BookingDto();
+//        BeanUtils.copyProperties(booking, savedBookingDto);
+//        return savedBookingDto;
+//    }
 
     @Override
     public List<BookingDto> getAllBooking(int pageNo) {
@@ -92,6 +123,7 @@ public class BookingServiceImpl implements BookingService {
             bookingDto.setCarId(listOfBooking.get(counter).getCarId());
             bookingDto.setUserId(listOfBooking.get(counter).getUserId());
             bookingDto.setDealerId(listOfBooking.get(counter).getDealerId());
+            bookingDto.setStatus(listOfBooking.get(counter).getStatus());
            // bookingDto.setPendingBookingId(listOfBooking.get(counter).);
             listOfBookingDto.add(bookingDto);
             if(diff == i){
@@ -139,6 +171,7 @@ public class BookingServiceImpl implements BookingService {
             bookingDto.setCarId(listOfBooking.get(counter).getCarId());
             bookingDto.setUserId(listOfBooking.get(counter).getUserId());
             bookingDto.setDealerId(listOfBooking.get(counter).getDealerId());
+            bookingDto.setStatus(listOfBooking.get(counter).getStatus());
             // bookingDto.setPendingBookingId(listOfBooking.get(counter).);
             listOfBookingDto.add(bookingDto);
             if(diff == i){
@@ -160,4 +193,26 @@ public class BookingServiceImpl implements BookingService {
        }
     }
 
+
+    @Override
+    public String editById(int id) {
+        Optional<Booking> bookingOptional = bookingRepository.findById(id);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            booking.setStatus("cancel"); // Set booking status to "cancel"
+            bookingRepository.save(booking);
+
+            Optional<Car> carOptional = carRepo.findById(booking.getCarId());
+            if (carOptional.isPresent()) {
+                Car car = carOptional.get();
+                car.setCarStatus(Status.ACTIVE); // Assuming Status is an enum and "ACTIVE" is one of its values
+                carRepo.save(car);
+            } else {
+                throw new CarNotFoundException("No car found with this id");
+            }
+            return "Booking and Car status cancel successfully.";
+        } else {
+            throw new BookingNotFoundException("No booking found with this id");
+        }
+    }
 }
