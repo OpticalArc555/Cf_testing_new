@@ -113,6 +113,7 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     @Override
     public List<PlacedBidDTO> getTopThree(Integer bidCarId) throws BidNotFoundExceptions {
         Optional<BidCars> bidCarOptional = bidCarsRepo.findById(bidCarId);
+        System.err.println(bidCarOptional);
         if (bidCarOptional.isEmpty()) {
             throw new BidNotFoundExceptions("Bid car not found with ID: " + bidCarId);
         }
@@ -123,13 +124,14 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             PlacedBidDTO basePriceBidDTO = new PlacedBidDTO();
             basePriceBidDTO.setBidCarId(bidCarId);
             basePriceBidDTO.setAmount(bidCar.getBasePrice());
+            System.err.println("Base price: " + bidCar.getBasePrice());
             return Collections.singletonList(basePriceBidDTO);
+        }else {
+            return topThreeBids.stream().map(this::convertToDto).collect(Collectors.toList());
         }
 
-        return topThreeBids.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
     }
+
 
     public PlacedBid convertToEntity(PlacedBidDTO placedBidDTO){
         PlacedBid toEntity = modelMapper.map(placedBidDTO, PlacedBid.class);

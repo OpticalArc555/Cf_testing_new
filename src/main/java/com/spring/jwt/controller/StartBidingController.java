@@ -4,9 +4,11 @@ import com.spring.jwt.Bidding.Interface.SmsService;
 import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.dto.*;
+import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.repository.BidCarsRepo;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/Bidding/v1")
 @RequiredArgsConstructor
 public class StartBidingController {
+    private final BidCarsRepo bidCarsRepo;
 
     private final BiddingTimerService biddingTimerService;
     private final UserRepository userRepository;
@@ -65,13 +68,6 @@ public class StartBidingController {
         scheduledTasks.put(biddingTimerId, scheduledTask);
     }
 
-
-    private void cancelExistingTask(int biddingTimerId) {
-        ScheduledFuture<?> existingTask = scheduledTasks.get(biddingTimerId);
-        if (existingTask != null && !existingTask.isDone()) {
-            existingTask.cancel(true);
-        }
-    }
 
     private void pushNotificationToAllUsers() {
         List<User> allUsers = userRepository.findAll();
@@ -122,6 +118,9 @@ public class StartBidingController {
             if (updatedTimerRequest.getBiddingTimerId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BiddingTimerId is null or not properly set");
             }
+
+            cancelExistingTask(updatedTimerRequest.getBiddingTimerId());
+
             startCountdown(updatedTimerRequest.getBiddingTimerId(), updateBiddingTimeRequest.getDurationMinutes());
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", updatedTimerRequest));
         } catch (UserNotFoundExceptions | BeadingCarNotFoundException e) {
@@ -131,6 +130,13 @@ public class StartBidingController {
         }
     }
 
+    private void cancelExistingTask(int biddingTimerId) {
+        ScheduledFuture<?> existingTask = scheduledTasks.get(biddingTimerId);
+        if (existingTask != null && !existingTask.isDone()) {
+            existingTask.cancel(true);
+            scheduledTasks.remove(biddingTimerId);
+        }
+    }
     @GetMapping("/getById")
     public ResponseEntity<?> getbiddingcar(@RequestParam Integer bidCarId, @RequestParam Integer beadingCarId) {
         BidDetailsDTO bidDetailsDTO = bidCarsService.getbyBidId(bidCarId, beadingCarId);
@@ -155,5 +161,13 @@ public class StartBidingController {
             response.setException(ex.getClass().getSimpleName());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
+    }
+
+    @GetMapping ("/Timing")
+    public BidCarsDTO getTiming (@RequestParam Integer bidCarId){
+        Optional<BidCars> time = bidCarsRepo.findById(bidCarId);
+        BidCarsDTO carsDTO = new BidCarsDTO();
+        carsDTO.setCreatedAt(time.get().getCreatedAt());
+        return carsDTO;
     }
 }

@@ -3,10 +3,7 @@ package com.spring.jwt.controller;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.dto.ResponseDto;
-import com.spring.jwt.exception.BidAmountLessException;
-import com.spring.jwt.exception.BidForSelfAuctionException;
-import com.spring.jwt.exception.InsufficientBalanceException;
-import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +53,11 @@ public class WebSocketBidController {
         } catch (IllegalArgumentException e) {
             logger.error("Invalid request for top three bids: {}", e.getMessage());
             return Collections.emptyList();
+        } catch (BidNotFoundExceptions e) {
+            logger.error("Error finding top three bids: {}", e.getMessage());
+            return Collections.emptyList();
         }
     }
+
+
 }
