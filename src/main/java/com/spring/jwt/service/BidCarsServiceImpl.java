@@ -134,6 +134,17 @@ public class BidCarsServiceImpl implements BidCarsService {
         return dtos;
     }
 
+    @Override
+    public BidCarsDTO getbyBidId(Integer beadingCarId) {
+        Optional<BidCars> byBeadingCarId = bidCarsRepo.findByBeadingCarId(beadingCarId);
+        if(byBeadingCarId.isPresent()) {
+            BidCars bidCars = byBeadingCarId.get();
+            BidCarsDTO carsDTO = convertToDto(bidCars);
+            return carsDTO;
+        }else{
+            throw new RuntimeException("Car Not Found");
+        }
+    }
 
 
     public BidCars convertToEntity(BidCarsDTO bidCarsDTO){
