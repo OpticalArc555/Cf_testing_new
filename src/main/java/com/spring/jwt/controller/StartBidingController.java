@@ -69,13 +69,6 @@ public class StartBidingController {
     }
 
 
-    private void cancelExistingTask(int biddingTimerId) {
-        ScheduledFuture<?> existingTask = scheduledTasks.get(biddingTimerId);
-        if (existingTask != null && !existingTask.isDone()) {
-            existingTask.cancel(true);
-        }
-    }
-
     private void pushNotificationToAllUsers() {
         List<User> allUsers = userRepository.findAll();
         List<String> dealerEmails = allUsers.stream()
@@ -125,6 +118,9 @@ public class StartBidingController {
             if (updatedTimerRequest.getBiddingTimerId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BiddingTimerId is null or not properly set");
             }
+
+            cancelExistingTask(updatedTimerRequest.getBiddingTimerId());
+
             startCountdown(updatedTimerRequest.getBiddingTimerId(), updateBiddingTimeRequest.getDurationMinutes());
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", updatedTimerRequest));
         } catch (UserNotFoundExceptions | BeadingCarNotFoundException e) {
@@ -134,6 +130,13 @@ public class StartBidingController {
         }
     }
 
+    private void cancelExistingTask(int biddingTimerId) {
+        ScheduledFuture<?> existingTask = scheduledTasks.get(biddingTimerId);
+        if (existingTask != null && !existingTask.isDone()) {
+            existingTask.cancel(true);
+            scheduledTasks.remove(biddingTimerId);
+        }
+    }
     @GetMapping("/getById")
     public ResponseEntity<?> getbiddingcar(@RequestParam Integer bidCarId, @RequestParam Integer beadingCarId) {
         BidDetailsDTO bidDetailsDTO = bidCarsService.getbyBidId(bidCarId, beadingCarId);
