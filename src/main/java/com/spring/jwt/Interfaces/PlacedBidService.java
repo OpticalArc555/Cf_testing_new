@@ -19,6 +19,4 @@ public interface PlacedBidService {
 
     public  List<PlacedBidDTO> getTopThree(Integer bidCarId);
 
-
-
 }

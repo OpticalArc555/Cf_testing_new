@@ -14,7 +14,7 @@
     <label for="userId">User ID:</label>
     <input type="text" id="userId" name="userId"><br><br>
     <label for="bidCarId">Car ID:</label>
-    <input type="text" id="bidCarId" name="bidCarId"><br><br>
+    <input type="text" id="bidCarId" name="bidCarId" oninput="refreshTopThreeBids()"><br><br>
     <label for="amount">Bid Amount:</label>
     <input type="text" id="amount" name="amount"><br><br>
     <button onclick="placeBid()">Place Bid</button>
@@ -29,7 +29,6 @@
 </div>
 
 <script>
-
     const socket = new SockJS('http://localhost:8080/Aucbidding');
     const stompClient = Stomp.over(socket);
 
@@ -48,7 +47,7 @@
         });
 
         refreshTopThreeBids();
-        setInterval(refreshTopThreeBids, 1000);
+        setInterval(refreshTopThreeBids, 30000);
     });
 
     function placeBid() {
@@ -63,18 +62,26 @@
 
     function refreshTopThreeBids() {
         const bidCarId = document.getElementById('bidCarId').value;
-        stompClient.send('/app/topThreeBids', {}, JSON.stringify({ bidCarId }));
+        if (bidCarId) {
+            stompClient.send('/app/topThreeBids', {}, JSON.stringify({ bidCarId }));
+        }
     }
 
     function updateTopThreeBids(bids) {
         const topBidsList = document.getElementById('topBidsList');
         topBidsList.innerHTML = '';
 
-        bids.forEach(bid => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `User ${bid.userId} placed a bid of ${bid.amount} on car ${bid.bidCarId}`;
-            topBidsList.appendChild(listItem);
-        });
+        if (bids.length === 1 && bids[0].userId == null) {
+            const basePriceItem = document.createElement('li');
+            basePriceItem.textContent = `No bids yet. Starting price is ${bids[0].amount}`;
+            topBidsList.appendChild(basePriceItem);
+        } else {
+            bids.forEach(bid => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `User ${bid.userId} placed a bid of ${bid.amount} on car ${bid.bidCarId}`;
+                topBidsList.appendChild(listItem);
+            });
+        }
     }
 </script>
 </body>

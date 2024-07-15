@@ -16,7 +16,7 @@ public class BidCars {
    @Column(name= "bidCarId")
    private Integer bidCarId;
 
-   @Column(name = "beadingCardId")
+   @Column(name = "beadingCarId")
    private Integer beadingCarId;
 
     @Column(nullable = false)
