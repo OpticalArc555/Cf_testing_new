@@ -88,41 +88,46 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBooking(int pageNo) {
+        int pageSize = 10; // Define the size of the page
         List<Booking> listOfBooking = bookingRepository.findAll();
-        CarNotFoundException carNotFoundException;
-        if((pageNo*10)>listOfBooking.size()-1){
-            throw new PageNotFoundException("page not found");
 
-        }
-        if(listOfBooking.size()<=0){throw new BookingNotFound("car not found",HttpStatus.NOT_FOUND);}
-//        System.out.println("list of de"+listOfCar.size());
-        List<BookingDto> listOfBookingDto = new ArrayList<>();
-
-        int pageStart=pageNo*10;
-        int pageEnd=pageStart+10;
-        int diff=(listOfBooking.size()) - pageStart;
-        for(int counter=pageStart,i=1;counter<pageEnd;counter++,i++){
-            if(pageStart>listOfBooking.size()){break;}
-
-//            System.out.println("*");
-            BookingDto bookingDto = new BookingDto(listOfBooking.get(counter));
-            bookingDto.setId(listOfBooking.get(counter).getId());
-            bookingDto.setDate(listOfBooking.get(counter).getDate());
-            bookingDto.setPrice(listOfBooking.get(counter).getPrice());
-            bookingDto.setCarId(listOfBooking.get(counter).getCarId());
-            bookingDto.setUserId(listOfBooking.get(counter).getUserId());
-            bookingDto.setDealerId(listOfBooking.get(counter).getDealerId());
-            bookingDto.setStatus(listOfBooking.get(counter).getStatus());
-           // bookingDto.setPendingBookingId(listOfBooking.get(counter).);
-            listOfBookingDto.add(bookingDto);
-            if(diff == i){
-                break;
-            }
+        if (listOfBooking.isEmpty()) {
+            throw new BookingNotFound("Booking not found", HttpStatus.NOT_FOUND);
         }
 
-       System.out.println(listOfBookingDto);
+        // Sort the list in descending order by ID
+        listOfBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
+
+        // Calculate start and end indices for pagination
+        int totalBookings = listOfBooking.size();
+        int pageStart = pageNo * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalBookings);
+
+        if (pageStart >= totalBookings) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        // Extract the sublist for the current page
+        List<Booking> pagedBookings = listOfBooking.subList(pageStart, pageEnd);
+
+        // Convert to DTOs
+        List<BookingDto> listOfBookingDto = pagedBookings.stream()
+                .map(booking -> {
+                    BookingDto bookingDto = new BookingDto(booking);
+                    bookingDto.setId(booking.getId());
+                    bookingDto.setDate(booking.getDate());
+                    bookingDto.setPrice(booking.getPrice());
+                    bookingDto.setCarId(booking.getCarId());
+                    bookingDto.setUserId(booking.getUserId());
+                    bookingDto.setDealerId(booking.getDealerId());
+                    bookingDto.setStatus(booking.getStatus());
+                    return bookingDto;
+                })
+                .collect(Collectors.toList());
+
         return listOfBookingDto;
     }
+
 
     @Override
     public BookingDto getAllBookingsByUserId(int userId) {
@@ -135,40 +140,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllBookingsByDealerId(int dealerId,int pageNo) {
+    public List<BookingDto> getAllBookingsByDealerId(int dealerId, int pageNo) {
+        int pageSize = 10; // Define the size of the page
         List<Booking> listOfBooking = bookingRepository.findByDealerId(dealerId);
-        CarNotFoundException carNotFoundException;
-        if((pageNo*10)>listOfBooking.size()-1){
-            throw new PageNotFoundException("page not found");
 
+        if (listOfBooking.isEmpty()) {
+            throw new BookingNotFound("No bookings found for dealer ID " + dealerId, HttpStatus.NOT_FOUND);
         }
-        if(listOfBooking.size()<=0){throw new BookingNotFound("car not found",HttpStatus.NOT_FOUND);}
-//        System.out.println("list of de"+listOfCar.size());
-        List<BookingDto> listOfBookingDto = new ArrayList<>();
+        listOfBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
+        int totalBookings = listOfBooking.size();
+        int pageStart = pageNo * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalBookings);
 
-        int pageStart=pageNo*10;
-        int pageEnd=pageStart+10;
-        int diff=(listOfBooking.size()) - pageStart;
-        for(int counter=pageStart,i=1;counter<pageEnd;counter++,i++){
-            if(pageStart>listOfBooking.size()){break;}
-
-//            System.out.println("*");
-            BookingDto bookingDto = new BookingDto(listOfBooking.get(counter));
-            bookingDto.setId(listOfBooking.get(counter).getId());
-            bookingDto.setDate(listOfBooking.get(counter).getDate());
-            bookingDto.setPrice(listOfBooking.get(counter).getPrice());
-            bookingDto.setCarId(listOfBooking.get(counter).getCarId());
-            bookingDto.setUserId(listOfBooking.get(counter).getUserId());
-            bookingDto.setDealerId(listOfBooking.get(counter).getDealerId());
-            bookingDto.setStatus(listOfBooking.get(counter).getStatus());
-            // bookingDto.setPendingBookingId(listOfBooking.get(counter).);
-            listOfBookingDto.add(bookingDto);
-            if(diff == i){
-                break;
-            }
+        if (pageStart >= totalBookings) {
+            throw new PageNotFoundException("Page not found");
         }
-
-        System.out.println(listOfBookingDto);
+        List<Booking> pagedBookings = listOfBooking.subList(pageStart, pageEnd);
+        List<BookingDto> listOfBookingDto = pagedBookings.stream()
+                .map(booking -> {
+                    BookingDto bookingDto = new BookingDto(booking);
+                    bookingDto.setId(booking.getId());
+                    bookingDto.setDate(booking.getDate());
+                    bookingDto.setPrice(booking.getPrice());
+                    bookingDto.setCarId(booking.getCarId());
+                    bookingDto.setUserId(booking.getUserId());
+                    bookingDto.setDealerId(booking.getDealerId());
+                    bookingDto.setStatus(booking.getStatus());
+                    return bookingDto;
+                })
+                .collect(Collectors.toList());
         return listOfBookingDto;
     }
 
