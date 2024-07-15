@@ -1,6 +1,8 @@
 package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.SaveCarService;
+import com.spring.jwt.dto.ResponceDto;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.saveCar.SaveCarDto;
 import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.SaveCar;
@@ -105,5 +107,16 @@ public class SaveCarServiceImpl implements SaveCarService {
             return "Error deleting saved car: " + e.getMessage();
         }
     }
+
+    @Override
+    public ResponceDto getByCarAndUserId(int userId, Integer carId) {
+        Optional<SaveCar> optionalSaveCar = saveCarRepo.findByUserIdAndCarId(userId, carId);
+        if (optionalSaveCar.isPresent()) {
+            return new ResponceDto("success", "saveCarId: " + optionalSaveCar.get().getSaveCarId());
+        } else {
+            return new ResponceDto("error", "No saved car found for user ID " + userId + " and car ID " + carId);
+        }
+    }
+
 
 }
