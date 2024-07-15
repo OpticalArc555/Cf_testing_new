@@ -13,7 +13,7 @@ public class PendingBookingDTO {
     public static final String STATUS_ACTIVE = "Active";
     public static final String STATUS_SOLD = "Sold";
 
-    private int id;
+    private Integer id;
     private LocalDate date;
     private int price;
     private int askingPrice;
@@ -21,7 +21,6 @@ public class PendingBookingDTO {
     private Integer carId;
     private Integer dealerId;
     private Integer userId;
-
 
     public PendingBookingDTO() {
 

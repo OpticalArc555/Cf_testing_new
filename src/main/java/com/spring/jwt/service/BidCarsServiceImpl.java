@@ -38,6 +38,11 @@ public class BidCarsServiceImpl implements BidCarsService {
 
         User byUserId = userRepository.findByUserId(bidCarsDTO.getUserId());
 
+        Optional<BidCars> biddingCar = bidCarsRepo.findByBeadingCarId(bidCarsDTO.getBeadingCarId());
+
+        if (biddingCar.isPresent()) {
+            throw new RuntimeException("Car Already Added for the Bidding");
+        }
         if(byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
         }

@@ -106,7 +106,7 @@ public class AppConfig {
                 .requestMatchers("/cars/**").permitAll()
                 .requestMatchers("/finalBid/**").permitAll()
                 .requestMatchers("/BeadingCarController/**").permitAll()
-                .requestMatchers("/booking/**").hasAnyAuthority("USER", "ADMIN", "DEALER")
+                .requestMatchers("/booking/**").permitAll()
                 .requestMatchers("/userProfilePhoto/**").permitAll()
                 .requestMatchers("/uploadFile/**").permitAll()
                 .requestMatchers("/confirmBooking/**").permitAll()
