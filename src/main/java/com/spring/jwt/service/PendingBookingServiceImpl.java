@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -126,10 +127,6 @@ public class PendingBookingServiceImpl implements PendingBookingService {
         DealerDetails dealerDetails = new DealerDetails(dealer.get());
         pendingBookingRequestDto.setDealerDetails(dealerDetails);
         return pendingBookingRequestDto;
-
-
-
-
 
     }
 

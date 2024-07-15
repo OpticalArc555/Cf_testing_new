@@ -4,6 +4,7 @@ import com.spring.jwt.entity.Booking;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class BookingDto {
@@ -16,14 +17,13 @@ public class BookingDto {
         private int dealerId;
         private String status;
 
+
         public BookingDto(Booking booking, Booking booking1) {
         }
 
         public BookingDto() {
 
         }
-
-
 
         public BookingDto(Booking booking) {
                 this.id = booking.getId();
@@ -33,5 +33,7 @@ public class BookingDto {
                 this.dealerId = booking.getDealerId();
                 this.carId = booking.getCarId();
                 this.status= booking.getStatus();
+
+
         }
 }

@@ -1,6 +1,5 @@
 package com.spring.jwt.controller;
 
-
 import com.spring.jwt.Interfaces.PendingBookingService;
 import com.spring.jwt.dto.BookingDtos.*;
 import com.spring.jwt.dto.CarDto;
