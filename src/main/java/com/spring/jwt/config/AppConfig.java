@@ -115,7 +115,7 @@ public class AppConfig {
                 .requestMatchers("/dealerDocument/**").hasAnyAuthority("ADMIN", "DEALER")
                 .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/dealer/allDealer").permitAll()
-                .requestMatchers("/dealer/**").hasAnyAuthority("DEALER", "ADMIN")
+                .requestMatchers("/dealer/**").hasAnyAuthority("DEALER", "ADMIN", "USER")
                 .requestMatchers("/car/**").permitAll()
                 .requestMatchers("/carVerify/**").permitAll()
                 .requestMatchers("/sms/**").permitAll()

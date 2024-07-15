@@ -17,4 +17,6 @@ public interface BidCarsRepo extends JpaRepository<BidCars, Integer> {
     List<BidCars> findAllLiveCars(LocalDateTime currentTime);
 
     Optional<BidCars> findByBeadingCarId(Integer beadingCarId);
+
+
 }
