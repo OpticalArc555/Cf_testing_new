@@ -87,6 +87,9 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         if (salesPersonDto.getArea() != null && !salesPersonDto.getArea().isEmpty()) {
             profile.setArea(salesPersonDto.getArea());
         }
+        if (salesPersonDto.getStatus() != null) {
+            profile.setStatus(salesPersonDto.getStatus());
+        }
         salesPersonRepository.save(profile);
 
         User user = profile.getUser();
