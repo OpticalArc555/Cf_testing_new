@@ -73,6 +73,8 @@ public class CarDto {
     @JsonFormat(pattern = "yyyy-MM-dd") // Define the date format
     private LocalDate date;
 
+    private String carInsuranceType;
+
 
 
     public CarDto(Car car){
@@ -100,6 +102,7 @@ public class CarDto {
         this.title = car.getTitle();
         this.variant = car.getVariant();
         this.carInsuranceDate = car.getCarInsuranceDate();
+        this.carInsuranceType=car.getCarInsuranceType();
 
     }
 }

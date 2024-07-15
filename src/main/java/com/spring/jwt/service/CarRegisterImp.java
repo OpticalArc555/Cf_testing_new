@@ -99,6 +99,7 @@ public class CarRegisterImp implements ICarRegister {
         if (carDto.getTitle() != null) car.setTitle(carDto.getTitle());
         if (carDto.getVariant() != null) car.setVariant(carDto.getVariant());
         if (carDto.getTransmission() != null) car.setTransmission(carDto.getTransmission());
+        if (carDto.getCarInsuranceType()!=null)car.setCarInsuranceType(carDto.getCarInsuranceType());
         if (carDto.getYear() != 0) car.setYear(carDto.getYear()); // assuming year cannot be null
 
         carRepo.save(car);
@@ -313,6 +314,7 @@ public class CarRegisterImp implements ICarRegister {
         carDto.setCarInsuranceDate(car.getCarInsuranceDate());
         carDto.setTitle(car.getTitle());
         carDto.setVariant(car.getVariant());
+        carDto.setCarInsuranceType(car.getCarInsuranceType());
         return carDto;
     }
 }

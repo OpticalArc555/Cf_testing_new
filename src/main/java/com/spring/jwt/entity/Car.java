@@ -44,6 +44,9 @@ public class Car {
     @Column(name = "car_insurance_date")
     private String carInsuranceDate;
 
+    @Column(name = "carInsuranceType")
+    private String carInsuranceType;
+
     @Enumerated(EnumType.STRING)
     private Status carStatus;
 
@@ -131,6 +134,7 @@ public class Car {
         this.title=carDto.getTitle();
         this.variant = carDto.getVariant();
         this.carInsuranceDate = carDto.getCarInsuranceDate();
+        this.carInsuranceType= carDto.getCarInsuranceType();
     }
 
 }

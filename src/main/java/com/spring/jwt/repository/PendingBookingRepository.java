@@ -15,5 +15,7 @@ public interface PendingBookingRepository extends JpaRepository<PendingBooking, 
 
         List<PendingBooking> findByCarCarId(Integer carId);
         public Optional<List<PendingBooking>> getAllPendingBookingByUserId(int userId);
+
+
 }
 
