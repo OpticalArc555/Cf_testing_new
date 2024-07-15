@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,11 +112,20 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
     @Override
     public List<PlacedBidDTO> getTopThree(Integer bidCarId) throws BidNotFoundExceptions {
-        Optional<BidCars> bidCar = bidCarsRepo.findById(bidCarId);
-        if (bidCar.isEmpty()) {
+        Optional<BidCars> bidCarOptional = bidCarsRepo.findById(bidCarId);
+        if (bidCarOptional.isEmpty()) {
             throw new BidNotFoundExceptions("Bid car not found with ID: " + bidCarId);
         }
+        BidCars bidCar = bidCarOptional.get();
         List<PlacedBid> topThreeBids = placedBidRepo.findTop3ByBidCarIdOrderByAmountDesc(bidCarId);
+
+        if (topThreeBids.isEmpty()) {
+            PlacedBidDTO basePriceBidDTO = new PlacedBidDTO();
+            basePriceBidDTO.setBidCarId(bidCarId);
+            basePriceBidDTO.setAmount(bidCar.getBasePrice());
+            return Collections.singletonList(basePriceBidDTO);
+        }
+
         return topThreeBids.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
