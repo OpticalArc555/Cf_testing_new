@@ -8,11 +8,13 @@ import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.SaveCar;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.CarNotFoundException;
+import com.spring.jwt.exception.SaveCarAlreadyExistsException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.CarRepo;
 import com.spring.jwt.repository.SaveCarRepo;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,25 +36,26 @@ public class SaveCarServiceImpl implements SaveCarService {
         Optional<User> optionalUser = userRepository.findById(saveCarDto.getUserId());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
             Optional<Car> optionalCar = carRepo.findById(saveCarDto.getCarId());
             if (optionalCar.isPresent()) {
                 Car car = optionalCar.get();
-
                 SaveCar saveCar = new SaveCar();
-
                 saveCar.setCarId(saveCarDto.getCarId());
                 saveCar.setUserId(saveCarDto.getUserId());
-                saveCarRepo.save(saveCar);
-
-                return "Car saved successfully.";
+                try {
+                    saveCarRepo.save(saveCar);
+                    return "Car saved successfully.";
+                } catch (DataIntegrityViolationException e) {
+                    throw new SaveCarAlreadyExistsException("This car is already saved for this user.");
+                }
             } else {
-                return "Car with ID " + saveCarDto.getCarId() + " not found.";
+                throw new CarNotFoundException("Car with ID " + saveCarDto.getCarId() + " not found.");
             }
         } else {
-            return "User with ID " + saveCarDto.getUserId() + " not found.";
+            throw new UserNotFoundExceptions("User with ID " + saveCarDto.getUserId() + " not found.");
         }
     }
+
 
 
 
@@ -109,12 +112,12 @@ public class SaveCarServiceImpl implements SaveCarService {
     }
 
     @Override
-    public ResponceDto getByCarAndUserId(int userId, Integer carId) {
+    public SaveCar getByCarAndUserId(int userId, Integer carId) {
         Optional<SaveCar> optionalSaveCar = saveCarRepo.findByUserIdAndCarId(userId, carId);
         if (optionalSaveCar.isPresent()) {
-            return new ResponceDto("success", "saveCarId: " + optionalSaveCar.get().getSaveCarId());
+            return optionalSaveCar.get();
         } else {
-            return new ResponceDto("error", "No saved car found for user ID " + userId + " and car ID " + carId);
+            throw new CarNotFoundException("No saved car found for user ID " + userId + " and car ID " + carId);
         }
     }
 
