@@ -78,6 +78,10 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
             profileDto.setAddress(profile.getAddress());
             profileDto.setCity(profile.getCity());
             profileDto.setFirstName(profile.getFirstName());
+            Boolean status = profile.getStatus();
+            if (status != null) {
+                profileDto.setStatus(status);
+            }
             profileDto.setLastName(profile.getLastName());
 
             if (user != null) {
@@ -117,6 +121,7 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         inspectorProfileDto.setCity(inspectorProfile.getCity());
         inspectorProfileDto.setFirstName(inspectorProfile.getFirstName());
         inspectorProfileDto.setLastName(inspectorProfile.getLastName());
+        inspectorProfileDto.setStatus(inspectorProfile.getStatus());
         inspectorProfileDto.setEmail(user.getEmail());
         inspectorProfileDto.setMobileNo(user.getMobileNo());
 
@@ -147,6 +152,10 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         dto.setCity(inspectorProfile.getCity());
         dto.setFirstName(inspectorProfile.getFirstName());
         dto.setLastName(inspectorProfile.getLastName());
+        Boolean status = inspectorProfile.getStatus();
+        if (status != null) {
+            dto.setStatus(status);
+        }
         User user = inspectorProfile.getUser();
         if (user != null) {
             dto.setUserId(user.getId());
