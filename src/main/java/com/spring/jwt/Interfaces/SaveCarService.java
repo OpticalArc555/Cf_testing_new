@@ -13,7 +13,7 @@ public interface SaveCarService {
 
     public String deleteSavedCarById(Integer saveCarId);
 
-    public ResponceDto getByCarAndUserId(int userId, Integer carId);
+    public SaveCar getByCarAndUserId(int userId, Integer carId);
 
 
 }
