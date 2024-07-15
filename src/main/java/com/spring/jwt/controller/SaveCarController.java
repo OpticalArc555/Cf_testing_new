@@ -69,14 +69,16 @@ public class SaveCarController {
         }
     }
     @GetMapping("/getByCarAndUserId")
-    public ResponseEntity<ResponceDto> getByCarAndUserId(@RequestParam int userId, @RequestParam Integer carId) {
+    public ResponseEntity<?> getByCarAndUserId(@RequestParam int userId, @RequestParam Integer carId) {
         try {
-            ResponceDto response = saveCarService.getByCarAndUserId(userId, carId);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (UserNotFoundExceptions | CarNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("error", e.getMessage()));
+            SaveCar saveCar = saveCarService.getByCarAndUserId(userId, carId);
+            SaveCarDto saveCarDto = new SaveCarDto(saveCar);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", saveCarDto));
+        } catch (CarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("error", "An error occurred: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "An error occurred: " + e.getMessage()));
         }
     }
 }
+

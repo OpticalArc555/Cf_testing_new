@@ -112,12 +112,12 @@ public class SaveCarServiceImpl implements SaveCarService {
     }
 
     @Override
-    public ResponceDto getByCarAndUserId(int userId, Integer carId) {
+    public SaveCar getByCarAndUserId(int userId, Integer carId) {
         Optional<SaveCar> optionalSaveCar = saveCarRepo.findByUserIdAndCarId(userId, carId);
         if (optionalSaveCar.isPresent()) {
-            return new ResponceDto("success", "saveCarId: " + optionalSaveCar.get().getSaveCarId());
+            return optionalSaveCar.get();
         } else {
-            return new ResponceDto("error", "No saved car found for user ID " + userId + " and car ID " + carId);
+            throw new CarNotFoundException("No saved car found for user ID " + userId + " and car ID " + carId);
         }
     }
 
