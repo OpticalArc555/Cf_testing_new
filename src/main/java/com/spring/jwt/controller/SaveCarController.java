@@ -68,4 +68,15 @@ public class SaveCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred: " + e.getMessage()));
         }
     }
+    @GetMapping("/getByCarAndUserId")
+    public ResponseEntity<ResponceDto> getByCarAndUserId(@RequestParam int userId, @RequestParam Integer carId) {
+        try {
+            ResponceDto response = saveCarService.getByCarAndUserId(userId, carId);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (UserNotFoundExceptions | CarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("error", "An error occurred: " + e.getMessage()));
+        }
+    }
 }

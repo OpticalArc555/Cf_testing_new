@@ -1,4 +1,5 @@
 package com.spring.jwt.Interfaces;
+import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.saveCar.SaveCarDto;
 import com.spring.jwt.entity.SaveCar;
 
@@ -11,6 +12,8 @@ public interface SaveCarService {
     public List<SaveCarDto> getSavedCar(int userId);
 
     public String deleteSavedCarById(Integer saveCarId);
+
+    public ResponceDto getByCarAndUserId(int userId, Integer carId);
 
 
 }
