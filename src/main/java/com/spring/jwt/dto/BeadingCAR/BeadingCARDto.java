@@ -59,6 +59,8 @@ public class BeadingCARDto {
 
     private Integer dealerId;
 
+    private String carInsuranceType;
+
 
     public BeadingCARDto() {
     }
@@ -89,5 +91,6 @@ public class BeadingCARDto {
         this.title= beadingCAR.getTitle();
         this.variant= beadingCAR.getVariant();
         this.dealerId= beadingCAR.getDealerId();
+        this.carInsuranceType=beadingCAR.getCarInsuranceType();
     }
 }

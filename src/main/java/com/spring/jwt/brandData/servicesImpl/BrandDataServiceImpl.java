@@ -7,6 +7,10 @@ import com.spring.jwt.brandData.Entity.BrandData;
 import com.spring.jwt.brandData.exception.BrandNotFoundException;
 import com.spring.jwt.brandData.Reposiory.BrandDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -39,10 +43,12 @@ public class BrandDataServiceImpl implements BrandDataService {
 
 
     @Override
-    public List<BrandDataDto> GetAllBrands() {
-        List<BrandData> brands = brandDataRepository.findAll();
-        return brands.stream().map(this::convertToDto).collect(Collectors.toList());
+    public List<BrandDataDto> GetAllBrands(Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("brandDataId").descending());
+        Page<BrandData> brandPage = brandDataRepository.findAll(pageable);
+        return brandPage.getContent().stream().map(this::convertToDto).collect(Collectors.toList());
     }
+
 
     @Override
     public String editBrand(Integer brandDataId, BrandDataDto brandDataDto) {
