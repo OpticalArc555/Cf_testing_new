@@ -8,6 +8,7 @@ import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class DealerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess","user not found exception"));
         }
     }
+
 
     @GetMapping("/allDealers/{pageNo}")
     public ResponseEntity<ResponseAllDealerDto> getAllDealers(@PathVariable int pageNo) {

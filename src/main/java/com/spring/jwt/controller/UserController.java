@@ -30,6 +30,7 @@ public class UserController {
         return ResponseEntity.ok("Welcome to user page : " + principal.getName());
     }
 
+
     @GetMapping("/getAllUsers")
     public ResponseEntity<ResponseAllUsersDto> getAllUsers(@RequestParam int pageNo){
 
@@ -71,7 +72,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessful", "User not found"));
         }
     }
-
+    @PreAuthorize("permitAll()")
     @GetMapping("/getUser/{id}")
     public ResponseEntity<?> getUser(@PathVariable int id ){
 

@@ -10,4 +10,6 @@ public interface UserProfileRepository extends JpaRepository<Userprofile,Integer
     @Modifying
     @Query(value = "DELETE FROM dealer_jwt.userprofile WHERE user_profile_id=:user_id", nativeQuery = true)
     public void DeleteById(int user_id);
+
+
 }
