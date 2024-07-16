@@ -60,7 +60,7 @@ public class BidCarsServiceImpl implements BidCarsService {
         BeadingCAR beadingCAR = byId.get();
         String carStatus = beadingCAR.getCarStatus();
         System.err.println("Car Status: " + carStatus);
-        if (!"ACTIVE".equals(carStatus)) {
+        if (!"active".equals(carStatus)) {
             throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
 

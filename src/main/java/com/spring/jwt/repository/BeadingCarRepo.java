@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaSpecificationExecutor<BeadingCAR> {
-
+    @Query("SELECT b FROM BeadingCAR b WHERE b.userId = :userId ORDER BY b.id DESC")
     List<BeadingCAR> findByUserId (int userId);
 
     List<BeadingCAR> findByDealerId(Integer getDealerId);
