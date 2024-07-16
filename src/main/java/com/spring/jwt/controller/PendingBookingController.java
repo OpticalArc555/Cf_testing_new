@@ -147,7 +147,7 @@ public class PendingBookingController {
     @GetMapping("/getPendingBookingDetailsById")
     public ResponseEntity<?> getBookingDetailsById(@RequestParam int bookingId) {
         try {
-            com.spring.jwt.dto.BookingDtos.PendingBookingDTO pendingBookingDTO = pendingBookingService.getPendingBookingId(bookingId);
+            PendingBookingDTO pendingBookingDTO = pendingBookingService.getPendingBookingId(bookingId);
             PendingBookingResponseForSingleDealerDto pendingBookingResponseForSingleDealerDto = new PendingBookingResponseForSingleDealerDto("success");
             pendingBookingResponseForSingleDealerDto.setPendingBookingDTO(pendingBookingDTO);
             return ResponseEntity.status(HttpStatus.OK).body(pendingBookingResponseForSingleDealerDto);
