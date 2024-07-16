@@ -143,6 +143,17 @@ public class StartBidingController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("Success", bidDetailsDTO));
     }
 
+    @GetMapping("/getByBidCarId")
+    public ResponseEntity<?> getbiddingcar(@RequestParam Integer beadingCarId) {
+        try {
+            BidCarsDTO bidDetailsDTO = bidCarsService.getbyBidId(beadingCarId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("Success", bidDetailsDTO));
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResDtos("Unsuccess", e.getMessage()));
+        }
+    }
+
+
     @GetMapping("/beadCarByUserId")
     public ResponseEntity<ResponseAllBidCarsDTO> getByUserId(@RequestParam Integer userId) {
         ResponseAllBidCarsDTO response = new ResponseAllBidCarsDTO("success");

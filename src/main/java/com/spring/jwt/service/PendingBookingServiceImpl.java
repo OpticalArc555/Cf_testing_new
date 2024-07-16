@@ -6,22 +6,14 @@ import com.spring.jwt.dto.BookingDtos.PendingBookingRequestDto;
 import com.spring.jwt.dto.CarDto;
 import com.spring.jwt.dto.DealerDto;
 import com.spring.jwt.dto.PendingBookingDTO;
-import com.spring.jwt.entity.Car;
-import com.spring.jwt.entity.Dealer;
-import com.spring.jwt.entity.PendingBooking;
-import com.spring.jwt.entity.User;
+import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.*;
-import com.spring.jwt.repository.CarRepo;
-import com.spring.jwt.repository.DealerRepository;
-import com.spring.jwt.repository.PendingBookingRepository;
-import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,10 +24,11 @@ public class PendingBookingServiceImpl implements PendingBookingService {
     private final PendingBookingRepository pendingBookingRepository;
     private final CarRepo carRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private DealerRepository dealerRepository;
+    private final UserProfileRepository userProfileRepository;
+
+    private  final UserRepository userRepository;
+
+    private final DealerRepository dealerRepository;
 
     @Override
 
@@ -69,13 +62,15 @@ public class PendingBookingServiceImpl implements PendingBookingService {
     }
 
 
+    @Override
     public List<PendingBookingDTO> getAllPendingBookingWithPage(int pageNo) {
-        int pageSize = 10; // Define the size of the page
+        int pageSize = 10;
         List<PendingBooking> listOfPendingBooking = pendingBookingRepository.findAll();
 
         if (listOfPendingBooking.isEmpty()) {
             throw new CarNotFoundException("Pending Booking not found", HttpStatus.NOT_FOUND);
         }
+
         listOfPendingBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
         int totalPendingBookings = listOfPendingBooking.size();
         int pageStart = pageNo * pageSize;
@@ -84,18 +79,29 @@ public class PendingBookingServiceImpl implements PendingBookingService {
         if (pageStart >= totalPendingBookings) {
             throw new PageNotFoundException("Page not found");
         }
+
         List<PendingBooking> pagedPendingBookings = listOfPendingBooking.subList(pageStart, pageEnd);
         List<PendingBookingDTO> listOfPendingBookingDto = pagedPendingBookings.stream()
                 .map(pendingBooking -> {
                     PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(pendingBooking);
-                    pendingBookingDTO.setCarId(pendingBooking.getId());
+                    Optional<Userprofile> userOptional = userProfileRepository.findByUserId(pendingBooking.getUserId());
+
+                    if (userOptional.isPresent()) {
+                        Userprofile userProfile = userOptional.get();
+                        User user = userProfile.getUser();
+                        pendingBookingDTO.setUsername(userProfile.getFirstName());
+                        pendingBookingDTO.setMobileNumber(user.getMobileNo());
+                        System.out.println("User Profile found: " + userProfile.getFirstName() + ", " + user.getMobileNo());
+                    } else {
+                        System.out.println("User Profile not found for userId: " + pendingBooking.getUserId());
+                    }
+
                     return pendingBookingDTO;
                 })
                 .collect(Collectors.toList());
 
         return listOfPendingBookingDto;
     }
-
 
 
 
@@ -150,28 +156,42 @@ public class PendingBookingServiceImpl implements PendingBookingService {
         return new Dealer(dealerDto);
     }
 
+
+
     @Override
-    public com.spring.jwt.dto.BookingDtos.PendingBookingDTO getPendingBookingId(int bookingId) {
-        Optional<PendingBooking> pendingBooking = pendingBookingRepository.findById(bookingId);
-        if (pendingBooking.isEmpty()) {
+    public PendingBookingDTO getPendingBookingId(int bookingId) {
+        Optional<PendingBooking> pendingBookingOptional = pendingBookingRepository.findById(bookingId);
+        if (pendingBookingOptional.isEmpty()) {
             throw new BookingNotFoundException("pending booking not found", HttpStatus.NOT_FOUND);
         }
-        com.spring.jwt.dto.BookingDtos.PendingBookingDTO pendingBookingDTO = new com.spring.jwt.dto.BookingDtos.PendingBookingDTO(pendingBooking.get());
+
+        PendingBooking pendingBooking = pendingBookingOptional.get();
+        PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(pendingBooking);
+
+        Optional<Userprofile> userOptional = userProfileRepository.findByUserId(pendingBooking.getUserId());
+        if (userOptional.isPresent()) {
+            Userprofile userProfile = userOptional.get();
+            User user = userProfile.getUser();
+            pendingBookingDTO.setUsername(userProfile.getFirstName());
+            pendingBookingDTO.setMobileNumber(user.getMobileNo());
+        } else {
+            throw new UserNotFoundExceptions("User not found for pending booking with ID: " + bookingId);
+        }
 
         return pendingBookingDTO;
-
     }
 
+
     @Override
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> getPendingBookingsByDealerId(int pageNo, int dealerId) {
+    public List<PendingBookingDTO> getPendingBookingsByDealerId(int pageNo, int dealerId) {
         Optional<Dealer> dealer = dealerRepository.findById(dealerId);
         if (dealer.isEmpty()) {
-            throw new DealerNotFoundException("dealer not found by id ");
+            throw new DealerNotFoundException("Dealer not found by id: " + dealerId);
         }
 
         Optional<List<PendingBooking>> listofPendingBookingOptional = pendingBookingRepository.findByDealerId(dealerId);
         if (listofPendingBookingOptional.isEmpty()) {
-            throw new BookingNotFoundException("pending booking not found by dealer Id", HttpStatus.NOT_FOUND);
+            throw new BookingNotFoundException("Pending bookings not found for dealer Id: " + dealerId, HttpStatus.NOT_FOUND);
         }
 
         List<PendingBooking> listofPendingBooking = listofPendingBookingOptional.get();
@@ -179,33 +199,41 @@ public class PendingBookingServiceImpl implements PendingBookingService {
         // Sort the list in descending order by ID
         listofPendingBooking.sort(Comparator.comparing(PendingBooking::getId).reversed());
 
-        if ((pageNo * 10) > listofPendingBooking.size() - 1) {
-            throw new PageNotFoundException("page not found");
+        int pageSize = 10;
+        int totalPendingBookings = listofPendingBooking.size();
+        int pageStart = pageNo * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalPendingBookings);
+
+        if (pageStart >= totalPendingBookings) {
+            throw new PageNotFoundException("Page not found");
         }
 
-        List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBookingdto = new ArrayList<>();
-        int pageStart = pageNo * 10;
-        int pageEnd = Math.min(pageStart + 10, listofPendingBooking.size());
-        int diff = listofPendingBooking.size() - pageStart;
+        List<PendingBookingDTO> listOfPendingBookingDto = listofPendingBooking.subList(pageStart, pageEnd).stream()
+                .map(pendingBooking -> {
+                    PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(pendingBooking);
 
-        for (int counter = pageStart, i = 1; counter < pageEnd; counter++, i++) {
-            if (pageStart > listofPendingBooking.size()) {
-                break;
-            }
+                    // Fetch user details
+                    Optional<Userprofile> userOptional = userProfileRepository.findByUserId(pendingBooking.getUserId());
+                    if (userOptional.isPresent()) {
+                        Userprofile userProfile = userOptional.get();
+                        User user = userProfile.getUser();
+                        pendingBookingDTO.setUsername(userProfile.getFirstName());
+                        pendingBookingDTO.setMobileNumber(user.getMobileNo());
+                    } else {
+                        throw new UserNotFoundExceptions("User not found for pending booking with ID: " + pendingBooking.getId());
+                    }
 
-            com.spring.jwt.dto.BookingDtos.PendingBookingDTO pendingBookingDTO = new com.spring.jwt.dto.BookingDtos.PendingBookingDTO(listofPendingBooking.get(counter));
-            listOfPendingBookingdto.add(pendingBookingDTO);
-            if (diff == i) {
-                break;
-            }
-        }
+                    return pendingBookingDTO;
+                })
+                .collect(Collectors.toList());
 
-        return listOfPendingBookingdto;
+        return listOfPendingBookingDto;
     }
 
 
+
     @Override
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> getPendingBookingsByCarId(int pageNo, int carId) {
+    public List<PendingBookingDTO> getPendingBookingsByCarId(int pageNo, int carId) {
         Optional<Car> car = carRepository.findById(carId);
         if (car.isEmpty()) {
             throw new CarNotFoundException("car not found by id");
@@ -224,7 +252,7 @@ public class PendingBookingServiceImpl implements PendingBookingService {
             throw new PageNotFoundException("page not found");
         }
 
-        List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBookingdto = new ArrayList<>();
+        List<PendingBookingDTO> listOfPendingBookingdto = new ArrayList<>();
         int pageStart = pageNo * 10;
         int pageEnd = Math.min(pageStart + 10, listofPendingBooking.size());
         int diff = listofPendingBooking.size() - pageStart;
@@ -234,7 +262,7 @@ public class PendingBookingServiceImpl implements PendingBookingService {
                 break;
             }
 
-            com.spring.jwt.dto.BookingDtos.PendingBookingDTO pendingBookingDTO = new com.spring.jwt.dto.BookingDtos.PendingBookingDTO(listofPendingBooking.get(counter));
+            PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(listofPendingBooking.get(counter));
             listOfPendingBookingdto.add(pendingBookingDTO);
             if (diff == i) {
                 break;
@@ -246,7 +274,7 @@ public class PendingBookingServiceImpl implements PendingBookingService {
 
 
     @Override
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> getAllPendingBookingByUserId(int pageNo, int userId) {
+    public List<PendingBookingDTO> getAllPendingBookingByUserId(int pageNo, int userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new UserNotFoundExceptions("User not found by id");
@@ -265,7 +293,7 @@ public class PendingBookingServiceImpl implements PendingBookingService {
             throw new PageNotFoundException("page not found");
         }
 
-        List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBookingdto = new ArrayList<>();
+        List<PendingBookingDTO> listOfPendingBookingdto = new ArrayList<>();
         int pageStart = pageNo * 10;
         int pageEnd = Math.min(pageStart + 10, listofPendingBooking.size());
         int diff = listofPendingBooking.size() - pageStart;
@@ -274,7 +302,7 @@ public class PendingBookingServiceImpl implements PendingBookingService {
             if (pageStart > listofPendingBooking.size()) {
                 break;
             }
-            com.spring.jwt.dto.BookingDtos.PendingBookingDTO pendingBookingDTO = new com.spring.jwt.dto.BookingDtos.PendingBookingDTO(listofPendingBooking.get(counter));
+            PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(listofPendingBooking.get(counter));
             listOfPendingBookingdto.add(pendingBookingDTO);
             if (diff == i) {
                 break;

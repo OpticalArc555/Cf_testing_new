@@ -17,10 +17,11 @@ public interface PendingBookingService {
     public List<PendingBookingDTO> getAllPendingBookingWithPage(int PageNo);
 
 
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO>getAllPendingBookingByUserId(int pageNo, int userId);
-    public com.spring.jwt.dto.BookingDtos.PendingBookingDTO getPendingBookingId(int bookingId);
+    public List<PendingBookingDTO>getAllPendingBookingByUserId(int pageNo, int userId);
 
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> getPendingBookingsByDealerId(int pageNo, int dealerId);
+    public PendingBookingDTO getPendingBookingId(int bookingId);
 
-    public List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> getPendingBookingsByCarId(int pageNo, int carId);
+    public List<PendingBookingDTO> getPendingBookingsByDealerId(int pageNo, int dealerId);
+
+    public List<PendingBookingDTO> getPendingBookingsByCarId(int pageNo, int carId);
 }

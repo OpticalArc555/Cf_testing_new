@@ -18,6 +18,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +36,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class AppConfig {
 
     @Autowired
@@ -113,9 +114,9 @@ public class AppConfig {
                 .requestMatchers("/photo/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/dealerDocument/**").hasAnyAuthority("ADMIN", "DEALER")
-                .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN")
+                .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN", "DEALER")
                 .requestMatchers("/dealer/allDealer").permitAll()
-                .requestMatchers("/dealer/**").hasAnyAuthority("DEALER", "ADMIN")
+                .requestMatchers("/dealer/**").hasAnyAuthority("DEALER", "ADMIN", "USER")
                 .requestMatchers("/car/**").permitAll()
                 .requestMatchers("/carVerify/**").permitAll()
                 .requestMatchers("/sms/**").permitAll()
