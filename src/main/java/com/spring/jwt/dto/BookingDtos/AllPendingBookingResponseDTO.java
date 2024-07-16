@@ -1,5 +1,6 @@
 package com.spring.jwt.dto.BookingDtos;
 
+import com.spring.jwt.dto.PendingBookingDTO;
 import lombok.Data;
 
 import java.util.List;
