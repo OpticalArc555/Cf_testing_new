@@ -21,6 +21,9 @@ public class PendingBookingDTO {
     private Integer carId;
     private Integer dealerId;
     private Integer userId;
+    private String username;
+    private String mobileNumber;
+
 
     public PendingBookingDTO() {
 

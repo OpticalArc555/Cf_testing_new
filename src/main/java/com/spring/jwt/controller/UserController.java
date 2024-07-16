@@ -24,7 +24,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @GetMapping("/index")
     public ResponseEntity<String> index(Principal principal){
         return ResponseEntity.ok("Welcome to user page : " + principal.getName());
