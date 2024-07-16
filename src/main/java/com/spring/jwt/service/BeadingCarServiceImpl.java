@@ -143,6 +143,10 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         }
         if (beadingCARDto.getDealerId() != null) {
             beadingCAR.setDealerId(beadingCARDto.getDealerId());
+
+        }
+        if (beadingCARDto.getCarInsuranceType()!=null){
+            beadingCAR.setCarInsuranceType(beadingCARDto.getCarInsuranceType());
         }
 
         beadingCarRepo.save(beadingCAR);

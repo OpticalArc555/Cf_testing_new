@@ -98,6 +98,9 @@ public class BeadingCAR {
     @Column(name = "inspectionReportId")
     private Integer inspectionReportId;
 
+    @Column(name = "carInsuranceType")
+    private String carInsuranceType;
+
 
 
 
@@ -130,6 +133,7 @@ public class BeadingCAR {
         this.title= beadingCARDto.getTitle();
         this.variant=beadingCARDto.getVariant();
         this.dealerId= beadingCARDto.getDealerId();
+        this.carInsuranceType=beadingCARDto.getCarInsuranceType();
     }
 
 
