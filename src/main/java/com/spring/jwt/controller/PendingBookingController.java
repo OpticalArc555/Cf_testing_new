@@ -122,7 +122,7 @@ public class PendingBookingController {
     @GetMapping("/getByUserId")
     public ResponseEntity<?> getByUserId(@RequestParam int pageNo,@RequestParam int userId) {
         try {
-            List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBooking = pendingBookingService.getAllPendingBookingByUserId(pageNo,userId);
+            List<PendingBookingDTO> listOfPendingBooking = pendingBookingService.getAllPendingBookingByUserId(pageNo,userId);
 
             AllPendingBookingResponseDTO allPendingBookingResponseDTO = new AllPendingBookingResponseDTO("success");
             allPendingBookingResponseDTO.setList(listOfPendingBooking);
@@ -161,7 +161,7 @@ public class PendingBookingController {
     @GetMapping("/getPendingBookingDetailsByDealerID")
     public ResponseEntity<?> getBookingDetailsByDealerId(@RequestParam int pageNo,@RequestParam int dealerId) {
         try {
-            List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBooking = pendingBookingService.getPendingBookingsByDealerId(pageNo,dealerId);
+            List<PendingBookingDTO> listOfPendingBooking = pendingBookingService.getPendingBookingsByDealerId(pageNo,dealerId);
 
             AllPendingBookingResponseDTO allPendingBookingResponseDTO = new AllPendingBookingResponseDTO("success");
             allPendingBookingResponseDTO.setList(listOfPendingBooking);
@@ -186,7 +186,7 @@ public class PendingBookingController {
     public ResponseEntity<?> getBookingDetailsByCarId(@RequestParam int pageNo,@RequestParam int CarId) {
         try {
 
-            List<com.spring.jwt.dto.BookingDtos.PendingBookingDTO> listOfPendingBooking = pendingBookingService.getPendingBookingsByCarId(pageNo,CarId);
+            List<PendingBookingDTO> listOfPendingBooking = pendingBookingService.getPendingBookingsByCarId(pageNo,CarId);
 
             AllPendingBookingResponseDTO allPendingBookingResponseDTO = new AllPendingBookingResponseDTO("success");
             allPendingBookingResponseDTO.setList(listOfPendingBooking);
