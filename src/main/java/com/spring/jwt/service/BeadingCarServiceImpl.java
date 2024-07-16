@@ -16,6 +16,7 @@ import com.spring.jwt.repository.BidCarsRepo;
 import com.spring.jwt.repository.DealerRepository;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,12 +157,10 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     @Override
     public List<BeadingCarWithInsDto> getAllBeadingCars() {
-        List<BeadingCAR> beadingCars = beadingCarRepo.findAll();
-        List<BeadingCarWithInsDto> dtos = new ArrayList<>();
-        for (BeadingCAR beadingCAR : beadingCars) {
-            dtos.add(new BeadingCarWithInsDto(beadingCAR));
-        }
-        return dtos;
+        List<BeadingCAR> beadingCars = beadingCarRepo.findAll(Sort.by(Sort.Direction.DESC, "beadingCarId")); // Sorting by 'id' in descending order
+        return beadingCars.stream()
+                .map(BeadingCarWithInsDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override
