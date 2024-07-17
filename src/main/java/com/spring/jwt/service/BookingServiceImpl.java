@@ -6,10 +6,7 @@ import com.spring.jwt.dto.BookingDto;
 import com.spring.jwt.dto.CarDto;
 import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.*;
-import com.spring.jwt.repository.BookingRepository;
-import com.spring.jwt.repository.CarRepo;
-import com.spring.jwt.repository.PendingBookingRepository;
-import com.spring.jwt.repository.TempPendingBookingReqRepository;
+import com.spring.jwt.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +29,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ICarRegister iCarRegister;
     private final PendingBookingRepository pendingBookingRepository;
+    private final UserProfileRepository userProfileRepository;
     private final CarRepo carRepo;
     private final TempPendingBookingReqRepository tempPendingBookingReqRepository;
 
@@ -88,17 +86,15 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBooking(int pageNo) {
-        int pageSize = 10; // Define the size of the page
+        int pageSize = 10;
         List<Booking> listOfBooking = bookingRepository.findAll();
 
         if (listOfBooking.isEmpty()) {
             throw new BookingNotFound("Booking not found", HttpStatus.NOT_FOUND);
         }
 
-        // Sort the list in descending order by ID
         listOfBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
 
-        // Calculate start and end indices for pagination
         int totalBookings = listOfBooking.size();
         int pageStart = pageNo * pageSize;
         int pageEnd = Math.min(pageStart + pageSize, totalBookings);
@@ -107,10 +103,8 @@ public class BookingServiceImpl implements BookingService {
             throw new PageNotFoundException("Page not found");
         }
 
-        // Extract the sublist for the current page
         List<Booking> pagedBookings = listOfBooking.subList(pageStart, pageEnd);
 
-        // Convert to DTOs
         List<BookingDto> listOfBookingDto = pagedBookings.stream()
                 .map(booking -> {
                     BookingDto bookingDto = new BookingDto(booking);
@@ -121,12 +115,24 @@ public class BookingServiceImpl implements BookingService {
                     bookingDto.setUserId(booking.getUserId());
                     bookingDto.setDealerId(booking.getDealerId());
                     bookingDto.setStatus(booking.getStatus());
+
+                    Optional<Userprofile> userOptional = userProfileRepository.findByUserId(booking.getUserId());
+                    if (userOptional.isPresent()) {
+                        Userprofile userProfile = userOptional.get();
+                        User user = userProfile.getUser();
+                        bookingDto.setFirstName(userProfile.getFirstName());
+                        bookingDto.setMobileNo(user.getMobileNo());
+                    } else {
+                        throw new UserNotFoundExceptions("User not found for booking with ID: " + booking.getId());
+                    }
+
                     return bookingDto;
                 })
                 .collect(Collectors.toList());
 
         return listOfBookingDto;
     }
+
 
 
     @Override
@@ -194,7 +200,7 @@ public class BookingServiceImpl implements BookingService {
             Optional<Car> carOptional = carRepo.findById(booking.getCarId());
             if (carOptional.isPresent()) {
                 Car car = carOptional.get();
-                car.setCarStatus(Status.ACTIVE); // Assuming Status is an enum and "ACTIVE" is one of its values
+                car.setCarStatus(Status.ACTIVE);
                 carRepo.save(car);
             } else {
                 throw new CarNotFoundException("No car found with this id");

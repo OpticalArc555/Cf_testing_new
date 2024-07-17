@@ -16,7 +16,8 @@ public class BookingDto {
         private int userId;
         private int dealerId;
         private String status;
-
+        private String firstName;
+        private String mobileNo;
 
         public BookingDto(Booking booking, Booking booking1) {
         }
