@@ -196,7 +196,6 @@ public class PendingBookingServiceImpl implements PendingBookingService {
 
         List<PendingBooking> listofPendingBooking = listofPendingBookingOptional.get();
 
-        // Sort the list in descending order by ID
         listofPendingBooking.sort(Comparator.comparing(PendingBooking::getId).reversed());
 
         int pageSize = 10;
@@ -212,7 +211,6 @@ public class PendingBookingServiceImpl implements PendingBookingService {
                 .map(pendingBooking -> {
                     PendingBookingDTO pendingBookingDTO = new PendingBookingDTO(pendingBooking);
 
-                    // Fetch user details
                     Optional<Userprofile> userOptional = userProfileRepository.findByUserId(pendingBooking.getUserId());
                     if (userOptional.isPresent()) {
                         Userprofile userProfile = userOptional.get();

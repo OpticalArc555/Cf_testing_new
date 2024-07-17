@@ -53,9 +53,4 @@ public class PendingBooking {
         this.status = pendingBookingDTO.getStatus();
         this.askingPrice = pendingBookingDTO.getAskingPrice();
     }
-
-    //    @OneToMany(mappedBy = "pendingBooking")
-//    private List<Booking> bookings;
-
-
 }

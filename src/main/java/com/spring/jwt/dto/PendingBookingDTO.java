@@ -34,7 +34,7 @@ public class PendingBookingDTO {
         this.price = pendingBooking.getPrice();
         this.askingPrice = pendingBooking.getAskingPrice();
         this.status = pendingBooking.getStatus();
-        this.carId = pendingBooking.getId();
+        this.carId = pendingBooking.getCarCar().getId();
         this.dealerId = pendingBooking.getDealerId();
         this.userId = pendingBooking.getUserId();
 
