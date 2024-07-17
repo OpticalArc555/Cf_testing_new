@@ -141,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBookingsByDealerId(int dealerId, int pageNo) {
-        int pageSize = 10; // Define the size of the page
+        int pageSize = 10;
         List<Booking> listOfBooking = bookingRepository.findByDealerId(dealerId);
 
         if (listOfBooking.isEmpty()) {

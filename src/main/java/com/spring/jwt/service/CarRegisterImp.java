@@ -42,24 +42,13 @@ public class CarRegisterImp implements ICarRegister {
 
 
     @Override
-    public String AddCarDetails(CarDto carDto) {
-//        System.out.println(carDto.getDealer_id());
-        Dealer dealer=dealerRepo.findById(carDto.getDealer_id()).orElseThrow(()->new CarNotFoundException(("Dealer Not Found For ID" +carDto.getDealer_id()),HttpStatus.NOT_FOUND));
-//        System.out.println(dealer.toString());
-//        List<Car> dealerCar = new ArrayList<>();
+    public int AddCarDetails(CarDto carDto) {
+        Dealer dealer = dealerRepo.findById(carDto.getDealer_id())
+                .orElseThrow(() -> new CarNotFoundException("Dealer Not Found For ID " + carDto.getDealer_id(), HttpStatus.NOT_FOUND));
 
-
-        Car car =new Car(carDto);
-//              car.setDealer(dealer);
-//              dealerCar=dealer.getCars();
-
-//              dealer.setCars(dealerCar);
-//              dealerRepo.save(dealer);
-        carRepo.save(car);
-        return "car Added";
-
-
-
+        Car car = new Car(carDto);
+        car = carRepo.save(car);
+        return car.getId();
     }
     /////////////////////////////////////////////////////////////////////
     //
