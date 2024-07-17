@@ -7,7 +7,7 @@ import com.spring.jwt.entity.Status;
 import java.util.List;
 
 public interface ICarRegister {
-    public String AddCarDetails(CarDto carDto);
+    public int AddCarDetails(CarDto carDto);
 
     public String editCarDetails(CarDto carDto,int id);
 

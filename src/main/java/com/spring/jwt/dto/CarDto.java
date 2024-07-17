@@ -70,7 +70,7 @@ public class CarDto {
 
     private int dealer_id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd") // Define the date format
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     private String carInsuranceType;
@@ -78,6 +78,7 @@ public class CarDto {
 
 
     public CarDto(Car car){
+        this.carId = car.getId();
         this.acFeature = car.getAcFeature();
         this.musicFeature = car.getMusicFeature();
         this.area = car.getArea();

@@ -29,15 +29,15 @@ CarController {
 
     @PostMapping(value = "/carregister")
     public ResponseEntity<ResponseDto> carRegistration(@RequestBody CarDto carDto) {
-        try{
-            String result = iCarRegister.AddCarDetails(carDto);
+        try {
+            Integer carId = iCarRegister.AddCarDetails(carDto);
+            String result = String.valueOf(carId);
 
-            return (ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success",result)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", result));
 
-        }catch (CarNotFoundException carNotFoundException){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess","Dealer not found"));
+        } catch (CarNotFoundException carNotFoundException) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess", "Dealer not found"));
         }
-//        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PutMapping("/edit/{id}")
