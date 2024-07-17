@@ -10,7 +10,7 @@ public interface BrandDataService {
 
     BrandDataDto addBrand(BrandDataDto brandDataDto) throws SQLIntegrityConstraintViolationException;
 
-    List<BrandDataDto> GetAllBrands();
+    public List<BrandDataDto> GetAllBrands(Integer pageNo, Integer pageSize);
 
     String editBrand(Integer brandDataId, BrandDataDto brandDataDto);
 

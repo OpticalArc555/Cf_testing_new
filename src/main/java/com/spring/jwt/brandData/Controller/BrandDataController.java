@@ -35,9 +35,11 @@ public class BrandDataController {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<AllBrandDataDto> getAllBrands() {
+    public ResponseEntity<AllBrandDataDto> getAllBrands(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "50") Integer pageSize) {
         try {
-            List<BrandDataDto> allBrands = brandDataService.GetAllBrands();
+            List<BrandDataDto> allBrands = brandDataService.GetAllBrands(pageNo, pageSize);
             return ResponseEntity.status(HttpStatus.OK).body(new AllBrandDataDto("Brands retrieved successfully", allBrands, null));
         } catch (BrandNotFoundException brandNotFoundException) {
             AllBrandDataDto responseAllCarDto = new AllBrandDataDto("unsuccessful");
