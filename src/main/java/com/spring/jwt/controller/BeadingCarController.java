@@ -27,11 +27,11 @@ public class BeadingCarController {
         try {
             String result = beadingCarService.AddBCar(beadingCARDto);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", result));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("error", e.getMessage()));
         }
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllBeadingCars() {
