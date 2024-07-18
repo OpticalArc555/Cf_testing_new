@@ -43,15 +43,13 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     @Override
     public String AddBCar(BeadingCARDto beadingCARDto) {
-
         User byUserId = userRepository.findByUserId(beadingCARDto.getUserId());
-        if(byUserId == null) {
+        if (byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
         }
         Set<Role> roles = byUserId.getRoles();
-        System.err.println(roles);
         boolean isSalesPerson = roles.stream().anyMatch(role -> "INSPECTOR".equals(role.getName()));
-        if(!isSalesPerson) {
+        if (!isSalesPerson) {
             throw new RuntimeException("You're not authorized to perform this action");
         }
 
@@ -67,8 +65,11 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
         beadingCAR.setCarStatus("pending");
         beadingCAR = beadingCarRepo.save(beadingCAR);
-        return "BeadingCarId:" + beadingCAR.getBeadingCarId();
+        return String.valueOf(beadingCAR.getBeadingCarId());
     }
+
+
+
 
 
     @Override

@@ -162,7 +162,6 @@ public class PendingBookingController {
     public ResponseEntity<?> getBookingDetailsByDealerId(@RequestParam int pageNo,@RequestParam int dealerId) {
         try {
             List<PendingBookingDTO> listOfPendingBooking = pendingBookingService.getPendingBookingsByDealerId(pageNo,dealerId);
-
             AllPendingBookingResponseDTO allPendingBookingResponseDTO = new AllPendingBookingResponseDTO("success");
             allPendingBookingResponseDTO.setList(listOfPendingBooking);
 
