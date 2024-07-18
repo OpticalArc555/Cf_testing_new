@@ -52,8 +52,6 @@ public class DOBidCarUploadController {
                 documentDto.setBeadingCarId(beadingCarId);
                 documentDto.setDocumentType(documentType);
 
-
-
                 serviceResponse = iDocument.addDocument(documentDto);
 
 
