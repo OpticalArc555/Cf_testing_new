@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> listOfBooking = bookingRepository.findByDealerId(dealerId);
 
         if (listOfBooking.isEmpty()) {
-            throw new BookingNotFound("No bookings found for dealer ID " + dealerId, HttpStatus.NOT_FOUND);
+            throw new BookingNotFoundException("No bookings found for dealer ID " + dealerId, HttpStatus.NOT_FOUND);
         }
 
         listOfBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
