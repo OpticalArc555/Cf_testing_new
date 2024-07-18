@@ -41,7 +41,6 @@ public class FilterServiceImpl implements FilterService {
             if (filterDto.getMaxPrice() != null) {
                 predicates.add(criteriaBuilder.lessThan(root.get("price"), filterDto.getMaxPrice()));
             }
-
             if (filterDto.getArea() != null && !filterDto.getArea().isEmpty()) {
                 predicates.add(criteriaBuilder.equal(root.get("area"), filterDto.getArea()));
             }
@@ -66,6 +65,8 @@ public class FilterServiceImpl implements FilterService {
             );
             predicates.add(statusPredicate);
 
+            query.orderBy(criteriaBuilder.desc(root.get("id")));
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
@@ -83,7 +84,6 @@ public class FilterServiceImpl implements FilterService {
 
         return listOfCarDto;
     }
-
 
 
     @Override
