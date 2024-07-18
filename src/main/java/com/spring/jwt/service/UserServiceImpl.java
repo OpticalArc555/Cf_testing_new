@@ -11,20 +11,18 @@ import com.spring.jwt.repository.RoleRepository;
 import com.spring.jwt.repository.UserProfileRepository;
 import com.spring.jwt.repository.UserRepository;
 import com.spring.jwt.utils.BaseResponseDTO;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.util.*;
 
 @Service
@@ -65,7 +63,7 @@ public class UserServiceImpl implements UserService {
         } catch (UserAlreadyExistException e) {
             response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
             response.setMessage("User already exist !!");
-        }catch (BaseException e){
+        } catch (BaseException e) {
             response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
             response.setMessage("Invalid role !!");
         }
@@ -140,7 +138,7 @@ public class UserServiceImpl implements UserService {
             salesPerson.setDocumentId(registerDto.getDocumentId());
             salesPerson.setStatus(registerDto.status);
             user.setSalesPerson(salesPerson);
-             salesPerson.setUser(user);
+            salesPerson.setUser(user);
         }
         return user;
     }
@@ -168,7 +166,7 @@ public class UserServiceImpl implements UserService {
         Optional<Userprofile> userOptional = userProfileRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            User user= userOptional.get().getUser();
+            User user = userOptional.get().getUser();
 
             if (passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())) {
 
@@ -223,11 +221,13 @@ public class UserServiceImpl implements UserService {
             if (pageStart > listOfUsers.size()) {
                 break;
             }
-            Optional<User> users=userRepository.findById(listOfUsers.get(counter).getUser().getId());
-            if(users.isEmpty()){throw new UserNotFoundExceptions("User not found ");}
+            Optional<User> users = userRepository.findById(listOfUsers.get(counter).getUser().getId());
+            if (users.isEmpty()) {
+                throw new UserNotFoundExceptions("User not found ");
+            }
             // System.out.println("*");
 
-            UserProfileDto userProfileDto = new UserProfileDto(listOfUsers.get(counter),users.get());
+            UserProfileDto userProfileDto = new UserProfileDto(listOfUsers.get(counter), users.get());
 
             listOfUserDto.add(userProfileDto);
 
@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
         return listOfUserDto;
     }
 
-    private UserProfileDto convertToDto(Userprofile userprofile,User user ) {
+    private UserProfileDto convertToDto(Userprofile userprofile, User user) {
         //User user = new User();
         UserProfileDto userProfileDto = new UserProfileDto();
         userProfileDto.setId(userprofile.getId());
@@ -271,7 +271,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<Userprofile> user = userProfileRepository.findById(id);
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
             user.get().setFirstName(userProfileDto.getFirstName());
             user.get().setLastName(userProfileDto.getLastName());
             user.get().setAddress(userProfileDto.getAddress());
@@ -298,9 +298,9 @@ public class UserServiceImpl implements UserService {
 
         Optional<Userprofile> user = userProfileRepository.findById(id);
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
 
-            User users= user.get().getUser();
+            User users = user.get().getUser();
 
             userRepository.DeleteById(users.getId());
 
@@ -328,11 +328,11 @@ public class UserServiceImpl implements UserService {
 
         if (user != null) {
 
-            String message = "Hello this is Aniket";
+            String message = "Dear User this is the link to reset your password";
 
             String resetLink = resetPasswordLink;
 
-            String subject = "Checking: confirmation";
+            String subject = "Reset Password";
 
             String from = "b.aniket1414@gmail.com";
 
@@ -344,7 +344,6 @@ public class UserServiceImpl implements UserService {
             response.setMessage("Email sent");
 
         } else {
-
             response.setStatus(String.valueOf(HttpStatus.NOT_FOUND.value()));
             response.setMessage("User not found");
             throw new UserNotFoundExceptions("User not found");
@@ -353,8 +352,8 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-    // @Override
     public void sendEmail(String message, String subject, String to, String from, String resetLink, String domain) {
+
 
         String host = "smtp.gmail.com";
 
@@ -367,11 +366,11 @@ public class UserServiceImpl implements UserService {
         properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.auth", "true");
 
-
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("b.aniket1414@gmail.com", "egmqlowlfodymfzw");
+
+                return new PasswordAuthentication("ashutoshshedgeas87@gmail.com", "xextkpjtrmczkjsh");
             }
 
         });
@@ -388,6 +387,7 @@ public class UserServiceImpl implements UserService {
             m.setSubject(subject);
 
             m.setText(content);
+
             Transport.send(m);
 
         } catch (MessagingException e) {
@@ -397,17 +397,22 @@ public class UserServiceImpl implements UserService {
     }
 
     public void updateResetPassword(String token, String email) throws UserNotFoundExceptions {
+
         User user = userRepository.findByEmail(email);
 
         if (user != null) {
+
             user.setResetPasswordToken(token);
+
             userRepository.save(user);
         } else {
+
             throw new UserNotFoundExceptions("could not find any user with this email");
         }
     }
 
     public ResponseDto updatePassword(String token, String newPassword) {
+
         ResponseDto response = new ResponseDto();
 
         User user = userRepository.findByResetPasswordToken(token);

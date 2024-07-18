@@ -12,10 +12,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -134,9 +140,9 @@ public class FilterController {
 
             LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(1);
 
-
             userService.updateResetPassword(token, email);
-            String resetPasswordLink = "http://" + request.getServerName() + "/reset-password?token=" + token;
+
+            String resetPasswordLink = "http://localhost:8080/cars/reset-password?token=" + token;
 
             ResponseDto response = userService.forgotPass(email, resetPasswordLink, request.getServerName());
 
@@ -147,18 +153,39 @@ public class FilterController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/update-password")
     public ResponseEntity<ResponseDto> resetPassword(@RequestBody ResetPassword resetPassword) throws UserNotFoundExceptions {
 
         try {
             String token = resetPassword.getToken();
             String newPassword = resetPassword.getPassword();
-            ResponseDto response = userService.updatePassword(token, newPassword);
+            String newPassword1 = resetPassword.getConfirmPassword();
 
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", response.getMessage()));
+            if (newPassword.equals(newPassword1)) {
 
-        } catch (UserNotFoundExceptions e) {
+                ResponseDto response = userService.updatePassword(token, newPassword);
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", response.getMessage()));
+            }
+            else{
+                return new ResponseEntity<ResponseDto>(HttpStatus.NOT_FOUND);
+            }
+        }
+
+        catch (UserNotFoundExceptions e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("Unsuccessful", "Something went wrong"));
+        }
+    }
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<String> resetPasswordPage(@RequestParam(name = "token") String token) {
+        try {
+            ClassPathResource resource = new ClassPathResource("templates/reset-password.html");
+            String htmlContent = new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
+            return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(htmlContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error loading HTML file");
         }
     }
     @GetMapping("/autocomplete")
@@ -166,7 +193,5 @@ public class FilterController {
         List<String> suggestions = iCarRegister.getAutocompleteSuggestions(query);
         return ResponseEntity.ok(suggestions);
     }
-
-
 
 }

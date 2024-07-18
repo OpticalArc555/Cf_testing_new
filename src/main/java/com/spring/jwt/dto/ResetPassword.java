@@ -9,6 +9,8 @@ public class ResetPassword {
 
     private String password;
 
+    private String confirmPassword;
+
 }
 
 
