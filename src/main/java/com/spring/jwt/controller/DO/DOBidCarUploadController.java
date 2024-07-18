@@ -38,7 +38,7 @@ public class DOBidCarUploadController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/addWithoutPhoto")
-    public ResponseEntity<?> uploadWithoutImage(@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
+    public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String serviceResponse = null;
 
@@ -50,8 +50,12 @@ public class DOBidCarUploadController {
                 documentDto.setSubtype(subtype);
                 documentDto.setDoc(doc);
                 documentDto.setBeadingCarId(beadingCarId);
+                documentDto.setDocumentType(documentType);
+
                 serviceResponse = iDocument.addDocument(documentDto);
 
+
+                // ok
 
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
