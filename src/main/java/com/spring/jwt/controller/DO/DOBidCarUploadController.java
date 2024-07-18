@@ -32,8 +32,8 @@ public class DOBidCarUploadController {
     private String CDNNo;
     private final String uploadDir = "uploads";
     private DOService doService = new DOService();
-    //    private final String NODEJS_SERVER_URL = "https://digitaloceannodeservice.up.railway.app" ; // Change this to your Node.js server's URL
-    private final String NODEJS_SERVER_URL = "https://digitaloceannodeimageservice-production.up.railway.app" ; // Change this to your Node.js server's URL
+    //    private final String NODEJS_SERVER_URL = "https://digitaloceannodeservice.up.railway.app" ;
+    private final String NODEJS_SERVER_URL = "https://digitaloceannodeimageservice-production.up.railway.app" ;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -41,8 +41,6 @@ public class DOBidCarUploadController {
     public ResponseEntity<?> uploadWithoutImage(@RequestParam String documentType,@RequestParam String doc,@RequestParam String doctype,@RequestParam String subtype,@RequestParam String comment,@RequestParam Integer beadingCarId) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             String serviceResponse = null;
-
-
 
               BidCarDto documentDto = new BidCarDto();
                 documentDto.setComment(comment);
@@ -54,15 +52,9 @@ public class DOBidCarUploadController {
 
                 serviceResponse = iDocument.addDocument(documentDto);
 
-
-                // ok
-
-
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
         } catch (RuntimeException e) {
-//            System.err.println(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
-
         }  catch (Exception e) {
 
             System.err.println(e);
