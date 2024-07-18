@@ -153,6 +153,7 @@ public class BookingServiceImpl implements BookingService {
         if (listOfBooking.isEmpty()) {
             throw new BookingNotFound("No bookings found for dealer ID " + dealerId, HttpStatus.NOT_FOUND);
         }
+
         listOfBooking.sort((b1, b2) -> b2.getId().compareTo(b1.getId()));
         int totalBookings = listOfBooking.size();
         int pageStart = pageNo * pageSize;
@@ -161,6 +162,7 @@ public class BookingServiceImpl implements BookingService {
         if (pageStart >= totalBookings) {
             throw new PageNotFoundException("Page not found");
         }
+
         List<Booking> pagedBookings = listOfBooking.subList(pageStart, pageEnd);
         List<BookingDto> listOfBookingDto = pagedBookings.stream()
                 .map(booking -> {
@@ -172,11 +174,24 @@ public class BookingServiceImpl implements BookingService {
                     bookingDto.setUserId(booking.getUserId());
                     bookingDto.setDealerId(booking.getDealerId());
                     bookingDto.setStatus(booking.getStatus());
+
+                    Optional<Userprofile> userOptional = userProfileRepository.findByUserId(booking.getUserId());
+                    if (userOptional.isPresent()) {
+                        Userprofile userProfile = userOptional.get();
+                        User user = userProfile.getUser();
+                        bookingDto.setFirstName(userProfile.getFirstName());
+                        bookingDto.setMobileNo(user.getMobileNo());
+                    } else {
+                        throw new UserNotFoundExceptions("User not found for booking with ID: " + booking.getId());
+                    }
+
                     return bookingDto;
                 })
                 .collect(Collectors.toList());
+
         return listOfBookingDto;
     }
+
 
     @Override
     public BookingDto getBookingById(int id) {
