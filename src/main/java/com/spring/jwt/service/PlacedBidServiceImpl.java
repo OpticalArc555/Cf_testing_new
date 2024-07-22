@@ -119,6 +119,7 @@ public class PlacedBidServiceImpl implements PlacedBidService {
         }
         BidCars bidCar = bidCarOptional.get();
         List<PlacedBid> topThreeBids = placedBidRepo.findTop3ByBidCarIdOrderByAmountDesc(bidCarId);
+        System.err.println(topThreeBids);
 
         if (topThreeBids.isEmpty()) {
             PlacedBidDTO basePriceBidDTO = new PlacedBidDTO();
@@ -140,6 +141,7 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
     public PlacedBidDTO convertToDto(PlacedBid placedBid){
         PlacedBidDTO toDto = modelMapper.map(placedBid, PlacedBidDTO.class);
+        toDto.setPlacedBidId(placedBid.getPlacedBidId());
         return toDto;
     }
 
