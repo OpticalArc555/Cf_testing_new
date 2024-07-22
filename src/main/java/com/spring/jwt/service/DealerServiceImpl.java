@@ -90,7 +90,7 @@ public class DealerServiceImpl implements DealerService {
     }
     @Override
     public List<DealerDto> getAllDealers(int pageNo) {
-        List<Dealer> dealers = dealerRepository.findAll();
+        List<Dealer> dealers = dealerRepository.findAllByOrderByIdDesc();
         if (dealers.size() < 0) {
             throw new DealerNotFoundException("Dealer not found");
         }
@@ -267,6 +267,8 @@ public class DealerServiceImpl implements DealerService {
     @Override
     public List<DealerDto> getAllDealer() {
         List<Dealer> dealers = dealerRepository.findAll();
+
+        dealers.sort((dealer1, dealer2) -> dealer2.getId().compareTo(dealer1.getId()));
 
         if (dealers.isEmpty()) {
             throw new DealerNotFoundException("Dealer not found");
