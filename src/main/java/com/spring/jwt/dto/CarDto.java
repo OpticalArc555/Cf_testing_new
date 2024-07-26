@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.Status;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,18 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CarDto {
     private int carId;
+
+    private Boolean automaticEmergencyBraking;
+
+    private Boolean ADAS;
+
+    private Boolean sunroof;
+
+    private Boolean parkingSensors;
+
+    private Boolean adaptiveHeadlights;
+
+    private Boolean childSafetyLocks;
 
     private Boolean acFeature;
 
@@ -104,6 +117,11 @@ public class CarDto {
         this.variant = car.getVariant();
         this.carInsuranceDate = car.getCarInsuranceDate();
         this.carInsuranceType=car.getCarInsuranceType();
-
+        this.automaticEmergencyBraking=car.getAutomaticEmergencyBraking();
+        this.ADAS=car.getADAS();
+        this.sunroof=car.getSunroof();
+        this.parkingSensors=car.getParkingSensors();
+        this.adaptiveHeadlights=car.getAdaptiveHeadlights();
+        this.childSafetyLocks=car.getChildSafetyLocks();
     }
 }
