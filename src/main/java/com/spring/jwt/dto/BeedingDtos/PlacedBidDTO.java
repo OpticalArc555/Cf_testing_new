@@ -1,12 +1,14 @@
 package com.spring.jwt.dto.BeedingDtos;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PlacedBidDTO {
     private Integer placedBidId;
     private Integer userId;

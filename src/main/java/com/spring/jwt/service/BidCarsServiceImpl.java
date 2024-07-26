@@ -8,18 +8,17 @@ import com.spring.jwt.dto.ResDtos;
 import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
-import com.spring.jwt.repository.BeadingCarRepo;
-import com.spring.jwt.repository.BidCarsRepo;
-import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ScheduledFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -31,25 +30,30 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     private final BidCarsRepo bidCarsRepo;
 
+    private final PlacedBidRepo placedBidRepo;
+
+    private final FinalBidRepository finalBidRepo;
+
     private final UserRepository userRepository;
+
+    private final ThreadPoolTaskScheduler taskScheduler;
+
+    private ScheduledFuture<?> scheduledFuture;
 
     @Override
     public BidCarsDTO createBidding(BidCarsDTO bidCarsDTO) {
-
         User byUserId = userRepository.findByUserId(bidCarsDTO.getUserId());
-
         Optional<BidCars> biddingCar = bidCarsRepo.findByBeadingCarId(bidCarsDTO.getBeadingCarId());
 
         if (biddingCar.isPresent()) {
             throw new RuntimeException("Car Already Added for the Bidding");
         }
-        if(byUserId == null) {
+        if (byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
         }
         Set<Role> roles = byUserId.getRoles();
-        System.err.println(roles);
         boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
-        if(!isSalesPerson) {
+        if (!isSalesPerson) {
             throw new RuntimeException("You're not authorized to perform this action");
         }
         Optional<BeadingCAR> byId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId());
@@ -59,17 +63,48 @@ public class BidCarsServiceImpl implements BidCarsService {
 
         BeadingCAR beadingCAR = byId.get();
         String carStatus = beadingCAR.getCarStatus();
-        System.err.println("Car Status: " + carStatus);
         if (!"ACTIVE".equals(carStatus)) {
             throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
 
         BidCars bidCars = convertToEntity(bidCarsDTO);
+        BidCars savedBid = bidCarsRepo.save(bidCars);
 
-        BidCars save = bidCarsRepo.save(bidCars);
-        return convertToDto(save);
+        // Schedule task for the closing time
+        scheduleBidProcessing(savedBid);
+
+        return convertToDto(savedBid);
     }
 
+    private void scheduleBidProcessing(BidCars bidCar) {
+        LocalDateTime closingTime = bidCar.getClosingTime();
+        long delay = java.time.Duration.between(LocalDateTime.now(), closingTime).toMillis();
+
+        if (delay > 0) {
+            // Cancel the previous task if needed
+            if (scheduledFuture != null && !scheduledFuture.isDone()) {
+                scheduledFuture.cancel(false);
+            }
+
+            // Schedule new task
+            scheduledFuture = taskScheduler.schedule(() -> processBid(bidCar), new Date(System.currentTimeMillis() + delay));
+        }
+    }
+
+    public void processBid(BidCars bidCar) {
+        // Implement bid processing logic here
+        List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
+        if (!highestBids.isEmpty()) {
+            PlacedBid bid = highestBids.get(0);
+            FinalBid finalBid = new FinalBid();
+            finalBid.setSellerDealerId(bidCar.getUserId());
+            finalBid.setBuyerDealerId(bid.getUserId());
+            finalBid.setBidCarId(bidCar.getBidCarId());
+            finalBid.setPrice(bid.getAmount());
+
+            finalBidRepo.save(finalBid);
+        }
+    }
     @Override
     public BidDetailsDTO getbyBidId(Integer bidCarId, Integer beadingCarId) {
         Optional<BidCars> bidCarOptional  = bidCarsRepo.findById(bidCarId);

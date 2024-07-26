@@ -5,16 +5,21 @@ import com.spring.jwt.Wallet.Entity.WalletAccount;
 import com.spring.jwt.Wallet.Repo.AccountRepository;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.entity.BidCars;
+import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.entity.PlacedBid;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.BidCarsRepo;
+import com.spring.jwt.repository.FinalBidRepository;
 import com.spring.jwt.repository.PlacedBidRepo;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +33,8 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     private final  BidCarsRepo bidCarsRepo;
 
     private final ModelMapper modelMapper;
+
+    private final FinalBidRepository finalBidRepo;
 
     private final AccountRepository accountRepository;
 
@@ -73,6 +80,35 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
         return "Bid Placed Successfully";
     }
+
+//    @Override
+//    public void processClosedAuctions() {
+//        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+//        List<BidCars> closedBidCars = bidCarsRepo.findByClosingTimeBefore(now);
+//
+//        for (BidCars bidCar : closedBidCars) {
+//            // Check if a FinalBid already exists for this bidCarId
+//            if (finalBidRepo.existsByBidCarId(bidCar.getBidCarId())) {
+//                continue; // Skip to the next bidCar if a FinalBid already exists
+//            }
+//
+//            List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
+//
+//            if (!highestBids.isEmpty()) {
+//                PlacedBid bid = highestBids.get(0);
+//                FinalBid finalBid = new FinalBid();
+//                finalBid.setSellerDealerId(bidCar.getUserId());
+//                finalBid.setBuyerDealerId(bid.getUserId());
+//                finalBid.setBidCarId(bidCar.getBidCarId());
+//                finalBid.setPrice(bid.getAmount());
+//
+//                finalBidRepo.save(finalBid);
+//            }
+//        }
+//    }
+
+
+
 
     @Override
     public List<PlacedBidDTO> getByUserId(Integer userId) throws UserNotFoundExceptions {
@@ -120,7 +156,6 @@ public class PlacedBidServiceImpl implements PlacedBidService {
         BidCars bidCar = bidCarOptional.get();
         List<PlacedBid> topThreeBids = placedBidRepo.findTop3ByBidCarIdOrderByAmountDesc(bidCarId);
         System.err.println(topThreeBids);
-
         if (topThreeBids.isEmpty()) {
             PlacedBidDTO basePriceBidDTO = new PlacedBidDTO();
             basePriceBidDTO.setBidCarId(bidCarId);
@@ -131,6 +166,45 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             return topThreeBids.stream().map(this::convertToDto).collect(Collectors.toList());
         }
 
+    }
+
+    @Override
+    public PlacedBidDTO getTopBid(Integer bidCarId) {
+        Optional<PlacedBid> topBidOptional = placedBidRepo.findTopByBidCarIdOrderByAmountDesc(bidCarId);
+
+        System.err.println(topBidOptional);
+        if (topBidOptional.isPresent()) {
+            PlacedBid topBid = topBidOptional.get();
+            return new PlacedBidDTO(
+                    topBid.getPlacedBidId(),
+                    topBid.getUserId(),
+                    topBid.getBidCarId(),
+                    topBid.getDateTime(),
+                    topBid.getAmount()
+            );
+        } else {
+
+            throw new BidNotFoundExceptions("No bids found for car ID: " + bidCarId);
+        }
+    }
+
+//    @Override
+//    public PlacedBidDTO getTopBid(Integer bidCarId) {
+//        Optional<PlacedBid> topByBidCarIdOrderByAmountDesc = placedBidRepo.findTopBidByBidCarId(bidCarId);
+//
+//        PlacedBidDTO topByBidDTO = new PlacedBidDTO();
+//        topByBidDTO.setUserId(topByBidCarIdOrderByAmountDesc.get().getUserId());
+//        topByBidDTO.setAmount(topByBidCarIdOrderByAmountDesc.get().getAmount());
+//        topByBidDTO.setBidCarId(topByBidCarIdOrderByAmountDesc.get().getBidCarId());
+//        topByBidDTO.setPlacedBidId(topByBidDTO.getPlacedBidId());
+//        topByBidDTO.setDateTime(topByBidCarIdOrderByAmountDesc.get().getDateTime());
+//
+//        return topByBidDTO;
+//    }
+
+    @Override
+    public List<FinalBid> getAllFinalBids() {
+        return finalBidRepo.findAll();
     }
 
 

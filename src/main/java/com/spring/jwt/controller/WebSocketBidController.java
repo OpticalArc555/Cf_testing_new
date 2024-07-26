@@ -59,5 +59,14 @@ public class WebSocketBidController {
         }
     }
 
-
+    @MessageMapping("/topBid")
+    @SendTo("/topic/topBid")
+    public PlacedBidDTO getTopBid(PlacedBidDTO placedBidDTO) {
+        try {
+            return placedBidService.getTopBid(placedBidDTO.getBidCarId());
+        } catch (BidNotFoundExceptions e) {
+            logger.error("Error finding top bid: {}", e.getMessage());
+            return null;
+        }
+    }
 }
