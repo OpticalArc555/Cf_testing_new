@@ -22,8 +22,9 @@ public class FinalBid {
 
     @Column(name = "bidCarId")
     private Integer bidCarId;
-    
+
     @Column(name = "price")
     private Integer price;
+
 
 }
