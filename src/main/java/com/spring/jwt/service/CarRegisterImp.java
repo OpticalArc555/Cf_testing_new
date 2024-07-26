@@ -77,23 +77,30 @@ public class CarRegisterImp implements ICarRegister {
         if (carDto.getColor() != null) car.setColor(carDto.getColor());
         if (carDto.getDescription() != null) car.setDescription(carDto.getDescription());
         if (carDto.getFuelType() != null) car.setFuelType(carDto.getFuelType());
-        if (carDto.getKmDriven() != 0) car.setKmDriven(carDto.getKmDriven()); // assuming kmDriven cannot be null
+        if (carDto.getKmDriven() != 0) car.setKmDriven(carDto.getKmDriven());
         if (carDto.getModel() != null) car.setModel(carDto.getModel());
+        if (carDto.getOwnerSerial() != 0) car.setOwnerSerial(carDto.getOwnerSerial());
+        if (carDto.getPrice() != 0) car.setPrice(carDto.getPrice());
         if (carDto.getPowerWindowFeature() != null) car.setPowerWindowFeature(carDto.getPowerWindowFeature());
-        if (carDto.getOwnerSerial() != 0) car.setOwnerSerial(carDto.getOwnerSerial()); // assuming ownerSerial cannot be null
-        if (carDto.getPrice() != 0) car.setPrice(carDto.getPrice()); // assuming price cannot be null
         if (carDto.getRearParkingCameraFeature() != null) car.setRearParkingCameraFeature(carDto.getRearParkingCameraFeature());
         if (carDto.getRegistration() != null) car.setRegistration(carDto.getRegistration());
         if (carDto.getCarInsuranceDate() != null) car.setCarInsuranceDate(carDto.getCarInsuranceDate());
         if (carDto.getTitle() != null) car.setTitle(carDto.getTitle());
         if (carDto.getVariant() != null) car.setVariant(carDto.getVariant());
         if (carDto.getTransmission() != null) car.setTransmission(carDto.getTransmission());
-        if (carDto.getCarInsuranceType()!=null)car.setCarInsuranceType(carDto.getCarInsuranceType());
-        if (carDto.getYear() != 0) car.setYear(carDto.getYear()); // assuming year cannot be null
+        if (carDto.getCarInsuranceType() != null) car.setCarInsuranceType(carDto.getCarInsuranceType());
+        if (carDto.getYear() != 0) car.setYear(carDto.getYear());
+        if (carDto.getAutomaticEmergencyBraking() != null) car.setAutomaticEmergencyBraking(carDto.getAutomaticEmergencyBraking());
+        if (carDto.getADAS() != null) car.setADAS(carDto.getADAS());
+        if (carDto.getSunroof() != null) car.setSunroof(carDto.getSunroof());
+        if (carDto.getParkingSensors() != null) car.setParkingSensors(carDto.getParkingSensors());
+        if (carDto.getAdaptiveHeadlights() != null) car.setAdaptiveHeadlights(carDto.getAdaptiveHeadlights());
+        if (carDto.getChildSafetyLocks() != null) car.setChildSafetyLocks(carDto.getChildSafetyLocks());
 
         carRepo.save(car);
         return "Car Updated " + id;
     }
+
 
     @Override
     public List<CarDto> getAllCarsWithPages(int pageNo, int pageSize) {
@@ -304,6 +311,14 @@ public class CarRegisterImp implements ICarRegister {
         carDto.setTitle(car.getTitle());
         carDto.setVariant(car.getVariant());
         carDto.setCarInsuranceType(car.getCarInsuranceType());
+        carDto.setAutomaticEmergencyBraking(car.getAutomaticEmergencyBraking());
+        carDto.setADAS(car.getADAS());
+        carDto.setSunroof(car.getSunroof());
+        carDto.setParkingSensors(car.getParkingSensors());
+        carDto.setAdaptiveHeadlights(car.getAdaptiveHeadlights());
+        carDto.setChildSafetyLocks(car.getChildSafetyLocks());
+        carDto.setDate(car.getDate());
         return carDto;
     }
+
 }
