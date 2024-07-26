@@ -23,6 +23,25 @@ public class Car {
     @Column(name = "car_id", nullable = false)
     private int id;
 
+    @Column(name = "automatic_emergency_braking")
+    private Boolean automaticEmergencyBraking;
+
+    @Column(name = "ADAS")
+    private Boolean ADAS;
+
+    @Column(name = "sunroof")
+    private Boolean sunroof;
+
+    @Column(name = "parking_sensors")
+    private Boolean parkingSensors;
+
+    @Column(name = "adaptive_headlights")
+    private Boolean adaptiveHeadlights;
+
+    @Column(name = "child_safety_locks")
+    private Boolean childSafetyLocks;
+
+
     @Column(name = "ac_feature")
     private Boolean acFeature;
 
@@ -132,6 +151,12 @@ public class Car {
         this.variant = carDto.getVariant();
         this.carInsuranceDate = carDto.getCarInsuranceDate();
         this.carInsuranceType= carDto.getCarInsuranceType();
+        this.automaticEmergencyBraking=carDto.getAutomaticEmergencyBraking();
+        this.ADAS=carDto.getADAS();
+        this.sunroof=carDto.getSunroof();
+        this.parkingSensors=carDto.getParkingSensors();
+        this.adaptiveHeadlights=carDto.getAdaptiveHeadlights();
+        this.childSafetyLocks=carDto.getChildSafetyLocks();
     }
 
 }
