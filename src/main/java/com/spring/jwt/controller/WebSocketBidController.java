@@ -59,6 +59,7 @@ public class WebSocketBidController {
         }
     }
 
+
     @MessageMapping("/topBid")
     @SendTo("/topic/topBid")
     public PlacedBidDTO getTopBid(PlacedBidDTO placedBidDTO) {
