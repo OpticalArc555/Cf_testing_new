@@ -5,6 +5,12 @@
     <title>Real-Time Bidding</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        /* Optional: Add some basic styling */
+        #placeBidForm, #topBids {
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
 <h1>Real-Time Bidding</h1>
@@ -14,7 +20,7 @@
     <label for="userId">User ID:</label>
     <input type="text" id="userId" name="userId"><br><br>
     <label for="bidCarId">Car ID:</label>
-    <input type="text" id="bidCarId" name="bidCarId" oninput="refreshTopThreeBids()"><br><br>
+    <input type="text" id="bidCarId" name="bidCarId" oninput="refreshTopBids()"><br><br>
     <label for="amount">Bid Amount:</label>
     <input type="text" id="amount" name="amount"><br><br>
     <button onclick="placeBid()">Place Bid</button>
@@ -22,33 +28,25 @@
 
 <hr>
 
-<div id="topThreeBids">
-    <h2>Top Three Bids</h2>
-    <ul id="topBidsList">
-    </ul>
+<div id="topBids">
+    <h2>Top Bid</h2>
+    <div id="topBid"></div>
 </div>
 
 <script>
-    const socket = new SockJS('http://localhost:8080/Aucbidding');
-    const stompClient = Stomp.over(socket);
+    let stompClient = null;
+    let currentBidCarId = null;
 
-    stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
+    function connect() {
+        const socket = new SockJS('http://localhost:8080/Aucbidding');
+        stompClient = Stomp.over(socket);
 
-        stompClient.subscribe('/topic/bids', function (message) {
-            const bid = JSON.parse(message.body);
-            console.log('Received new bid: ', bid);
-            refreshTopThreeBids();
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            // Initial subscription for top bid updates
+            refreshTopBids();
         });
-
-        stompClient.subscribe('/topic/topThreeBids', function (message) {
-            const topBids = JSON.parse(message.body);
-            updateTopThreeBids(topBids);
-        });
-
-        refreshTopThreeBids();
-        setInterval(refreshTopThreeBids, 30000);
-    });
+    }
 
     function placeBid() {
         const userId = document.getElementById('userId').value;
@@ -58,31 +56,38 @@
 
         const bid = { userId, bidCarId, amount, dateTime };
         stompClient.send('/app/placeBid', {}, JSON.stringify(bid));
+
+        // Show a pop-up notification for the placed bid
+        alert('Your bid has been placed successfully!');
     }
 
-    function refreshTopThreeBids() {
+    function refreshTopBids() {
         const bidCarId = document.getElementById('bidCarId').value;
-        if (bidCarId) {
-            stompClient.send('/app/topThreeBids', {}, JSON.stringify({ bidCarId }));
-        }
-    }
+        if (bidCarId && bidCarId !== currentBidCarId) {
+            if (currentBidCarId) {
+                stompClient.unsubscribe(`/topic/topBid/${currentBidCarId}`);
+            }
+            currentBidCarId = bidCarId;
 
-    function updateTopThreeBids(bids) {
-        const topBidsList = document.getElementById('topBidsList');
-        topBidsList.innerHTML = '';
-
-        if (bids.length === 1 && bids[0].userId == null) {
-            const basePriceItem = document.createElement('li');
-            basePriceItem.textContent = `No bids yet. Starting price is ${bids[0].amount}`;
-            topBidsList.appendChild(basePriceItem);
-        } else {
-            bids.forEach(bid => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `User ${bid.userId} placed a bid of ${bid.amount} on car ${bid.bidCarId}`;
-                topBidsList.appendChild(listItem);
+            stompClient.subscribe(`/topic/topBid`, function (message) {
+                const topBid = JSON.parse(message.body);
+                updateTopBid(topBid);
             });
+
+            stompClient.send(`/app/topBid`, {}, JSON.stringify({ bidCarId }));
         }
     }
+
+    function updateTopBid(bid) {
+        const topBidElement = document.getElementById('topBid');
+        if (bid) {
+            topBidElement.textContent = `User ${bid.userId} placed a top bid of ${bid.amount} on car ${bid.bidCarId} at ${bid.dateTime}`;
+        } else {
+            topBidElement.textContent = 'No bids yet.';
+        }
+    }
+
+    window.onload = connect;
 </script>
 </body>
 </html>

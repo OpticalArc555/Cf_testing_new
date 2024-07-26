@@ -5,6 +5,7 @@ import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.dto.ResponseAllPlacedBidDTO;
 import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.ResponseSinglePlacedBid;
+import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import java.util.List;
 public class PlaceBidController {
 
     private final PlacedBidService placedBidService;
-
 
     @PostMapping("/placeBid")
     private ResponseEntity<?> placeBid(@RequestBody PlacedBidDTO placedBidDTO, @RequestParam Integer bidCarId) {
@@ -74,6 +74,11 @@ public class PlaceBidController {
         }
     }
 
+    @GetMapping("/finalBids")
+    public ResponseEntity<List<FinalBid>> getAllFinalBids() {
+        List<FinalBid> finalBids = placedBidService.getAllFinalBids();
+        return ResponseEntity.ok(finalBids);
+    }
 
     @GetMapping("/car/{bidCarId}")
     public ResponseEntity<ResponseAllPlacedBidDTO> getPlacedBidsByCarId(@PathVariable Integer bidCarId) {
