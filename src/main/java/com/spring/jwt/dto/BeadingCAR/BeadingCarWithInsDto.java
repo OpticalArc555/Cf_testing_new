@@ -8,6 +8,18 @@ import java.time.LocalDate;
 public class BeadingCarWithInsDto {
     private Integer beadingCarId;
 
+    private Boolean automaticEmergencyBraking;
+
+    private Boolean ADAS;
+
+    private Boolean sunroof;
+
+    private Boolean parkingSensors;
+
+    private Boolean adaptiveHeadlights;
+
+    private Boolean childSafetyLocks;
+
     private Boolean acFeature;
 
     private Boolean musicFeature;
@@ -89,6 +101,12 @@ public class BeadingCarWithInsDto {
         this.variant= beadingCAR.getVariant();
         this.dealerId= beadingCAR.getDealerId();
         this.inspectionReportId=beadingCAR.getInspectionReportId();
+        this.automaticEmergencyBraking=beadingCAR.getAutomaticEmergencyBraking();
+        this.ADAS=beadingCAR.getADAS();
+        this.sunroof=beadingCAR.getSunroof();
+        this.parkingSensors=beadingCAR.getParkingSensors();
+        this.adaptiveHeadlights=beadingCAR.getAdaptiveHeadlights();
+        this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
     }
 }
 
