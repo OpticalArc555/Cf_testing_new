@@ -85,7 +85,7 @@ public class WebSocketBidController {
         try {
             return placedBidService.getTopBid(bidCarId);
         } catch (BidNotFoundExceptions e) {
-            logger.error("Error finding top bid: {}", e.getMessage());
+            logger.error("Error finding top bids: {}", e.getMessage());
             return null;
         }
     }
@@ -94,6 +94,7 @@ public class WebSocketBidController {
     @SendTo("/topic/liveCars")
     public List<BidCarsDTO> getAllLiveCars() {
         try {
+
             LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
             List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
             return liveCars;
