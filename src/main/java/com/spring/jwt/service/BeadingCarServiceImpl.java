@@ -247,6 +247,7 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     public List<BidCarsDTO> getAllLiveCars() {
         LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         List<BidCars> liveCars = bidCarsRepo.findAllLiveCars(currentTime);
+        System.err.println(liveCars);
         return liveCars.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

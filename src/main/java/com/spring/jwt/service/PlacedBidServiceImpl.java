@@ -4,6 +4,7 @@ import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.Wallet.Entity.WalletAccount;
 import com.spring.jwt.Wallet.Repo.AccountRepository;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
+import com.spring.jwt.dto.FinalBidDto;
 import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.entity.PlacedBid;
@@ -15,6 +16,9 @@ import com.spring.jwt.repository.PlacedBidRepo;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +43,9 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     private final AccountRepository accountRepository;
 
     private final UserRepository userRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(PlacedBidServiceImpl.class);
+
 
 
     @Override
@@ -106,8 +113,6 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 //            }
 //        }
 //    }
-
-
 
 
     @Override
@@ -187,6 +192,31 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             throw new BidNotFoundExceptions("No bids found for car ID: " + bidCarId);
         }
     }
+
+    @Override
+    public List<FinalBidDto> getDealerAllBids(Integer buyerDealerId) {
+        logger.debug("Fetching bids for buyerDealerId: {}", buyerDealerId);
+
+        List<FinalBid> bids = finalBidRepo.findByBuyerDealerId(buyerDealerId);
+
+        if (bids != null && !bids.isEmpty()) {
+            logger.debug("Found {} bids for buyerDealerId: {}", bids.size(), buyerDealerId);
+
+            return bids.stream().map(bid -> {
+                FinalBidDto dto = new FinalBidDto();
+                dto.setFinalBidId(bid.getFinalBidId());
+                dto.setSellerDealerId(bid.getSellerDealerId());
+                dto.setBuyerDealerId(bid.getBuyerDealerId());
+                dto.setBidCarId(bid.getBidCarId());
+                dto.setPrice(bid.getPrice());
+                return dto;
+            }).collect(Collectors.toList());
+        } else {
+            logger.error("No bids found for buyerDealerId: {}", buyerDealerId);
+            throw new RuntimeException("No bids found for buyerDealerId: " + buyerDealerId);
+        }
+    }
+
 
 //    @Override
 //    public PlacedBidDTO getTopBid(Integer bidCarId) {

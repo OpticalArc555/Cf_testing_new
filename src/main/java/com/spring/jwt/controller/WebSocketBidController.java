@@ -1,20 +1,27 @@
 package com.spring.jwt.controller;
 
+import com.spring.jwt.Interfaces.BeadingCarService;
+import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
+import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +30,7 @@ public class WebSocketBidController {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketBidController.class);
     private final PlacedBidService placedBidService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final BeadingCarService beadingCarService;
 
     @PreAuthorize("permitAll")
     @MessageMapping("/placeBid")
@@ -70,4 +78,30 @@ public class WebSocketBidController {
             return null;
         }
     }
+
+    @MessageMapping("/topBids/{bidCarId}")
+    @SendTo("/topic/topBids")
+    public PlacedBidDTO getTopBid(@DestinationVariable Integer bidCarId) {
+        try {
+            return placedBidService.getTopBid(bidCarId);
+        } catch (BidNotFoundExceptions e) {
+            logger.error("Error finding top bid: {}", e.getMessage());
+            return null;
+        }
+    }
+    @PreAuthorize("permitAll")
+    @MessageMapping("/liveCars")
+    @SendTo("/topic/liveCars")
+    public List<BidCarsDTO> getAllLiveCars() {
+        try {
+            LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+            List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+            return liveCars;
+        } catch (Exception e) {
+            logger.error("Error getting live cars: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
 }
