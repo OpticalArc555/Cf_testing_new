@@ -22,6 +22,25 @@ public class BeadingCAR {
     @Column(name = "beadingCarId", nullable = false)
     private Integer beadingCarId;
 
+    @Column(name = "automatic_emergency_braking")
+    private Boolean automaticEmergencyBraking;
+
+    @Column(name = "ADAS")
+    private Boolean ADAS;
+
+    @Column(name = "sunroof")
+    private Boolean sunroof;
+
+    @Column(name = "parking_sensors")
+    private Boolean parkingSensors;
+
+    @Column(name = "adaptive_headlights")
+    private Boolean adaptiveHeadlights;
+
+    @Column(name = "child_safety_locks")
+    private Boolean childSafetyLocks;
+
+
     @Column(name = "ac_feature")
     private Boolean acFeature;
 
@@ -134,6 +153,12 @@ public class BeadingCAR {
         this.variant=beadingCARDto.getVariant();
         this.dealerId= beadingCARDto.getDealerId();
         this.carInsuranceType=beadingCARDto.getCarInsuranceType();
+        this.automaticEmergencyBraking=beadingCARDto.getAutomaticEmergencyBraking();
+        this.ADAS=beadingCARDto.getADAS();
+        this.sunroof=beadingCARDto.getSunroof();
+        this.parkingSensors=beadingCARDto.getParkingSensors();
+        this.adaptiveHeadlights=beadingCARDto.getAdaptiveHeadlights();
+        this.childSafetyLocks=beadingCARDto.getChildSafetyLocks();
     }
 
 

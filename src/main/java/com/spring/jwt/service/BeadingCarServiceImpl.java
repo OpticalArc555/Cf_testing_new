@@ -77,6 +77,25 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
                 .orElseThrow(() -> new BeadingCarNotFoundException("beadingCAR not found", HttpStatus.NOT_FOUND));
 
+        // Update fields only if they are not null in the DTO
+        if (beadingCARDto.getAutomaticEmergencyBraking() != null) {
+            beadingCAR.setAutomaticEmergencyBraking(beadingCARDto.getAutomaticEmergencyBraking());
+        }
+        if (beadingCARDto.getADAS() != null) {
+            beadingCAR.setADAS(beadingCARDto.getADAS());
+        }
+        if (beadingCARDto.getSunroof() != null) {
+            beadingCAR.setSunroof(beadingCARDto.getSunroof());
+        }
+        if (beadingCARDto.getParkingSensors() != null) {
+            beadingCAR.setParkingSensors(beadingCARDto.getParkingSensors());
+        }
+        if (beadingCARDto.getAdaptiveHeadlights() != null) {
+            beadingCAR.setAdaptiveHeadlights(beadingCARDto.getAdaptiveHeadlights());
+        }
+        if (beadingCARDto.getChildSafetyLocks() != null) {
+            beadingCAR.setChildSafetyLocks(beadingCARDto.getChildSafetyLocks());
+        }
         if (beadingCARDto.getAcFeature() != null) {
             beadingCAR.setAcFeature(beadingCARDto.getAcFeature());
         }
@@ -95,9 +114,9 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         if (beadingCARDto.getCarInsurance() != null) {
             beadingCAR.setCarInsurance(beadingCARDto.getCarInsurance());
         }
-//        if (beadingCARDto.getCarStatus() != null) {
-//            beadingCAR.setCarStatus(beadingCARDto.getCarStatus());
-//        }
+        if (beadingCARDto.getCarStatus() != null) {
+            beadingCAR.setCarStatus(beadingCARDto.getCarStatus());
+        }
         if (beadingCARDto.getCity() != null) {
             beadingCAR.setCity(beadingCARDto.getCity());
         }
@@ -116,11 +135,11 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         if (beadingCARDto.getModel() != null) {
             beadingCAR.setModel(beadingCARDto.getModel());
         }
-        if (beadingCARDto.getPowerWindowFeature() != null) {
-            beadingCAR.setPowerWindowFeature(beadingCARDto.getPowerWindowFeature());
-        }
         if (beadingCARDto.getOwnerSerial() != null) {
             beadingCAR.setOwnerSerial(beadingCARDto.getOwnerSerial());
+        }
+        if (beadingCARDto.getPowerWindowFeature() != null) {
+            beadingCAR.setPowerWindowFeature(beadingCARDto.getPowerWindowFeature());
         }
         if (beadingCARDto.getPrice() != null) {
             beadingCAR.setPrice(beadingCARDto.getPrice());
@@ -145,12 +164,12 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         }
         if (beadingCARDto.getDealerId() != null) {
             beadingCAR.setDealerId(beadingCARDto.getDealerId());
-
         }
-        if (beadingCARDto.getCarInsuranceType()!=null){
+        if (beadingCARDto.getCarInsuranceType() != null) {
             beadingCAR.setCarInsuranceType(beadingCARDto.getCarInsuranceType());
         }
 
+        // Save the updated entity
         beadingCarRepo.save(beadingCAR);
         return "beadingCAR edited";
     }

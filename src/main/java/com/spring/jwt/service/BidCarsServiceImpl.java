@@ -120,6 +120,8 @@ public class BidCarsServiceImpl implements BidCarsService {
             bidDetailsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
             bidDetailsDTO.setClosingTime(bidCar.getClosingTime());
             bidDetailsDTO.setCreatedAt(bidCar.getCreatedAt());
+
+            // Set additional features from BeadingCAR
             bidDetailsDTO.setMusicFeature(beadingCar.getMusicFeature());
             bidDetailsDTO.setArea(beadingCar.getArea());
             bidDetailsDTO.setBrand(beadingCar.getBrand());
@@ -144,11 +146,63 @@ public class BidCarsServiceImpl implements BidCarsService {
             bidDetailsDTO.setTitle(beadingCar.getTitle());
             bidDetailsDTO.setDealer_id(beadingCar.getDealerId());
 
+            // Set new fields
+            bidDetailsDTO.setAutomaticEmergencyBraking(beadingCar.getAutomaticEmergencyBraking());
+            bidDetailsDTO.setADAS(beadingCar.getADAS());
+            bidDetailsDTO.setSunroof(beadingCar.getSunroof());
+            bidDetailsDTO.setParkingSensors(beadingCar.getParkingSensors());
+            bidDetailsDTO.setAdaptiveHeadlights(beadingCar.getAdaptiveHeadlights());
+            bidDetailsDTO.setChildSafetyLocks(beadingCar.getChildSafetyLocks());
+
             return bidDetailsDTO;
-        }else {
+        } else {
             throw new RuntimeException("Bid car or Beading car not found");
         }
     }
+
+//    public BidDetailsDTO getbyBidId(Integer bidCarId, Integer beadingCarId) {
+//        Optional<BidCars> bidCarOptional  = bidCarsRepo.findById(bidCarId);
+//        Optional<BeadingCAR> beadingCarOptional  = beadingCarRepo.findById(beadingCarId);
+//
+//        if (bidCarOptional.isPresent() && beadingCarOptional.isPresent()) {
+//            BidCars bidCar = bidCarOptional.get();
+//            BeadingCAR beadingCar = beadingCarOptional.get();
+//
+//            BidDetailsDTO bidDetailsDTO = new BidDetailsDTO();
+//
+//            bidDetailsDTO.setBidCarId(bidCar.getBidCarId());
+//            bidDetailsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
+//            bidDetailsDTO.setClosingTime(bidCar.getClosingTime());
+//            bidDetailsDTO.setCreatedAt(bidCar.getCreatedAt());
+//            bidDetailsDTO.setMusicFeature(beadingCar.getMusicFeature());
+//            bidDetailsDTO.setArea(beadingCar.getArea());
+//            bidDetailsDTO.setBrand(beadingCar.getBrand());
+//            bidDetailsDTO.setCarInsurance(beadingCar.getCarInsurance());
+//            bidDetailsDTO.setCarStatus(beadingCar.getCarStatus());
+//            bidDetailsDTO.setCity(beadingCar.getCity());
+//            bidDetailsDTO.setColor(beadingCar.getColor());
+//            bidDetailsDTO.setDescription(beadingCar.getDescription());
+//            bidDetailsDTO.setFuelType(beadingCar.getFuelType());
+//            bidDetailsDTO.setKmDriven(beadingCar.getKmDriven());
+//            bidDetailsDTO.setModel(beadingCar.getModel());
+//            bidDetailsDTO.setOwnerSerial(beadingCar.getOwnerSerial());
+//            bidDetailsDTO.setPowerWindowFeature(beadingCar.getPowerWindowFeature());
+//            bidDetailsDTO.setPrice(beadingCar.getPrice());
+//            bidDetailsDTO.setRearParkingCameraFeature(beadingCar.getRearParkingCameraFeature());
+//            bidDetailsDTO.setRegistration(beadingCar.getRegistration());
+//            bidDetailsDTO.setTransmission(beadingCar.getTransmission());
+//            bidDetailsDTO.setYear(beadingCar.getYear());
+//            bidDetailsDTO.setDate(beadingCar.getDate());
+//            bidDetailsDTO.setUserId(beadingCar.getUserId());
+//            bidDetailsDTO.setVariant(beadingCar.getVariant());
+//            bidDetailsDTO.setTitle(beadingCar.getTitle());
+//            bidDetailsDTO.setDealer_id(beadingCar.getDealerId());
+//
+//            return bidDetailsDTO;
+//        }else {
+//            throw new RuntimeException("Bid car or Beading car not found");
+//        }
+//    }
 
     @Override
     public List<BidCarsDTO> getByUserId(Integer userId) {
