@@ -1,22 +1,24 @@
 package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.BidCarsService;
-import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.BidDetailsDTO;
-import com.spring.jwt.dto.ResDtos;
 import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 
@@ -39,6 +41,9 @@ public class BidCarsServiceImpl implements BidCarsService {
     private final ThreadPoolTaskScheduler taskScheduler;
 
     private ScheduledFuture<?> scheduledFuture;
+
+    private static final Logger log = LoggerFactory.getLogger(BidCarsServiceImpl.class);
+
 
     @Override
     public BidCarsDTO createBidding(BidCarsDTO bidCarsDTO) {
@@ -78,21 +83,45 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     private void scheduleBidProcessing(BidCars bidCar) {
         LocalDateTime closingTime = bidCar.getClosingTime();
-        long delay = java.time.Duration.between(LocalDateTime.now(), closingTime).toMillis();
+        ZonedDateTime indiaTime = closingTime.atZone(ZoneId.of("Asia/Kolkata"));
+        long delay = java.time.Duration.between(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")), indiaTime).toMillis();
 
         if (delay > 0) {
-            // Cancel the previous task if needed
             if (scheduledFuture != null && !scheduledFuture.isDone()) {
                 scheduledFuture.cancel(false);
             }
 
-            // Schedule new task
-            scheduledFuture = taskScheduler.schedule(() -> processBid(bidCar), new Date(System.currentTimeMillis() + delay));
+            scheduledFuture = taskScheduler.schedule(() -> {
+                try {
+                    log.info("Processing bid for car: " + bidCar.getBidCarId());
+                    processBid(bidCar);
+                } catch (Exception e) {
+                    log.error("Failed to process bid for car: " + bidCar.getBidCarId(), e);
+                    retryProcessingBid(bidCar, 3);
+                }
+            }, new Date(System.currentTimeMillis() + delay));
+
+            log.info("Scheduled task for bidCarId: " + bidCar.getBidCarId() + " with delay: " + delay + " ms");
+        }
+    }
+
+    private void retryProcessingBid(BidCars bidCar, int retryCount) {
+        if (retryCount <= 0) {
+            log.error("Exceeded retry limit for car: " + bidCar.getBidCarId());
+            return;
+        }
+
+        try {
+            log.info("Retrying bid processing for car: " + bidCar.getBidCarId());
+            processBid(bidCar);
+        } catch (Exception e) {
+            log.error("Retry failed for car: " + bidCar.getBidCarId(), e);
+            retryProcessingBid(bidCar, retryCount - 1);
         }
     }
 
     public void processBid(BidCars bidCar) {
-        // Implement bid processing logic here
+        log.info("Executing processBid for car: " + bidCar.getBidCarId());
         List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
         if (!highestBids.isEmpty()) {
             PlacedBid bid = highestBids.get(0);
@@ -103,8 +132,12 @@ public class BidCarsServiceImpl implements BidCarsService {
             finalBid.setPrice(bid.getAmount());
 
             finalBidRepo.save(finalBid);
+            log.info("Saved final bid for car: " + bidCar.getBidCarId());
+        } else {
+            log.info("No bids found for car: " + bidCar.getBidCarId());
         }
     }
+
     @Override
     public BidDetailsDTO getbyBidId(Integer bidCarId, Integer beadingCarId) {
         Optional<BidCars> bidCarOptional  = bidCarsRepo.findById(bidCarId);
