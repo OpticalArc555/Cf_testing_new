@@ -209,6 +209,8 @@ public class PlacedBidServiceImpl implements PlacedBidService {
                 dto.setBuyerDealerId(bid.getBuyerDealerId());
                 dto.setBidCarId(bid.getBidCarId());
                 dto.setPrice(bid.getPrice());
+                Integer beadingCarId = bidCarsRepo.findBeadingCarIdByBidCarId(bid.getBidCarId());
+                dto.setBeadingCarId(beadingCarId);
                 return dto;
             }).collect(Collectors.toList());
         } else {
