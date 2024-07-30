@@ -35,10 +35,12 @@ public class BidCars {
     public void prePersist() {
         final LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         if(closingTime == null) {
-            closingTime = localDateTime.plusMinutes(30);
+            closingTime = localDateTime.plusMinutes(3);
         }
         if(createdAt == null) {
             createdAt = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         }
     }
+
+
 }

@@ -64,7 +64,6 @@ public class PlaceBidController {
         }
     }
 
-
     @GetMapping("/topThree/{bidCarId}")
     public ResponseEntity<ResponseAllPlacedBidDTO> getTopThreeBids(@PathVariable Integer bidCarId) {
         try {
@@ -99,7 +98,6 @@ public class PlaceBidController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(profile);
         }
     }
-
 
 
     @GetMapping("/car/{bidCarId}")
