@@ -32,7 +32,6 @@ public class BeadingCarController {
         }
     }
 
-
     @GetMapping("/all")
     public ResponseEntity<?> getAllBeadingCars() {
         try {
@@ -126,14 +125,17 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars with the given status"));
         }
     }
+
     @GetMapping("/getAllLiveBiddingCars")
     public ResponseEntity<?> getAllLiveCars() {
+
         try {
             List<BidCarsDTO> beadingCars = beadingCarService.getAllLiveCars();
             return ResponseEntity.status(HttpStatus.OK).body(beadingCars);
-        } catch (Exception e) {
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars"));
         }
     }
+
    }
 
