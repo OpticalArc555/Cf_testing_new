@@ -22,5 +22,8 @@ public interface BidCarsRepo extends JpaRepository<BidCars, Integer> {
     @Query("SELECT b FROM BidCars b WHERE b.closingTime < :currentTime")
     List<BidCars> findByClosingTimeBefore(@Param("currentTime") LocalDateTime currentTime);
 
+    @Query("SELECT b.beadingCarId FROM BidCars b WHERE b.bidCarId = :bidCarId")
+    Integer findBeadingCarIdByBidCarId(@Param("bidCarId") Integer bidCarId);
+
 
 }
