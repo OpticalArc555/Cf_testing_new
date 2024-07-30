@@ -110,10 +110,10 @@ public class BidCarsServiceImpl implements BidCarsService {
             log.error("Exceeded retry limit for car: " + bidCar.getBidCarId());
             return;
         }
-
         try {
             log.info("Retrying bid processing for car: " + bidCar.getBidCarId());
             processBid(bidCar);
+
         } catch (Exception e) {
             log.error("Retry failed for car: " + bidCar.getBidCarId(), e);
             retryProcessingBid(bidCar, retryCount - 1);
@@ -122,6 +122,7 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     public void processBid(BidCars bidCar) {
         log.info("Executing processBid for car: " + bidCar.getBidCarId());
+
         List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
         if (!highestBids.isEmpty()) {
             PlacedBid bid = highestBids.get(0);
