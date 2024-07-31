@@ -94,7 +94,6 @@ public class WebSocketBidController {
     @SendTo("/topic/liveCars")
     public List<BidCarsDTO> getAllLiveCars() {
         try {
-
             LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
             List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
             return liveCars;
