@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,8 @@ public class BidCarsServiceImpl implements BidCarsService {
     private final BeadingCarRepo beadingCarRepo;
 
     private final BidCarsRepo bidCarsRepo;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     private final PlacedBidRepo placedBidRepo;
 
@@ -44,6 +48,11 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     private static final Logger log = LoggerFactory.getLogger(BidCarsServiceImpl.class);
 
+    public List<BidCarsDTO> getAllLiveCars() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        List<BidCars> liveCars = bidCarsRepo.findAllLiveCars(currentTime);
+        return liveCars.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
 
     @Override
     public BidCarsDTO createBidding(BidCarsDTO bidCarsDTO) {
@@ -75,8 +84,11 @@ public class BidCarsServiceImpl implements BidCarsService {
         BidCars bidCars = convertToEntity(bidCarsDTO);
         BidCars savedBid = bidCarsRepo.save(bidCars);
 
-        // Schedule task for the closing time
+
         scheduleBidProcessing(savedBid);
+
+        List<BidCarsDTO> liveCars = getAllLiveCars();
+        messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
 
         return convertToDto(savedBid);
     }
