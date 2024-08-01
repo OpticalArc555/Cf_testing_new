@@ -121,6 +121,7 @@ public class UserServiceImpl implements UserService {
                 dealer.setSalesPersonId(registerDto.getSalesPersonId());
 
                 user.setDealer(dealer);
+
                 dealer.setUser(user);
             }
             else {
