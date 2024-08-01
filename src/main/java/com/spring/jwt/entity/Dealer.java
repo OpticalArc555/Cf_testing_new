@@ -39,6 +39,9 @@ public class Dealer {
     @Column(name = "last_name", length = 45)
     private String lastName;
 
+    @Column(name = "salesPersonId", length = 10)
+    private Integer salesPersonId;
+
     @NotBlank(message = "Mobile number cannot be blank")
     @Pattern(regexp = "[0-9]{10}", message = "Invalid mobile number format")
     @Column(name = "mobile_no", nullable = false, length = 45)
@@ -58,7 +61,6 @@ public class Dealer {
     @JoinColumn(name = "user_user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
-
 //    @OneToMany(mappedBy = "dealerVendor")
 //    private Set<Car> cars = new LinkedHashSet<>();
 
@@ -73,6 +75,7 @@ public class Dealer {
         this.mobileNo = dealerDto.mobileNo;
         this.shopName = dealerDto.shopName;
         this.email = dealerDto.email;
+        this.salesPersonId = dealerDto.salesPersonId;
     }
 
 }

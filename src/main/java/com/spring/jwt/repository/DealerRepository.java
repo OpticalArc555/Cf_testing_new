@@ -16,4 +16,5 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
     List<Dealer> findAllByOrderByIdDesc();
 
 
+List<Dealer> getBySalesPersonId(Integer salesPersonID);
 }
