@@ -28,6 +28,7 @@ public class RegisterDto {
     public String userType;
     private Integer documentId;
     private Date joiningdate;
+    private Integer salesPersonId;
 
 
 

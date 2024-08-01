@@ -20,7 +20,7 @@ public class DealerDto {
     private Integer dealer_id;
     private Integer userId;
     private Boolean status;
-
+    public Integer salesPersonId;
     public DealerDto() {
     }
 
@@ -34,7 +34,7 @@ public class DealerDto {
         this.mobileNo = dealer.getMobileNo();
         this.shopName = dealer.getShopName();
         this.email = dealer.getEmail();
-
+        this.salesPersonId= dealer.getSalesPersonId();
         this.dealer_id = dealer.getId();
         this.userId = dealer.getUser().getId();
 

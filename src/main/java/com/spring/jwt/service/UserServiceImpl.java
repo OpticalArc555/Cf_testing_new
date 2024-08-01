@@ -10,6 +10,7 @@ import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.RoleRepository;
 import com.spring.jwt.repository.UserProfileRepository;
 import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.security.UserDetailsCustom;
 import com.spring.jwt.utils.BaseResponseDTO;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -101,20 +104,28 @@ public class UserServiceImpl implements UserService {
             user.setProfile(profile);
             profile.setUser(user);
         } else if (role.getName().equals("DEALER")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication.getAuthorities().stream().anyMatch(authority ->
+                   authority.getAuthority().equals("ADMIN") ||
+                    authority.getAuthority().equals("SALESPERSON"))){
+                Dealer dealer = new Dealer();
+                dealer.setAddress(registerDto.getAddress());
+                dealer.setArea(registerDto.getArea());
+                dealer.setCity(registerDto.getCity());
+                dealer.setStatus(registerDto.status);
+                dealer.setFirstname(registerDto.getFirstName());
+                dealer.setLastName(registerDto.getLastName());
+                dealer.setMobileNo(registerDto.getMobileNo());
+                dealer.setShopName(registerDto.getShopName());
+                dealer.setEmail(registerDto.getEmail());
+                dealer.setSalesPersonId(registerDto.getSalesPersonId());
 
-            Dealer dealer = new Dealer();
-            dealer.setAddress(registerDto.getAddress());
-            dealer.setArea(registerDto.getArea());
-            dealer.setCity(registerDto.getCity());
-            dealer.setStatus(registerDto.status);
-            dealer.setFirstname(registerDto.getFirstName());
-            dealer.setLastName(registerDto.getLastName());
-            dealer.setMobileNo(registerDto.getMobileNo());
-            dealer.setShopName(registerDto.getShopName());
-            dealer.setEmail(registerDto.getEmail());
-
-            user.setDealer(dealer);
-            dealer.setUser(user);
+                user.setDealer(dealer);
+                dealer.setUser(user);
+            }
+            else {
+                throw new UnauthorizedException("User do not have the authority of ADMIN or SALESPERSON to create this account.");
+            }
 
         } else if (role.getName().equals("INSPECTOR")) {
             InspectorProfile inspectorProfile = new InspectorProfile();
