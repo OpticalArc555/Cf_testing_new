@@ -20,6 +20,7 @@ public class BidCarsDTO {
 
     private Integer userId;
 
+
     public BidCarsDTO(BeadingCAR beadingCAR) {
     }
 }
