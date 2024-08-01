@@ -11,6 +11,7 @@ public interface DealerService {
     BaseResponseDTO updateDealer(Integer userId, RegisterDto registerDto);
 
     List<DealerDto> getAllDealers(int pageNo);
+
     DealerDto getDealerById(Integer dealerId);
 
     BaseResponseDTO deleteDealer(Integer dealerId);
@@ -18,7 +19,10 @@ public interface DealerService {
     BaseResponseDTO changePassword(Integer dealerId, ChangePasswordDto changePasswordDto);
 
     public int getDealerIdByEmail(String email);
+
     public void updateStatus(Integer dealerId, Boolean status);
 
     List<DealerDto> getAllDealer();
+
+    List<DealerDto> getAllDealersBySalesPersonId(Integer salesPersonID);
 }
