@@ -18,15 +18,13 @@ public class BidDetailsDTO {
 
     private LocalDateTime createdAt;
 
-    private Boolean automaticEmergencyBraking;
+    private Boolean airbag;
 
-    private Boolean ADAS;
+    private Boolean ABS;
+
+    private Boolean buttonStart;
 
     private Boolean sunroof;
-
-    private Boolean parkingSensors;
-
-    private Boolean adaptiveHeadlights;
 
     private Boolean childSafetyLocks;
 

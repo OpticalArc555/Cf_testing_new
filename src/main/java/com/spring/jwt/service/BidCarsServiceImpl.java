@@ -179,13 +179,10 @@ public class BidCarsServiceImpl implements BidCarsService {
             bidDetailsDTO.setVariant(beadingCar.getVariant());
             bidDetailsDTO.setTitle(beadingCar.getTitle());
             bidDetailsDTO.setDealer_id(beadingCar.getDealerId());
-
-            // Set new fields
-            bidDetailsDTO.setAutomaticEmergencyBraking(beadingCar.getAutomaticEmergencyBraking());
-            bidDetailsDTO.setADAS(beadingCar.getADAS());
             bidDetailsDTO.setSunroof(beadingCar.getSunroof());
-            bidDetailsDTO.setParkingSensors(beadingCar.getParkingSensors());
-            bidDetailsDTO.setAdaptiveHeadlights(beadingCar.getAdaptiveHeadlights());
+            bidDetailsDTO.setAirbag(beadingCar.getAirbag());
+            bidDetailsDTO.setABS(beadingCar.getABS());
+            bidDetailsDTO.setButtonStart(beadingCar.getButtonStart());
             bidDetailsDTO.setChildSafetyLocks(beadingCar.getChildSafetyLocks());
 
             return bidDetailsDTO;
