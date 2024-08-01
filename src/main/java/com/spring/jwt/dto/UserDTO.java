@@ -17,5 +17,7 @@ public class UserDTO {
 
     private String role;
 
+    private Integer profilePhotoId1;
+
 
 }

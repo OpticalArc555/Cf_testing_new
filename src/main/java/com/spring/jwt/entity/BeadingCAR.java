@@ -22,20 +22,18 @@ public class BeadingCAR {
     @Column(name = "beadingCarId", nullable = false)
     private Integer beadingCarId;
 
-    @Column(name = "automatic_emergency_braking")
-    private Boolean automaticEmergencyBraking;
+    @Column(name = "airbag")
+    private Boolean airbag;
 
-    @Column(name = "ADAS")
-    private Boolean ADAS;
+    @Column(name = "ABS")
+    private Boolean ABS;
+
+    @Column(name = "button_start")
+    private Boolean buttonStart;
 
     @Column(name = "sunroof")
     private Boolean sunroof;
 
-    @Column(name = "parking_sensors")
-    private Boolean parkingSensors;
-
-    @Column(name = "adaptive_headlights")
-    private Boolean adaptiveHeadlights;
 
     @Column(name = "child_safety_locks")
     private Boolean childSafetyLocks;
@@ -153,11 +151,10 @@ public class BeadingCAR {
         this.variant=beadingCARDto.getVariant();
         this.dealerId= beadingCARDto.getDealerId();
         this.carInsuranceType=beadingCARDto.getCarInsuranceType();
-        this.automaticEmergencyBraking=beadingCARDto.getAutomaticEmergencyBraking();
-        this.ADAS=beadingCARDto.getADAS();
         this.sunroof=beadingCARDto.getSunroof();
-        this.parkingSensors=beadingCARDto.getParkingSensors();
-        this.adaptiveHeadlights=beadingCARDto.getAdaptiveHeadlights();
+        this.ABS=beadingCARDto.getABS();
+        this.airbag=beadingCARDto.getAirbag();
+        this.buttonStart=beadingCARDto.getButtonStart();
         this.childSafetyLocks=beadingCARDto.getChildSafetyLocks();
     }
 
