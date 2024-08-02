@@ -1,12 +1,11 @@
 package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.InspectorProfileService;
-import com.spring.jwt.dto.AllInspectorProfilesDTO;
-import com.spring.jwt.dto.InspectorProfileDto;
-import com.spring.jwt.dto.ResponseDto;
-import com.spring.jwt.dto.SingleProfileDto;
+import com.spring.jwt.dto.*;
+import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -81,6 +80,20 @@ public class InspectorProfileController {
             AllInspectorProfilesDTO profile = new AllInspectorProfilesDTO("Unsuccessful");
             profile.setException(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(profile);
+        }
+    }
+
+    @PutMapping("/ispChangePassword/{id}")
+    public ResponseEntity<BaseResponseDTO> changePassword(@PathVariable int id, @RequestBody PasswordChange passwordChange){
+
+        try{
+
+            BaseResponseDTO result =inspectorProfileService.changePassword(id,passwordChange);
+            return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Successful",result.getMessage()));
+        }catch (UserNotFoundExceptions exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessfully","UserNotFoundException"));
+        } catch (InvalidPasswordException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessfully","InvalidPasswordException"));
         }
     }
 

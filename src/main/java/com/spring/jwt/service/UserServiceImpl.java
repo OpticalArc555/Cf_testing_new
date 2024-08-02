@@ -10,7 +10,6 @@ import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.RoleRepository;
 import com.spring.jwt.repository.UserProfileRepository;
 import com.spring.jwt.repository.UserRepository;
-import com.spring.jwt.security.UserDetailsCustom;
 import com.spring.jwt.utils.BaseResponseDTO;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;

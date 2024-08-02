@@ -30,6 +30,7 @@ public class User {
 
     @NotBlank(message = "Email cannot be blank")
     @Email
+    @Pattern(regexp = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email format")
     @Column(name = "email", nullable = false, length = 250)
     private String email;
 
