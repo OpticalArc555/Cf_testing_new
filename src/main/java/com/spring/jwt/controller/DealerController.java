@@ -83,9 +83,9 @@ public class DealerController {
            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dealerResponseForSingleDealerDto);
 
        }
-
-
     }
+
+
     @DeleteMapping("/delete/{dealerId}")
     public ResponseEntity<ResponseDto> deleteDealer(@PathVariable("dealerId") Integer dealerId) {
        try{
@@ -98,6 +98,7 @@ public class DealerController {
 
        }
     }
+
 
     @PutMapping("/changePassword/{dealerId}")
     public ResponseEntity<ResponseDto> changePassword(
@@ -127,7 +128,7 @@ public class DealerController {
 
         }
     }
-@GetMapping("/getDealerId")
+    @GetMapping("/getDealerId")
     public ResponseEntity<?> getDealerId(@RequestParam String email){
 
         try
@@ -153,6 +154,8 @@ public class DealerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllDealerDto);
         }
     }
+
+
     @PatchMapping("/statusUpdate")
     public ResponseEntity<DealerStatusDto> dealerStatusUpdate(@RequestParam Integer dealerId, @RequestParam Boolean status) {
         try {

@@ -19,7 +19,9 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleInvalidArguments(MethodArgumentNotValidException ex) {
         HashMap<String, String> errorMap = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errorMap.put(error.getField(), error.getDefaultMessage());
+            String field = error.getField();
+            String message = error.getDefaultMessage();
+            errorMap.merge(field, message, (existingMessage, newMessage) -> existingMessage + "; " + newMessage);
         });
         return errorMap;
     }
@@ -30,7 +32,8 @@ public class ApplicationExceptionHandler {
         return ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> violation.getPropertyPath().toString(),
-                        violation -> violation.getMessage()
+                        violation -> violation.getMessage(),
+                        (existingMessage, newMessage) -> existingMessage + "; " + newMessage
                 ));
     }
 }
