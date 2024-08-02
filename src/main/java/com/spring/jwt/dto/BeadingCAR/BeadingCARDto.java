@@ -11,15 +11,13 @@ public class BeadingCARDto {
 
     private Integer beadingCarId;
 
-    private Boolean automaticEmergencyBraking;
+    private Boolean airbag;
 
-    private Boolean ADAS;
+    private Boolean ABS;
+
+    private Boolean buttonStart;
 
     private Boolean sunroof;
-
-    private Boolean parkingSensors;
-
-    private Boolean adaptiveHeadlights;
 
     private Boolean childSafetyLocks;
 
@@ -104,11 +102,10 @@ public class BeadingCARDto {
         this.variant= beadingCAR.getVariant();
         this.dealerId= beadingCAR.getDealerId();
         this.carInsuranceType=beadingCAR.getCarInsuranceType();
-        this.automaticEmergencyBraking=beadingCAR.getAutomaticEmergencyBraking();
-        this.ADAS=beadingCAR.getADAS();
         this.sunroof=beadingCAR.getSunroof();
-        this.parkingSensors=beadingCAR.getParkingSensors();
-        this.adaptiveHeadlights=beadingCAR.getAdaptiveHeadlights();
+        this.ABS=beadingCAR.getABS();
+        this.airbag=beadingCAR.getAirbag();
+        this.buttonStart=beadingCAR.getButtonStart();
         this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
 
     }

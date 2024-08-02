@@ -48,6 +48,9 @@ public class User {
 
     private Long profilePhotoId;
 
+    private Integer profilePhotoId1;
+
+
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Userprofile profile;

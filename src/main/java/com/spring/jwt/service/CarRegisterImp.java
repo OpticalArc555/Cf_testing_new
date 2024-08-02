@@ -90,11 +90,13 @@ public class CarRegisterImp implements ICarRegister {
         if (carDto.getTransmission() != null) car.setTransmission(carDto.getTransmission());
         if (carDto.getCarInsuranceType() != null) car.setCarInsuranceType(carDto.getCarInsuranceType());
         if (carDto.getYear() != 0) car.setYear(carDto.getYear());
-        if (carDto.getAutomaticEmergencyBraking() != null) car.setAutomaticEmergencyBraking(carDto.getAutomaticEmergencyBraking());
-        if (carDto.getADAS() != null) car.setADAS(carDto.getADAS());
         if (carDto.getSunroof() != null) car.setSunroof(carDto.getSunroof());
-        if (carDto.getParkingSensors() != null) car.setParkingSensors(carDto.getParkingSensors());
-        if (carDto.getAdaptiveHeadlights() != null) car.setAdaptiveHeadlights(carDto.getAdaptiveHeadlights());
+        if (carDto.getAirbag() != null) car.setAirbag(carDto.getAirbag());
+
+        if (carDto.getABS() != null) car.setABS(carDto.getABS());
+
+        if (carDto.getButtonStart() != null) car.setButtonStart(carDto.getButtonStart());
+
         if (carDto.getChildSafetyLocks() != null) car.setChildSafetyLocks(carDto.getChildSafetyLocks());
 
         carRepo.save(car);
@@ -311,11 +313,10 @@ public class CarRegisterImp implements ICarRegister {
         carDto.setTitle(car.getTitle());
         carDto.setVariant(car.getVariant());
         carDto.setCarInsuranceType(car.getCarInsuranceType());
-        carDto.setAutomaticEmergencyBraking(car.getAutomaticEmergencyBraking());
-        carDto.setADAS(car.getADAS());
         carDto.setSunroof(car.getSunroof());
-        carDto.setParkingSensors(car.getParkingSensors());
-        carDto.setAdaptiveHeadlights(car.getAdaptiveHeadlights());
+        carDto.setAirbag(car.getAirbag());
+        carDto.setABS(car.getABS());
+        carDto.setButtonStart(car.getButtonStart());
         carDto.setChildSafetyLocks(car.getChildSafetyLocks());
         carDto.setDate(car.getDate());
         return carDto;

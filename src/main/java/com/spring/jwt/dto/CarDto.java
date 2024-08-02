@@ -21,15 +21,13 @@ import java.time.LocalDate;
 public class CarDto {
     private int carId;
 
-    private Boolean automaticEmergencyBraking;
+    private Boolean airbag;
 
-    private Boolean ADAS;
+    private Boolean ABS;
+
+    private Boolean buttonStart;
 
     private Boolean sunroof;
-
-    private Boolean parkingSensors;
-
-    private Boolean adaptiveHeadlights;
 
     private Boolean childSafetyLocks;
 
@@ -117,11 +115,10 @@ public class CarDto {
         this.variant = car.getVariant();
         this.carInsuranceDate = car.getCarInsuranceDate();
         this.carInsuranceType=car.getCarInsuranceType();
-        this.automaticEmergencyBraking=car.getAutomaticEmergencyBraking();
-        this.ADAS=car.getADAS();
+        this.ABS=car.getABS();
+        this.airbag=car.getAirbag();
+        this.buttonStart=car.getButtonStart();
         this.sunroof=car.getSunroof();
-        this.parkingSensors=car.getParkingSensors();
-        this.adaptiveHeadlights=car.getAdaptiveHeadlights();
         this.childSafetyLocks=car.getChildSafetyLocks();
     }
 }

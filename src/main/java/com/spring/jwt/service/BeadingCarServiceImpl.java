@@ -77,22 +77,22 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
                 .orElseThrow(() -> new BeadingCarNotFoundException("beadingCAR not found", HttpStatus.NOT_FOUND));
 
-        // Update fields only if they are not null in the DTO
-        if (beadingCARDto.getAutomaticEmergencyBraking() != null) {
-            beadingCAR.setAutomaticEmergencyBraking(beadingCARDto.getAutomaticEmergencyBraking());
+        if (beadingCARDto.getAirbag() != null) {
+            beadingCAR.setAirbag(beadingCARDto.getAirbag());
         }
-        if (beadingCARDto.getADAS() != null) {
-            beadingCAR.setADAS(beadingCARDto.getADAS());
+
+        if (beadingCARDto.getABS() != null) {
+            beadingCAR.setABS(beadingCARDto.getABS());
         }
+
+        if (beadingCARDto.getButtonStart() != null) {
+            beadingCAR.setButtonStart(beadingCARDto.getButtonStart());
+        }
+
         if (beadingCARDto.getSunroof() != null) {
             beadingCAR.setSunroof(beadingCARDto.getSunroof());
         }
-        if (beadingCARDto.getParkingSensors() != null) {
-            beadingCAR.setParkingSensors(beadingCARDto.getParkingSensors());
-        }
-        if (beadingCARDto.getAdaptiveHeadlights() != null) {
-            beadingCAR.setAdaptiveHeadlights(beadingCARDto.getAdaptiveHeadlights());
-        }
+
         if (beadingCARDto.getChildSafetyLocks() != null) {
             beadingCAR.setChildSafetyLocks(beadingCARDto.getChildSafetyLocks());
         }
