@@ -54,7 +54,7 @@ public class InspectorProfileController {
 
 }
 
-@GetMapping("/getByUserId")
+    @GetMapping("/getByUserId")
     public ResponseEntity<?> getbyUserId(@RequestParam Integer userId) {
     try {
         SingleProfileDto singleProfileDto = new SingleProfileDto("Success");
@@ -87,7 +87,6 @@ public class InspectorProfileController {
     public ResponseEntity<BaseResponseDTO> changePassword(@PathVariable int id, @RequestBody PasswordChange passwordChange){
 
         try{
-
             BaseResponseDTO result =inspectorProfileService.changePassword(id,passwordChange);
             return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Successful",result.getMessage()));
         }catch (UserNotFoundExceptions exception){
@@ -96,6 +95,7 @@ public class InspectorProfileController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessfully","InvalidPasswordException"));
         }
     }
+
 
 }
 
