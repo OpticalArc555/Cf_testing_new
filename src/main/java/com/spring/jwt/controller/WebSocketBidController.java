@@ -6,7 +6,10 @@ import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.dto.BidCarsDTO;
 import com.spring.jwt.dto.ResponseDto;
+import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.exception.*;
+import com.spring.jwt.repository.BidCarsRepo;
+import com.spring.jwt.service.BidCarsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -29,8 +33,14 @@ public class WebSocketBidController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketBidController.class);
     private final PlacedBidService placedBidService;
+
     private final SimpMessagingTemplate messagingTemplate;
+
     private final BeadingCarService beadingCarService;
+
+    private final BidCarsRepo bidCarsRepo;
+
+    private final BidCarsServiceImpl bidCarsService;
 
     @PreAuthorize("permitAll")
     @MessageMapping("/placeBid")
@@ -38,16 +48,47 @@ public class WebSocketBidController {
     public ResponseDto placeBid(PlacedBidDTO placedBidDTO) {
         try {
             logger.info("Received bid: {}", placedBidDTO);
-            String result = placedBidService.placeBid(placedBidDTO, placedBidDTO.getBidCarId());
 
-            messagingTemplate.convertAndSend("/topic/bids", placedBidDTO);
-            return new ResponseDto("success", result);
+            Optional<BidCars> bidCarOpt = bidCarsRepo.findById(placedBidDTO.getBidCarId());
+            if (bidCarOpt.isPresent()) {
+                BidCars bidCar = bidCarOpt.get();
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime closingTime = bidCar.getClosingTime();
+                System.out.println("Current Time: " + now);
+                System.out.println("Closing Time: " + closingTime);
+
+                if (closingTime.isBefore(now)) {
+                    return new ResponseDto("error", "Bidding is over. No more bids can be placed.");
+                }
+
+                String result = placedBidService.placeBid(placedBidDTO, placedBidDTO.getBidCarId());
+
+                if (closingTime.isAfter(now) && closingTime.minusMinutes(2).isBefore(now)) {
+                    System.out.println("Bid placed within the last 2 minutes. Extending closing time.");
+                    bidCar.setClosingTime(closingTime.plusMinutes(2));
+                    bidCarsRepo.save(bidCar);
+
+                    bidCarsService.scheduleBidProcessing(bidCar);
+
+                    System.err.println("Updated Closing Time: " + bidCar.getClosingTime());
+                } else {
+                    System.err.println("Bid not placed within the last 2 minutes. No extension needed.");
+                }
+                List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+                messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
+                messagingTemplate.convertAndSend("/topic/bids", placedBidDTO);
+                return new ResponseDto("success", result);
+            } else {
+                System.err.println("BidCar not found with ID: " + placedBidDTO.getBidCarId());
+                return new ResponseDto("error", "BidCar not found with ID: " + placedBidDTO.getBidCarId());
+            }
         } catch (BidAmountLessException | UserNotFoundExceptions | BidForSelfAuctionException |
-        InsufficientBalanceException e) {
+                 InsufficientBalanceException e) {
             logger.error("Error placing bid: {}", e.getMessage());
             return new ResponseDto("error", e.getMessage());
         }
     }
+
 
     @PreAuthorize("permitAll")
     @MessageMapping("/topThreeBids")
@@ -89,6 +130,8 @@ public class WebSocketBidController {
             return null;
         }
     }
+
+
     @PreAuthorize("permitAll")
     @MessageMapping("/liveCars")
     @SendTo("/topic/liveCars")

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,8 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     private final PlacedBidRepo placedBidRepo;
 
     private final  BidCarsRepo bidCarsRepo;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     private final ModelMapper modelMapper;
 
@@ -154,7 +157,7 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     @Override
     public List<PlacedBidDTO> getTopThree(Integer bidCarId) throws BidNotFoundExceptions {
         Optional<BidCars> bidCarOptional = bidCarsRepo.findById(bidCarId);
-        System.err.println(bidCarOptional);
+        System.out.println(bidCarOptional);
         if (bidCarOptional.isEmpty()) {
             throw new BidNotFoundExceptions("Bid car not found with ID: " + bidCarId);
         }
@@ -177,20 +180,28 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     public PlacedBidDTO getTopBid(Integer bidCarId) {
         Optional<PlacedBid> topBidOptional = placedBidRepo.findTopByBidCarIdOrderByAmountDesc(bidCarId);
 
-        System.err.println(topBidOptional);
         if (topBidOptional.isPresent()) {
             PlacedBid topBid = topBidOptional.get();
-            return new PlacedBidDTO(
+
+            PlacedBidDTO topBidDTO = new PlacedBidDTO(
                     topBid.getPlacedBidId(),
                     topBid.getUserId(),
                     topBid.getBidCarId(),
                     topBid.getDateTime(),
                     topBid.getAmount()
             );
-        } else {
 
+            sendTopBidUpdate(topBidDTO);
+
+            return topBidDTO;
+        } else {
             throw new BidNotFoundExceptions("No bids found for car ID: " + bidCarId);
         }
+    }
+
+    public void sendTopBidUpdate(PlacedBidDTO bid) {
+        logger.info("Publishing top bid update: " + bid);
+        messagingTemplate.convertAndSend("/topic/topBids/" + bid.getBidCarId(), bid);
     }
 
     @Override
