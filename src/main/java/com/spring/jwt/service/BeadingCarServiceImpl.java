@@ -69,9 +69,6 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     }
 
 
-
-
-
     @Override
     public String editCarDetails(BeadingCARDto beadingCARDto, Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
