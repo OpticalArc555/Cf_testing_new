@@ -14,6 +14,9 @@ public interface DealerService {
 
     DealerDto getDealerById(Integer dealerId);
 
+    DealerDto getDealerByUserId(Integer userId);
+
+
     BaseResponseDTO deleteDealer(Integer dealerId);
 
     BaseResponseDTO changePassword(Integer dealerId, ChangePasswordDto changePasswordDto);

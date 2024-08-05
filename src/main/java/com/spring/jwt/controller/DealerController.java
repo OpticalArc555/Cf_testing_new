@@ -85,6 +85,12 @@ public class DealerController {
        }
     }
 
+    @GetMapping("/win/{userId}")
+    public ResponseEntity<DealerDto> getDealerByUserId(@PathVariable Integer userId) {
+        DealerDto dealerDto = dealerService.getDealerByUserId(userId);
+        return ResponseEntity.ok(dealerDto);
+    }
+
 
     @DeleteMapping("/delete/{dealerId}")
     public ResponseEntity<ResponseDto> deleteDealer(@PathVariable("dealerId") Integer dealerId) {
