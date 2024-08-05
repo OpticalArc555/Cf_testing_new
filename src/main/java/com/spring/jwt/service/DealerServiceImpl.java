@@ -138,6 +138,24 @@ public class DealerServiceImpl implements DealerService {
         return dealerOptional.map(this::convertToDto).orElse(null);
     }
 
+    @Override
+    public DealerDto getDealerByUserId(Integer userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Dealer dealer = user.getDealer();
+
+            if (dealer != null) {
+                return convertToDto(dealer);
+            } else {
+                throw new DealerDeatilsNotFoundException("Dealer details not found for user id: " + userId);
+            }
+        } else {
+            throw new UserNotFoundExceptions("User not found for id: " + userId);
+        }
+    }
+
     private DealerDto convertToDto(Dealer dealer) {
         DealerDto dealerDto = new DealerDto();
         dealerDto.setDealer_id(dealer.getId());
