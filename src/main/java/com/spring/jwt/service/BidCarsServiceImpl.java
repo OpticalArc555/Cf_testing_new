@@ -34,6 +34,8 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     private final BidCarsRepo bidCarsRepo;
 
+    private final DealerRepository dealerRepository;
+
     private final SimpMessagingTemplate messagingTemplate;
 
     private final PlacedBidRepo placedBidRepo;
@@ -82,6 +84,9 @@ public class BidCarsServiceImpl implements BidCarsService {
         }
 
         BidCars bidCars = convertToEntity(bidCarsDTO);
+        Integer dealerId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId()).get().getDealerId();
+        Integer id = dealerRepository.findById(dealerId).get().getUser().getId();
+        bidCars.setUserId(id);
         BidCars savedBid = bidCarsRepo.save(bidCars);
 
 
@@ -141,6 +146,7 @@ public class BidCarsServiceImpl implements BidCarsService {
                 PlacedBid bid = highestBids.get(0);
                 if (bid != null && bidCar != null) {
                     FinalBid finalBid = new FinalBid();
+
                     finalBid.setSellerDealerId(bidCar.getUserId());
                     finalBid.setBuyerDealerId(bid.getUserId());
                     finalBid.setBidCarId(bidCar.getBidCarId());
