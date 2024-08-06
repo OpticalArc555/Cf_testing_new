@@ -1,10 +1,14 @@
 package com.spring.jwt.controller;
 
+import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.*;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
+import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.exception.*;
+import com.spring.jwt.repository.BidCarsRepo;
+import com.spring.jwt.service.BidCarsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/Bid")
@@ -21,6 +27,10 @@ public class PlaceBidController {
 
     private final PlacedBidService placedBidService;
 
+    private final BidCarsRepo bidCarsRepo;
+
+    private final BidCarsServiceImpl bidCarsService;
+
     private static final Logger logger = LoggerFactory.getLogger(PlaceBidController.class);
 
 
@@ -28,13 +38,37 @@ public class PlaceBidController {
     private ResponseEntity<?> placeBid(@RequestBody PlacedBidDTO placedBidDTO, @RequestParam Integer bidCarId) {
         try {
             String result = placedBidService.placeBid(placedBidDTO, bidCarId);
-            return (ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", result)));
-        } catch (BidAmountLessException | BidForSelfAuctionException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto("error", e.getMessage()));
-        } catch (InsufficientBalanceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", e.getMessage()));
-        }
 
+            Optional<BidCars> bidCarOpt = bidCarsRepo.findById(bidCarId);
+            if (bidCarOpt.isPresent()) {
+                BidCars bidCar = bidCarOpt.get();
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime closingTime = bidCar.getClosingTime();
+                System.out.println("Current Time: " + now);
+                System.out.println("Closing Time: " + closingTime);
+
+                if (closingTime.isBefore(now)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bidding is over. No more bids can be placed.");
+                }
+
+                if (closingTime.isAfter(now) && closingTime.minusMinutes(2).isBefore(now)) {
+                    System.out.println("Bid placed within the last 2 minutes. Extending closing time.");
+                    bidCar.setClosingTime(closingTime.plusMinutes(2));
+                    bidCarsRepo.save(bidCar);
+                    bidCarsService.scheduleBidProcessing(bidCar);
+
+                    System.out.println("Updated Closing Time: " + bidCar.getClosingTime());
+                } else {
+                    System.out.println("Bid not placed within the last 2 minutes. No extension needed.");
+                }
+            } else {
+                System.out.println("BidCar not found with ID: " + bidCarId);
+            }
+
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/user/{userId}")

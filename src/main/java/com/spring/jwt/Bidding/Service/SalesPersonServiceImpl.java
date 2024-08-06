@@ -3,23 +3,29 @@ package com.spring.jwt.Bidding.Service;
 import com.spring.jwt.Bidding.DTO.SalesPersonDto;
 import com.spring.jwt.Bidding.Interface.SalesPersonService;
 import com.spring.jwt.Bidding.Repository.SalesPersonRepository;
-import com.spring.jwt.dto.InspectorProfileDto;
+import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.entity.InspectorProfile;
 import com.spring.jwt.entity.SalesPerson;
 import com.spring.jwt.entity.User;
+import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +38,9 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     private final UserRepository userRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private static final Logger logger = LoggerFactory.getLogger(SalesPersonServiceImpl.class);
 
     @Override
     public SalesPersonDto getProfileByUserId(Integer userId) {
@@ -114,6 +123,45 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         user.getRoles().clear();
         userRepository.deleteById(user.getId());
         return "Profile deleted successfully";
+    }
+
+    @Override
+    public BaseResponseDTO changePassword(int id, PasswordChange passwordChange) {
+        BaseResponseDTO response = new BaseResponseDTO();
+
+        Optional<SalesPerson> userOptional = salesPersonRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get().getUser();
+            logger.info("User found: {}", user);
+
+            if (passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())) {
+                logger.info("Old password matches.");
+
+                if (passwordChange.getNewPassword().equals(passwordChange.getConfirmPassword())) {
+                    logger.info("New password and confirm password match.");
+
+                    user.setPassword(passwordEncoder.encode(passwordChange.getNewPassword()));
+                    userRepository.save(user);
+
+                    response.setCode(String.valueOf(HttpStatus.OK.value()));
+                    response.setMessage("Password changed");
+                } else {
+                    response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+                    logger.error("New password and confirm password do not match.");
+                    throw new InvalidPasswordException("New password and confirm password does not match");
+                }
+            } else {
+                response.setCode(String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                logger.error("Old password does not match.");
+                throw new InvalidPasswordException("Invalid Password");
+            }
+
+        } else {
+            logger.error("User not found.");
+            throw new UserNotFoundExceptions("No user found");
+        }
+        return response;
     }
 
 

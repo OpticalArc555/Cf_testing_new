@@ -1,19 +1,27 @@
 package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.InspectorProfileService;
+import com.spring.jwt.controller.PlaceBidController;
 import com.spring.jwt.dto.InspectorProfileDto;
+import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.entity.InspectorProfile;
 import com.spring.jwt.entity.User;
+import com.spring.jwt.entity.Userprofile;
+import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.InspectorProfileRepo;
 import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +36,12 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
     private final InspectorProfileRepo inspectorProfileRepo;
 
     private final UserRepository userRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private static final Logger logger = LoggerFactory.getLogger(InspectorProfileServiceImpl.class);
+
+
 
     @Override
     public String updateProfile(InspectorProfileDto inspectorProfileDto, Integer InspectorProfileId) {
@@ -144,6 +158,44 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         return new PageImpl<>(profileDtoList, pageable, allProfiles.getTotalElements());
     }
 
+    @Override
+    public BaseResponseDTO changePassword(int id, PasswordChange passwordChange) {
+        BaseResponseDTO response = new BaseResponseDTO();
+
+        Optional<InspectorProfile> userOptional = inspectorProfileRepo.findById(id);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get().getUser();
+            logger.info("User found: {}", user);
+
+            if (passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())) {
+                logger.info("Old password matches.");
+
+                if (passwordChange.getNewPassword().equals(passwordChange.getConfirmPassword())) {
+                    logger.info("New password and confirm password match.");
+
+                    user.setPassword(passwordEncoder.encode(passwordChange.getNewPassword()));
+                    userRepository.save(user);
+
+                    response.setCode(String.valueOf(HttpStatus.OK.value()));
+                    response.setMessage("Password changed");
+                } else {
+                    response.setCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+                    logger.error("New password and confirm password do not match.");
+                    throw new InvalidPasswordException("New password and confirm password does not match");
+                }
+            } else {
+                response.setCode(String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                logger.error("Old password does not match.");
+                throw new InvalidPasswordException("Invalid Password");
+            }
+
+        } else {
+            logger.error("User not found.");
+            throw new UserNotFoundExceptions("No user found");
+        }
+        return response;
+    }
 
     private InspectorProfileDto convertToDto(InspectorProfile inspectorProfile) {
         InspectorProfileDto dto = new InspectorProfileDto();

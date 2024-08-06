@@ -34,6 +34,8 @@ public class BidCarsServiceImpl implements BidCarsService {
 
     private final BidCarsRepo bidCarsRepo;
 
+    private final DealerRepository dealerRepository;
+
     private final SimpMessagingTemplate messagingTemplate;
 
     private final PlacedBidRepo placedBidRepo;
@@ -82,6 +84,9 @@ public class BidCarsServiceImpl implements BidCarsService {
         }
 
         BidCars bidCars = convertToEntity(bidCarsDTO);
+        Integer dealerId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId()).get().getDealerId();
+        Integer id = dealerRepository.findById(dealerId).get().getUser().getId();
+        bidCars.setUserId(id);
         BidCars savedBid = bidCarsRepo.save(bidCars);
 
 
@@ -93,7 +98,7 @@ public class BidCarsServiceImpl implements BidCarsService {
         return convertToDto(savedBid);
     }
 
-    private void scheduleBidProcessing(BidCars bidCar) {
+    public void scheduleBidProcessing(BidCars bidCar) {
         LocalDateTime closingTime = bidCar.getClosingTime();
         ZonedDateTime indiaTime = closingTime.atZone(ZoneId.of("Asia/Kolkata"));
         long delay = java.time.Duration.between(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")), indiaTime).toMillis();
@@ -133,21 +138,30 @@ public class BidCarsServiceImpl implements BidCarsService {
     }
 
     public void processBid(BidCars bidCar) {
-        log.info("Executing processBid for car: " + bidCar.getBidCarId());
+        log.info("Executing processBid for car: {}", bidCar.getBidCarId());
 
-        List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
-        if (!highestBids.isEmpty()) {
-            PlacedBid bid = highestBids.get(0);
-            FinalBid finalBid = new FinalBid();
-            finalBid.setSellerDealerId(bidCar.getUserId());
-            finalBid.setBuyerDealerId(bid.getUserId());
-            finalBid.setBidCarId(bidCar.getBidCarId());
-            finalBid.setPrice(bid.getAmount());
+        try {
+            List<PlacedBid> highestBids = placedBidRepo.findTopBidByBidCarId(bidCar.getBidCarId(), PageRequest.of(0, 1));
+            if (!highestBids.isEmpty()) {
+                PlacedBid bid = highestBids.get(0);
+                if (bid != null && bidCar != null) {
+                    FinalBid finalBid = new FinalBid();
 
-            finalBidRepo.save(finalBid);
-            log.info("Saved final bid for car: " + bidCar.getBidCarId());
-        } else {
-            log.info("No bids found for car: " + bidCar.getBidCarId());
+                    finalBid.setSellerDealerId(bidCar.getUserId());
+                    finalBid.setBuyerDealerId(bid.getUserId());
+                    finalBid.setBidCarId(bidCar.getBidCarId());
+                    finalBid.setPrice(bid.getAmount());
+
+                    finalBidRepo.save(finalBid);
+                    log.info("Successfully saved final bid for car: {} with amount: {}", bidCar.getBidCarId(), bid.getAmount());
+                } else {
+                    log.warn("Invalid bid or bidCar data for car: {}", bidCar.getBidCarId());
+                }
+            } else {
+                log.info("No bids found for car: {}", bidCar.getBidCarId());
+            }
+        } catch (Exception e) {
+            log.error("Error processing bid for car: {}", bidCar.getBidCarId(), e);
         }
     }
 
