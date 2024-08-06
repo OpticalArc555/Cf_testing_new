@@ -54,6 +54,8 @@ public class BeadingCarWithInsDto {
 
     private String transmission;
 
+
+
     private Integer year;
 
     private LocalDate date;
@@ -68,6 +70,8 @@ public class BeadingCarWithInsDto {
 
     private Integer inspectionReportId;
 
+    private String carInsuranceType;
+
 
     public BeadingCarWithInsDto() {
     }
@@ -77,6 +81,7 @@ public class BeadingCarWithInsDto {
         this.acFeature = beadingCAR.getAcFeature();
         this.musicFeature = beadingCAR.getMusicFeature();
         this.carInsurance= beadingCAR.getCarInsurance();
+        this.carInsuranceType=beadingCAR.getCarInsuranceType();
         this.area = beadingCAR.getArea();
         this.brand = beadingCAR.getBrand();
         this.carStatus = beadingCAR.getCarStatus();
