@@ -75,7 +75,9 @@ public class WebSocketBidController {
                     System.err.println("Bid not placed within the last 2 minutes. No extension needed.");
                 }
                 List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+
                 messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
+
                 messagingTemplate.convertAndSend("/topic/bids", placedBidDTO);
                 return new ResponseDto("success", result);
             } else {
@@ -145,6 +147,5 @@ public class WebSocketBidController {
             return Collections.emptyList();
         }
     }
-
 
 }

@@ -4,10 +4,12 @@ import com.spring.jwt.Bidding.Interface.SmsService;
 import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.dto.*;
+import com.spring.jwt.entity.BeadingCAR;
 import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.repository.BeadingCarRepo;
 import com.spring.jwt.repository.BidCarsRepo;
 import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -31,15 +34,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StartBidingController {
     private final BidCarsRepo bidCarsRepo;
-
     private final BiddingTimerService biddingTimerService;
     private final UserRepository userRepository;
     private final BidCarsService bidCarsService;
+    private final BeadingCarRepo beadingCarRepo;
     private final SmsService smsService;
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
 
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
     private final ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, BiddingTimerRequestDTO> biddingTimerRequests = new ConcurrentHashMap<>();
 
     @PostMapping("/SetTime")
     public ResponseEntity<?> setTimer(@RequestBody BiddingTimerRequestDTO biddingTimerRequest) {
@@ -52,6 +56,8 @@ public class StartBidingController {
 
             BiddingTimerRequestDTO savedRequest = biddingTimerService.startTimer(biddingTimerRequest);
 
+            biddingTimerRequests.put(savedRequest.getBiddingTimerId(), savedRequest); // Store the request
+
             startCountdown(savedRequest.getBiddingTimerId(), durationMinutes);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", savedRequest));
@@ -62,11 +68,45 @@ public class StartBidingController {
 
     private void startCountdown(int biddingTimerId, int durationMinutes) {
         ScheduledFuture<?> scheduledTask = executorService.schedule(() -> {
-            pushNotificationToAllUsers();
+            // Create bidding when the timer ends
+            createBiddingOnTimerEnd(biddingTimerId);
+
+            // Send notifications in a separate thread
+            CompletableFuture.runAsync(this::pushNotificationToAllUsers);
         }, durationMinutes, TimeUnit.MINUTES);
 
         scheduledTasks.put(biddingTimerId, scheduledTask);
     }
+
+    private void createBiddingOnTimerEnd(int biddingTimerId) {
+        BiddingTimerRequestDTO biddingTimerRequest = biddingTimerRequests.get(biddingTimerId);
+        if (biddingTimerRequest == null) {
+            logger.error("BiddingTimerRequest not found for BiddingTimerId: " + biddingTimerId);
+            return;
+        }
+
+        Optional<BeadingCAR> beadingCarOpt = beadingCarRepo.findById(biddingTimerRequest.getBeadingCarId());
+        if (!beadingCarOpt.isPresent()) {
+            logger.error("BeadingCAR not found for BeadingCarId: " + biddingTimerRequest.getBeadingCarId());
+            return;
+        }
+
+        BeadingCAR beadingCar = beadingCarOpt.get();
+
+        BidCarsDTO bidCarsDTO = new BidCarsDTO();
+        bidCarsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
+        bidCarsDTO.setCreatedAt(LocalDateTime.now());
+        bidCarsDTO.setBasePrice(biddingTimerRequest.getBasePrice());
+        bidCarsDTO.setUserId(biddingTimerRequest.getUserId());
+
+        ResponseEntity<?> response = createBidding(bidCarsDTO);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            logger.info("Bidding created successfully after timer ended for BiddingTimerId: " + biddingTimerId);
+        } else {
+            logger.error("Failed to create bidding after timer ended for BiddingTimerId: " + biddingTimerId);
+        }
+    }
+
 
 
     private void pushNotificationToAllUsers() {
@@ -83,7 +123,9 @@ public class StartBidingController {
 
         try {
             sendNotification(dealerEmails, "Hurry Up Bidding is Started!");
+
 //            sendSmsNotification(dealerMobileNumbers, "Hurry Up Bidding is Started!");
+
             logger.info("Notification sent to users: " + dealerEmails);
         } catch (Exception e) {
             logger.error("Failed to send notification to users: " + dealerEmails, e);
@@ -99,6 +141,7 @@ public class StartBidingController {
         try {
             BidCarsDTO bidding = bidCarsService.createBidding(bidCarsDTO);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", bidding));
+
         } catch (Exception e) {
             return handleException(e);
         }

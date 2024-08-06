@@ -1,5 +1,6 @@
 package com.spring.jwt.entity;
 
+import com.spring.jwt.dto.BidCarsDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,14 +34,11 @@ public class BidCars {
 
     @PrePersist
     public void prePersist() {
-        final LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
-        if(closingTime == null) {
-            closingTime = localDateTime.plusMinutes(3);
-        }
-        if(createdAt == null) {
+        if (createdAt == null) {
             createdAt = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         }
+        if (closingTime == null) {
+            closingTime = createdAt.plusMinutes(2);
+        }
     }
-
-
 }
