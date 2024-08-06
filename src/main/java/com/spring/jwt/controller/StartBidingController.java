@@ -1,6 +1,7 @@
 package com.spring.jwt.controller;
 
 import com.spring.jwt.Bidding.Interface.SmsService;
+import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.dto.*;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,16 +35,29 @@ import java.util.stream.Collectors;
 @RequestMapping("/Bidding/v1")
 @RequiredArgsConstructor
 public class StartBidingController {
+
     private final BidCarsRepo bidCarsRepo;
+
     private final BiddingTimerService biddingTimerService;
+
     private final UserRepository userRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
+    private final BeadingCarService beadingCarService;
+
     private final BidCarsService bidCarsService;
+
     private final BeadingCarRepo beadingCarRepo;
+
     private final SmsService smsService;
+
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
 
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+
     private final ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
+
     private final ConcurrentHashMap<Integer, BiddingTimerRequestDTO> biddingTimerRequests = new ConcurrentHashMap<>();
 
     @PostMapping("/SetTime")
@@ -56,7 +71,7 @@ public class StartBidingController {
 
             BiddingTimerRequestDTO savedRequest = biddingTimerService.startTimer(biddingTimerRequest);
 
-            biddingTimerRequests.put(savedRequest.getBiddingTimerId(), savedRequest); // Store the request
+            biddingTimerRequests.put(savedRequest.getBiddingTimerId(), savedRequest);
 
             startCountdown(savedRequest.getBiddingTimerId(), durationMinutes);
 
@@ -68,10 +83,9 @@ public class StartBidingController {
 
     private void startCountdown(int biddingTimerId, int durationMinutes) {
         ScheduledFuture<?> scheduledTask = executorService.schedule(() -> {
-            // Create bidding when the timer ends
+
             createBiddingOnTimerEnd(biddingTimerId);
 
-            // Send notifications in a separate thread
             CompletableFuture.runAsync(this::pushNotificationToAllUsers);
         }, durationMinutes, TimeUnit.MINUTES);
 
@@ -99,6 +113,10 @@ public class StartBidingController {
         bidCarsDTO.setBasePrice(biddingTimerRequest.getBasePrice());
         bidCarsDTO.setUserId(biddingTimerRequest.getUserId());
 
+        List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+
+        messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
+
         ResponseEntity<?> response = createBidding(bidCarsDTO);
         if (response.getStatusCode() == HttpStatus.OK) {
             logger.info("Bidding created successfully after timer ended for BiddingTimerId: " + biddingTimerId);
@@ -106,8 +124,6 @@ public class StartBidingController {
             logger.error("Failed to create bidding after timer ended for BiddingTimerId: " + biddingTimerId);
         }
     }
-
-
 
     private void pushNotificationToAllUsers() {
         List<User> allUsers = userRepository.findAll();
