@@ -68,8 +68,8 @@ public class BidCarsServiceImpl implements BidCarsService {
             throw new UserNotFoundExceptions("User not found");
         }
         Set<Role> roles = byUserId.getRoles();
-        boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
-        if (!isSalesPerson) {
+        boolean isAuthorized = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()) || "ADMIN".equals(role.getName()));
+        if (!isAuthorized) {
             throw new RuntimeException("You're not authorized to perform this action");
         }
         Optional<BeadingCAR> byId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId());

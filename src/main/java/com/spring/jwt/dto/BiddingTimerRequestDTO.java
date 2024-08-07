@@ -3,6 +3,8 @@ package com.spring.jwt.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 public class BiddingTimerRequestDTO {
@@ -15,5 +17,6 @@ public class BiddingTimerRequestDTO {
 
     private Integer basePrice;
 
-    private int durationMinutes;
+    private LocalDateTime endTime;
+
 }

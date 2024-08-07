@@ -51,7 +51,6 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
             throw new UserNotFoundExceptions("User not found");
         }
         Set<Role> roles = byUserId.getRoles();
-        System.err.println(roles);
         boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
         if(!isSalesPerson) {
             throw new RuntimeException("You're not authorized to perform this action");
@@ -61,16 +60,13 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         }
         BeadingCAR beadingCAR = byId.get();
         String carStatus = beadingCAR.getCarStatus();
-        System.err.println("Car Status: " + carStatus);
         if (!"ACTIVE".equals(carStatus)) {
             throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
         BiddingTimerRequest biddingTimerRequest1 = convertToEntity(biddingTimerRequest);
         BiddingTimerRequest save = biddingTImerRepo.save(biddingTimerRequest1);
 
-
-        BiddingTimerRequestDTO biddingTimerRequestDTO = convertToDto(save);
-        return biddingTimerRequestDTO;
+        return convertToDto(save);
     }
 
     @Override
@@ -85,14 +81,13 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
             throw new BeadingCarNotFoundException("Car not found");
         }
 
-        BiddingTimerRequest beadingCAR = optionalCar.get();
-        beadingCAR.setDurationMinutes(updateBiddingTimeRequest.getDurationMinutes());
+        BiddingTimerRequest biddingTimerRequest = optionalCar.get();
+        biddingTimerRequest.setEndTime(updateBiddingTimeRequest.getEndTime());
 
-        biddingTImerRepo.save(beadingCAR);
+        biddingTImerRepo.save(biddingTimerRequest);
 
-        return modelMapper.map(beadingCAR, BiddingTimerRequestDTO.class);
+        return modelMapper.map(biddingTimerRequest, BiddingTimerRequestDTO.class);
     }
-
 //    @Override
 //    public void sendNotification(String recipient, String message) {
 //

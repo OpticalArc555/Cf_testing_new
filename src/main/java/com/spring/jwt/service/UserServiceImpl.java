@@ -111,14 +111,13 @@ public class UserServiceImpl implements UserService {
                 dealer.setAddress(registerDto.getAddress());
                 dealer.setArea(registerDto.getArea());
                 dealer.setCity(registerDto.getCity());
-                dealer.setStatus(registerDto.status);
+                dealer.setStatus(false);
                 dealer.setFirstname(registerDto.getFirstName());
                 dealer.setLastName(registerDto.getLastName());
                 dealer.setMobileNo(registerDto.getMobileNo());
                 dealer.setShopName(registerDto.getShopName());
                 dealer.setEmail(registerDto.getEmail());
                 dealer.setSalesPersonId(registerDto.getSalesPersonId());
-
                 user.setDealer(dealer);
 
                 dealer.setUser(user);
@@ -133,13 +132,12 @@ public class UserServiceImpl implements UserService {
             inspectorProfile.setCity(registerDto.getCity());
             inspectorProfile.setFirstName(registerDto.getFirstName());
             inspectorProfile.setLastName(registerDto.getLastName());
-            inspectorProfile.setStatus(registerDto.status);
+            inspectorProfile.setStatus(false);
             user.setInspectorProfile(inspectorProfile);
             inspectorProfile.setUser(user);
 
         } else if (role.getName().equals("SALESPERSON")) {
             SalesPerson salesPerson = new SalesPerson();
-
             salesPerson.setFirstName(registerDto.getFirstName());
             salesPerson.setLastName(registerDto.getLastName());
             salesPerson.setAddress(registerDto.getAddress());
@@ -147,7 +145,7 @@ public class UserServiceImpl implements UserService {
             salesPerson.setCity(registerDto.getCity());
             salesPerson.setJoiningdate(registerDto.getJoiningdate());
             salesPerson.setDocumentId(registerDto.getDocumentId());
-            salesPerson.setStatus(registerDto.status);
+            salesPerson.setStatus(false);
             user.setSalesPerson(salesPerson);
             salesPerson.setUser(user);
         }
