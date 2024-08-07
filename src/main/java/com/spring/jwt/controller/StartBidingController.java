@@ -112,18 +112,22 @@ public class StartBidingController {
         bidCarsDTO.setCreatedAt(LocalDateTime.now());
         bidCarsDTO.setBasePrice(biddingTimerRequest.getBasePrice());
         bidCarsDTO.setUserId(biddingTimerRequest.getUserId());
-
-        List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
-
-        messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
-
         ResponseEntity<?> response = createBidding(bidCarsDTO);
         if (response.getStatusCode() == HttpStatus.OK) {
             logger.info("Bidding created successfully after timer ended for BiddingTimerId: " + biddingTimerId);
         } else {
             logger.error("Failed to create bidding after timer ended for BiddingTimerId: " + biddingTimerId);
         }
+        publishLiveCarsToWebSocket();
     }
+
+    private void publishLiveCarsToWebSocket() {
+        List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+        logger.info("Publishing live cars to WebSocket: " + liveCars);
+        messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
+    }
+
+
 
     private void pushNotificationToAllUsers() {
         List<User> allUsers = userRepository.findAll();
