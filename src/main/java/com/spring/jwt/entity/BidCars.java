@@ -39,7 +39,7 @@ public class BidCars {
             createdAt = nowInIST.toLocalDateTime();
         }
         if (closingTime == null) {
-            closingTime = createdAt.plusMinutes(4);
+            closingTime = createdAt.plusMinutes(15);
         }
     }
 }
