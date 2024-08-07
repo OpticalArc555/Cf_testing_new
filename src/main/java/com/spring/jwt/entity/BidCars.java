@@ -1,6 +1,5 @@
 package com.spring.jwt.entity;
 
-import com.spring.jwt.dto.BidCarsDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,7 @@ public class BidCars {
             createdAt = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         }
         if (closingTime == null) {
-            closingTime = createdAt.plusMinutes(2);
+            closingTime = createdAt.plusMinutes(4);
         }
     }
 }
