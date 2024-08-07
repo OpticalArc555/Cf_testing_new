@@ -42,16 +42,16 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
     private final Logger logger = LoggerFactory.getLogger(BiddingTimerServiceImpl.class);
 
-
     @Override
     public BiddingTimerRequestDTO startTimer(BiddingTimerRequestDTO biddingTimerRequest) {
+
         User byUserId = userRepository.findByUserId(biddingTimerRequest.getUserId());
         Optional<BeadingCAR> byId = beadingCarRepo.findById(biddingTimerRequest.getBeadingCarId());
         if(byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
         }
         Set<Role> roles = byUserId.getRoles();
-        boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()));
+        boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()) || "ADMIN".equals(role.getName()));
         if(!isSalesPerson) {
             throw new RuntimeException("You're not authorized to perform this action");
         }
