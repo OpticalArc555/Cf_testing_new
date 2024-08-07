@@ -89,9 +89,12 @@ public class BidCarsServiceImpl implements BidCarsService {
 
         Integer id = dealerRepository.findById(dealerId).get().getUser().getId();
         bidCars.setUserId(id);
+
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
-        ZonedDateTime indiaTime  = ZonedDateTime.now(zoneId);
+        ZonedDateTime indiaTime = ZonedDateTime.now(zoneId);
         bidCars.setCreatedAt(indiaTime.toLocalDateTime());
+        bidCars.setClosingTime(bidCarsDTO.getClosingTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(zoneId).toLocalDateTime());
+
         BidCars savedBid = bidCarsRepo.save(bidCars);
 
         scheduleBidProcessing(savedBid);
@@ -101,6 +104,7 @@ public class BidCarsServiceImpl implements BidCarsService {
 
         return convertToDto(savedBid);
     }
+
 
     public void scheduleBidProcessing(BidCars bidCar) {
         LocalDateTime closingTime = bidCar.getClosingTime();
