@@ -26,7 +26,7 @@ public class BiddingTimerRequest {
     @Column(name="basePrice")
     private Integer basePrice;
 
-    @Column(name="durationMinutes")
-    private int durationMinutes;
+    @Column(name="endTime")
+    private LocalDateTime endTime;
 
 }

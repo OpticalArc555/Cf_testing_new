@@ -119,6 +119,9 @@ public class JwtServiceImpl implements JwtService {
             userId = userDetailsCustom.getUserId();
             salesPersonId = userDetailsCustom.getSalesPersonId();
         }
+        if (roles.contains("ADMIN")) {
+            userId = userDetailsCustom.getUserId();
+        }
 
         log.info("firstName: {}", firstName);
         log.info("dealerId: {}", dealerId);

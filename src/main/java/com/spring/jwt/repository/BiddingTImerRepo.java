@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BiddingTImerRepo extends JpaRepository<BiddingTimerRequest, Integer> {
+    boolean existsByBeadingCarId(Integer beadingCarId);
+
+    BiddingTimerRequest findByBeadingCarId(Integer beadingCarId);
 }
