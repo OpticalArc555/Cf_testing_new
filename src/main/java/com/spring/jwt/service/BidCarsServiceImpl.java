@@ -84,11 +84,15 @@ public class BidCarsServiceImpl implements BidCarsService {
         }
 
         BidCars bidCars = convertToEntity(bidCarsDTO);
+
         Integer dealerId = beadingCarRepo.findById(bidCarsDTO.getBeadingCarId()).get().getDealerId();
+
         Integer id = dealerRepository.findById(dealerId).get().getUser().getId();
         bidCars.setUserId(id);
+        ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+        ZonedDateTime indiaTime  = ZonedDateTime.now(zoneId);
+        bidCars.setCreatedAt(indiaTime.toLocalDateTime());
         BidCars savedBid = bidCarsRepo.save(bidCars);
-
 
         scheduleBidProcessing(savedBid);
 
