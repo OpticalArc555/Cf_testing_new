@@ -162,9 +162,13 @@ public class StartBidingController {
     @PostMapping("/CreateBidding")
     public ResponseEntity<?> createBidding(@RequestBody BidCarsDTO bidCarsDTO) {
         try {
+            ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+            ZonedDateTime indiaTime = ZonedDateTime.now(zoneId);
+            bidCarsDTO.setCreatedAt(indiaTime.toLocalDateTime());
+            bidCarsDTO.setClosingTime(bidCarsDTO.getClosingTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(zoneId).toLocalDateTime());
+
             BidCarsDTO bidding = bidCarsService.createBidding(bidCarsDTO);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", bidding));
-
         } catch (Exception e) {
             return handleException(e);
         }
