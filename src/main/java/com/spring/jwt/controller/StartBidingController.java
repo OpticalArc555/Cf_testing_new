@@ -24,8 +24,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -68,7 +66,6 @@ public class StartBidingController {
         if (!user.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
         }
-
         try {
             int durationMinutes = biddingTimerRequest.getDurationMinutes();
 
@@ -112,11 +109,7 @@ public class StartBidingController {
 
         BidCarsDTO bidCarsDTO = new BidCarsDTO();
         bidCarsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
-
-        ZoneId zoneId = ZoneId.of("Asia/Kolkata");
-        ZonedDateTime indiaTime  = ZonedDateTime.now(zoneId);
-
-        bidCarsDTO.setCreatedAt(indiaTime.toLocalDateTime());
+        bidCarsDTO.setCreatedAt(LocalDateTime.now());
         bidCarsDTO.setBasePrice(biddingTimerRequest.getBasePrice());
         bidCarsDTO.setUserId(biddingTimerRequest.getUserId());
 
