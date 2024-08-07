@@ -68,6 +68,7 @@ public class StartBidingController {
         if (!user.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
         }
+
         try {
             int durationMinutes = biddingTimerRequest.getDurationMinutes();
 
@@ -111,8 +112,10 @@ public class StartBidingController {
 
         BidCarsDTO bidCarsDTO = new BidCarsDTO();
         bidCarsDTO.setBeadingCarId(beadingCar.getBeadingCarId());
+
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
         ZonedDateTime indiaTime  = ZonedDateTime.now(zoneId);
+
         bidCarsDTO.setCreatedAt(indiaTime.toLocalDateTime());
         bidCarsDTO.setBasePrice(biddingTimerRequest.getBasePrice());
         bidCarsDTO.setUserId(biddingTimerRequest.getUserId());
