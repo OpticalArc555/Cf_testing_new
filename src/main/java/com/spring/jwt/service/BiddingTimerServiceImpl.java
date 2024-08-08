@@ -43,7 +43,6 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
     private final TemplateEngine templateEngine;
 
-
     private final JavaMailSender javaMailSender;
 
     private final UserRepository userRepository;
@@ -90,23 +89,17 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
     @Override
     public BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest) {
-        User user = userRepository.findByUserId(updateBiddingTimeRequest.getUserId());
-        if (user == null) {
-            throw new UserNotFoundExceptions("User not found");
-        }
+        BiddingTimerRequest biddingTimerRequest = biddingTImerRepo.findById(updateBiddingTimeRequest.getBiddingTimerId())
+                .orElseThrow(() -> new BeadingCarNotFoundException("BiddingTimerRequest not found"));
 
-        Optional<BiddingTimerRequest> optionalCar = biddingTImerRepo.findById(updateBiddingTimeRequest.getBeadingCarId());
-        if (optionalCar.isEmpty()) {
-            throw new BeadingCarNotFoundException("Car not found");
-        }
-
-        BiddingTimerRequest biddingTimerRequest = optionalCar.get();
         biddingTimerRequest.setEndTime(updateBiddingTimeRequest.getEndTime());
 
         biddingTImerRepo.save(biddingTimerRequest);
 
         return modelMapper.map(biddingTimerRequest, BiddingTimerRequestDTO.class);
     }
+
+
 //    @Override
 //    public void sendNotification(String recipient, String message) {
 //

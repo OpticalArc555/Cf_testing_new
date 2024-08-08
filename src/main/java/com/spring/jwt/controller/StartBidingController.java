@@ -68,7 +68,6 @@ public class StartBidingController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Bid timing already set for the car, please update if required");
         }
         try {
-            // Convert the endTime to Asia/Kolkata time zone
             LocalDateTime endTime = biddingTimerRequest.getEndTime()
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(ZoneId.of("Asia/Kolkata"))
@@ -177,18 +176,20 @@ public class StartBidingController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSingleCarDto);
     }
 
-
     @PostMapping("/UpdateBiddingTime")
     public ResponseEntity<?> updateBiddingTime(@RequestBody BiddingTimerRequestDTO updateBiddingTimeRequest) {
         try {
-            BiddingTimerRequest existingRequest = biddingTImerRepo.findByBeadingCarId(updateBiddingTimeRequest.getBeadingCarId());
-
-            LocalDateTime endTime = existingRequest.getEndTime()
+            LocalDateTime kolkataEndTime = updateBiddingTimeRequest.getEndTime()
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(ZoneId.of("Asia/Kolkata"))
                     .toLocalDateTime();
 
-            if (endTime.isBefore(LocalDateTime.now(ZoneId.of("Asia/Kolkata")))) {
+            updateBiddingTimeRequest.setEndTime(kolkataEndTime);
+
+            BiddingTimerRequest existingRequest = biddingTImerRepo.findById(updateBiddingTimeRequest.getBiddingTimerId())
+                    .orElseThrow(() -> new BeadingCarNotFoundException("BiddingTimerRequest not found"));
+
+            if (kolkataEndTime.isBefore(LocalDateTime.now(ZoneId.of("Asia/Kolkata")))) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("End time has already passed");
             }
 
@@ -198,8 +199,8 @@ public class StartBidingController {
             }
 
             cancelExistingTask(updatedTimerRequest.getBiddingTimerId());
-            System.err.println("Updated the Task & rescheduled to send mail and add car at: " + updateBiddingTimeRequest.getEndTime());
-            scheduleTask(updatedTimerRequest.getBiddingTimerId(), updateBiddingTimeRequest.getEndTime());
+            System.err.println("Updated the Task & rescheduled to send mail and add car at: " + kolkataEndTime);
+            scheduleTask(updatedTimerRequest.getBiddingTimerId(), kolkataEndTime);
             return ResponseEntity.status(HttpStatus.OK).body(new ResDtos("success", updatedTimerRequest));
         } catch (UserNotFoundExceptions | BeadingCarNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseSingleCarDto("User or car not found"));
@@ -207,6 +208,7 @@ public class StartBidingController {
             return handleException(e);
         }
     }
+
 
 
     private void cancelExistingTask(int biddingTimerId) {
