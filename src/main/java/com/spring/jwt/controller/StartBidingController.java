@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -67,7 +68,12 @@ public class StartBidingController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Bid timing already set for the car, please update if required");
         }
         try {
-            LocalDateTime endTime = biddingTimerRequest.getEndTime();
+            // Convert the endTime to Asia/Kolkata time zone
+            LocalDateTime endTime = biddingTimerRequest.getEndTime()
+                    .atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Asia/Kolkata"))
+                    .toLocalDateTime();
+
             BiddingTimerRequestDTO savedRequest = biddingTimerService.startTimer(biddingTimerRequest);
             biddingTimerRequests.put(savedRequest.getBiddingTimerId(), savedRequest);
             scheduleTask(savedRequest.getBiddingTimerId(), endTime);
@@ -76,6 +82,7 @@ public class StartBidingController {
             return handleException(e);
         }
     }
+
 
     private void scheduleTask(int biddingTimerId, LocalDateTime endTime) {
         long delay = calculateDelayInMillis(endTime);
@@ -175,7 +182,11 @@ public class StartBidingController {
         try {
             BiddingTimerRequest existingRequest = biddingTImerRepo.findByBeadingCarId(updateBiddingTimeRequest.getBeadingCarId());
 
-            LocalDateTime endTime = existingRequest.getEndTime();
+            LocalDateTime endTime = existingRequest.getEndTime()
+                    .atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Asia/Kolkata"))
+                    .toLocalDateTime();
+
             if (endTime.isBefore(LocalDateTime.now())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("End time has already passed");
             }
