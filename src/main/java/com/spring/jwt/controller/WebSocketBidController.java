@@ -141,6 +141,7 @@ public class WebSocketBidController {
         try {
             LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
             List<BidCarsDTO> liveCars = beadingCarService.getAllLiveCars();
+            System.err.println(liveCars);
             return liveCars;
         } catch (Exception e) {
             logger.error("Error getting live cars: {}", e.getMessage());

@@ -48,9 +48,13 @@ public class StartBidingController {
     private final SmsService smsService;
 
     private final BiddingTImerRepo biddingTImerRepo;
+
     private final Logger logger = LoggerFactory.getLogger(StartBidingController.class);
+
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+
     private final ConcurrentHashMap<Integer, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
+
     private final ConcurrentHashMap<Integer, BiddingTimerRequestDTO> biddingTimerRequests = new ConcurrentHashMap<>();
 
     @PostMapping("/SetTime")
@@ -76,6 +80,7 @@ public class StartBidingController {
     private void scheduleTask(int biddingTimerId, LocalDateTime endTime) {
         long delay = calculateDelayInMillis(endTime);
         System.err.println("Task scheduled to send mail and add car at: " + endTime);
+
         ScheduledFuture<?> scheduledTask = executorService.schedule(() -> {
             if (LocalDateTime.now().isBefore(endTime)) {
                 try {
