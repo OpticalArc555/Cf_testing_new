@@ -88,7 +88,6 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         return convertToDto(savedRequest);
     }
 
-
     @Override
     public BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest) {
         User user = userRepository.findByUserId(updateBiddingTimeRequest.getUserId());
