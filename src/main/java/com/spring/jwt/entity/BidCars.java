@@ -34,12 +34,12 @@ public class BidCars {
 
     @PrePersist
     public void prePersist() {
-        if (createdAt == null) {
-            ZonedDateTime nowInIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-            createdAt = nowInIST.toLocalDateTime();
+        final LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+        if(closingTime == null) {
+            closingTime = localDateTime.plusMinutes(3);
         }
-        if (closingTime == null) {
-            closingTime = createdAt.plusMinutes(15);
+        if(createdAt == null) {
+            createdAt = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
         }
     }
 }

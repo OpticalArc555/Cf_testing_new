@@ -17,11 +17,15 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,6 +37,9 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
     private final BiddingTImerRepo biddingTImerRepo;
 
     private final ModelMapper modelMapper;
+
+    private final TemplateEngine templateEngine;
+
 
     private final JavaMailSender javaMailSender;
 
@@ -46,6 +53,7 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
     public BiddingTimerRequestDTO startTimer(BiddingTimerRequestDTO biddingTimerRequest) {
 
         User byUserId = userRepository.findByUserId(biddingTimerRequest.getUserId());
+
         Optional<BeadingCAR> byId = beadingCarRepo.findById(biddingTimerRequest.getBeadingCarId());
         if(byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
@@ -68,6 +76,7 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
         return convertToDto(save);
     }
+
 
     @Override
     public BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest) {
@@ -98,6 +107,7 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 //        javaMailSender.send(mailMessage);
 //    }
 
+
     public void sendBulkEmails(List<String> recipients, String message) {
         try {
             int batchSize = 50;
@@ -109,7 +119,15 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
                 helper.setTo(recipient);
                 helper.setSubject("Bidding Timer Notification");
-                helper.setText(message);
+
+                Context context = new Context(Locale.ENGLISH);
+
+                String htmlContent = templateEngine.process("BiddingNotification", context);
+                helper.setText(htmlContent, true);
+
+                // Add logo image
+//                ClassPathResource logoImage = new ClassPathResource("/static/images/logo.png");
+//                helper.addInline("logoImage", logoImage);
 
                 messages[messageIndex++] = mimeMessage;
 
