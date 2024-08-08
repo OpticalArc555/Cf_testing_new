@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,30 +54,38 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
 
     @Override
     public BiddingTimerRequestDTO startTimer(BiddingTimerRequestDTO biddingTimerRequest) {
-
         User byUserId = userRepository.findByUserId(biddingTimerRequest.getUserId());
 
         Optional<BeadingCAR> byId = beadingCarRepo.findById(biddingTimerRequest.getBeadingCarId());
-        if(byUserId == null) {
+        if (byUserId == null) {
             throw new UserNotFoundExceptions("User not found");
         }
+
         Set<Role> roles = byUserId.getRoles();
         boolean isSalesPerson = roles.stream().anyMatch(role -> "SALESPERSON".equals(role.getName()) || "ADMIN".equals(role.getName()));
-        if(!isSalesPerson) {
+        if (!isSalesPerson) {
             throw new RuntimeException("You're not authorized to perform this action");
         }
         if (byId.isEmpty()) {
             throw new RuntimeException("Car Not Found in our Database");
         }
+
         BeadingCAR beadingCAR = byId.get();
         String carStatus = beadingCAR.getCarStatus();
         if (!"ACTIVE".equals(carStatus)) {
             throw new RuntimeException("Car is not Verified by SalesInspector, it can't be bid on.");
         }
-        BiddingTimerRequest biddingTimerRequest1 = convertToEntity(biddingTimerRequest);
-        BiddingTimerRequest save = biddingTImerRepo.save(biddingTimerRequest1);
 
-        return convertToDto(save);
+        LocalDateTime utcEndTime = biddingTimerRequest.getEndTime();
+        ZonedDateTime zonedEndTime = utcEndTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Kolkata"));
+        LocalDateTime kolkataEndTime = zonedEndTime.toLocalDateTime();
+
+        biddingTimerRequest.setEndTime(kolkataEndTime);
+
+        BiddingTimerRequest biddingTimerRequestEntity = convertToEntity(biddingTimerRequest);
+        BiddingTimerRequest savedRequest = biddingTImerRepo.save(biddingTimerRequestEntity);
+
+        return convertToDto(savedRequest);
     }
 
 
