@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -70,13 +68,6 @@ public class StartBidingController {
         }
         try {
             LocalDateTime endTime = biddingTimerRequest.getEndTime();
-            // Log the end time
-            System.out.println("Received end time: " + endTime);
-
-            // Optionally convert to UTC or any specific time zone for storage
-            ZonedDateTime endTimeZoned = endTime.atZone(ZoneId.of("Asia/Kolkata"));
-            System.out.println("End time in Asia/Kolkata: " + endTimeZoned);
-
             BiddingTimerRequestDTO savedRequest = biddingTimerService.startTimer(biddingTimerRequest);
             biddingTimerRequests.put(savedRequest.getBiddingTimerId(), savedRequest);
             scheduleTask(savedRequest.getBiddingTimerId(), endTime);

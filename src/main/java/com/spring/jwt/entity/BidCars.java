@@ -37,13 +37,10 @@ public class BidCars {
         if (createdAt == null) {
             ZonedDateTime nowInIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
             createdAt = nowInIST.toLocalDateTime();
-            System.out.println("CreatedAt (IST): " + createdAt);
         }
 
         if (closingTime == null) {
             closingTime = createdAt.plusMinutes(15);
-            System.out.println("ClosingTime (IST): " + closingTime);
         }
     }
-
 }
