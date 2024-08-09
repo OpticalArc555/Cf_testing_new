@@ -79,8 +79,16 @@ public class WebSocketBidController {
                 messagingTemplate.convertAndSend("/topic/liveCars", liveCars);
 
                 messagingTemplate.convertAndSend("/topic/bids", placedBidDTO);
-                return new ResponseDto("success", result);
-            } else {
+
+                List<PlacedBidDTO> topThreeBids = placedBidService.getTopThree(placedBidDTO.getBidCarId());
+                messagingTemplate.convertAndSend("/topic/topThreeBids", topThreeBids);
+
+                PlacedBidDTO topBid = placedBidService.getTopBid(placedBidDTO.getBidCarId());
+                messagingTemplate.convertAndSend("/topic/topBid", topBid);
+
+                messagingTemplate.convertAndSend("/topic/topBids", topBid);
+
+                return new ResponseDto("success", result);     } else {
                 System.err.println("BidCar not found with ID: " + placedBidDTO.getBidCarId());
                 return new ResponseDto("error", "BidCar not found with ID: " + placedBidDTO.getBidCarId());
             }
