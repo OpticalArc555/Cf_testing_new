@@ -54,7 +54,7 @@ public class BeadingCarWithInsDto {
 
     private String transmission;
 
-
+    private Integer biddingTimerId;
 
     private Integer year;
 
@@ -110,5 +110,6 @@ public class BeadingCarWithInsDto {
         this.buttonStart=beadingCAR.getButtonStart();
         this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
     }
+
 }
 
