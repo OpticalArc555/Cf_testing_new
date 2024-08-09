@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -99,6 +97,14 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         return modelMapper.map(biddingTimerRequest, BiddingTimerRequestDTO.class);
     }
 
+    @Override
+    public BiddingTimerRequestDTO getCarByTimerId(Integer biddingTimerId) {
+        BiddingTimerRequest biddingTimer= biddingTImerRepo.findById(biddingTimerId)
+                .orElseThrow(() -> new BeadingCarNotFoundException("BiddingTimerRequest not found"));
+        return convertToDto(biddingTimer);
+
+    }
+
 
 //    @Override
 //    public void sendNotification(String recipient, String message) {
@@ -159,4 +165,6 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         BiddingTimerRequestDTO biddingtimeDto = modelMapper.map(biddingTimerRequest, BiddingTimerRequestDTO.class);
         return biddingtimeDto;
     }
+
+
 }

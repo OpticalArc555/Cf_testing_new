@@ -15,6 +15,8 @@ public interface BiddingTimerService {
 
     BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest);
 
+    BiddingTimerRequestDTO getCarByTimerId(Integer biddingTimerId);
+
 //    BiddingTimerRequestDTO updateBiddingTime(BiddingTimerRequestDTO updateBiddingTimeRequest);
 
 

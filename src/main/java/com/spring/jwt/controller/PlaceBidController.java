@@ -1,6 +1,7 @@
 package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.BidCarsService;
+import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.*;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
@@ -8,12 +9,15 @@ import com.spring.jwt.entity.BidCars;
 import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.BidCarsRepo;
+import com.spring.jwt.repository.BiddingTImerRepo;
 import com.spring.jwt.service.BidCarsServiceImpl;
+import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,6 +32,8 @@ public class PlaceBidController {
     private final PlacedBidService placedBidService;
 
     private final BidCarsRepo bidCarsRepo;
+
+    private final BiddingTimerService biddingTimerService;
 
     private final BidCarsServiceImpl bidCarsService;
 
@@ -102,7 +108,7 @@ public class PlaceBidController {
     public ResponseEntity<ResponseAllPlacedBidDTO> getTopThreeBids(@PathVariable Integer bidCarId) {
         try {
             List<PlacedBidDTO> topThreeBids = placedBidService.getTopThree(bidCarId);
-            return ResponseEntity.ok(new ResponseAllPlacedBidDTO("Top three bids for car ID "  + " retrieved successfully", null, null));
+            return ResponseEntity.ok(new ResponseAllPlacedBidDTO("Top three bids for car ID " + " retrieved successfully", null, null));
         } catch (BidNotFoundExceptions e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseAllPlacedBidDTO(e.getMessage(), null, null));
         } catch (Exception e) {
@@ -146,5 +152,13 @@ public class PlaceBidController {
         }
     }
 
-
+    @GetMapping("getTimer")
+    public ResponseEntity<?> getTimer(@RequestParam Integer biddingTimerId) {
+        try {
+            BiddingTimerRequestDTO carByTimerId = biddingTimerService.getCarByTimerId(biddingTimerId);
+            return ResponseEntity.ok(carByTimerId);
+        } catch(BeadingCarNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessful","Data not found"));
+        }
+    }
 }
