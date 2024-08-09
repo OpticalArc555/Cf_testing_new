@@ -4,17 +4,11 @@ import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
 import com.spring.jwt.dto.BeadingCAR.BeadingCarWithInsDto;
 import com.spring.jwt.dto.BidCarsDTO;
-import com.spring.jwt.entity.BeadingCAR;
-import com.spring.jwt.entity.BidCars;
-import com.spring.jwt.entity.Role;
-import com.spring.jwt.entity.User;
+import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.BeadingCarNotFoundException;
 import com.spring.jwt.exception.DealerNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
-import com.spring.jwt.repository.BeadingCarRepo;
-import com.spring.jwt.repository.BidCarsRepo;
-import com.spring.jwt.repository.DealerRepository;
-import com.spring.jwt.repository.UserRepository;
+import com.spring.jwt.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -25,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +33,8 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     private final DealerRepository dealerRepository;
 
     private final UserRepository userRepository;
+
+    private final BiddingTImerRepo biddingTImerRepo;
 
     private final BidCarsRepo bidCarsRepo;
 
@@ -166,19 +163,28 @@ public class BeadingCarServiceImpl implements BeadingCarService {
             beadingCAR.setCarInsuranceType(beadingCARDto.getCarInsuranceType());
         }
 
-        // Save the updated entity
         beadingCarRepo.save(beadingCAR);
         return "beadingCAR edited";
     }
 
 
+
     @Override
     public List<BeadingCarWithInsDto> getAllBeadingCars() {
-        List<BeadingCAR> beadingCars = beadingCarRepo.findAll(Sort.by(Sort.Direction.DESC, "beadingCarId")); // Sorting by 'id' in descending order
+        List<BeadingCAR> beadingCars = beadingCarRepo.findAll(Sort.by(Sort.Direction.DESC, "beadingCarId"));
+
         return beadingCars.stream()
-                .map(BeadingCarWithInsDto::new)
+                .map(car -> {
+                    BeadingCarWithInsDto dto = new BeadingCarWithInsDto(car);
+                    BiddingTimerRequest biddingTimer = biddingTImerRepo.findByBeadingCarId(car.getBeadingCarId());
+                    if (biddingTimer != null) {
+                        dto.setBiddingTimerId(biddingTimer.getBiddingTimerId());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public String deleteBCar(Integer beadingCarId) {
