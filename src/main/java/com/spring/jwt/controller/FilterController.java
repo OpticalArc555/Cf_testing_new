@@ -142,8 +142,7 @@ public class FilterController {
 
             userService.updateResetPassword(token, email);
 
-            String resetPasswordLink = "http://localhost:5173/reset-password?token=" + token;
-
+            String resetPasswordLink = "https://cffffftasting-production.up.railway.app/cars/reset-password?token=" + token;
 
             ResponseDto response = userService.forgotPass(email, resetPasswordLink, request.getServerName());
 
@@ -153,6 +152,18 @@ public class FilterController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("Unsuccessful", "Invalid email. Please register."));
         }
     }
+    @GetMapping("/reset-password")
+    public ResponseEntity<String> resetPasswordPage(@RequestParam(name = "token") String token) {
+        try {
+            ClassPathResource resource = new ClassPathResource("templates/reset-password.html");
+            String htmlContent = new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
+            return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(htmlContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error loading HTML file");
+        }
+    }
+
 
     @PostMapping("/update-password")
     public ResponseEntity<ResponseDto> resetPassword(@RequestBody ResetPassword resetPassword) throws UserNotFoundExceptions {
