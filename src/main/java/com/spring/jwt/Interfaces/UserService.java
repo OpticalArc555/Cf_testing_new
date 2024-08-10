@@ -83,4 +83,10 @@ public interface UserService {
      * @return              A ResponseDto object indicating the status and message of the operation.
      */
     ResponseDto updatePassword(String token, String newPassword);
+
+    void sendEmailWithTemplate(String email, String resetPassword, String htmlContent);
+
+    boolean validateResetToken(String token);
+
+    boolean isSameAsOldPassword(String token, String newPassword);
 }

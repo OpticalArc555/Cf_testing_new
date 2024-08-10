@@ -43,10 +43,8 @@ private UserRepository userRepository;
         ProfilePhoto profilePhoto = profilePhotoRepo.findById(id).orElse(null);
 
         if (profilePhoto != null) {
-            // Update the photo data
             profilePhoto.setProfilephoto(data);
 
-            // Save the updated photo to the database
             profilePhotoRepo.save(profilePhoto);
         }
 
