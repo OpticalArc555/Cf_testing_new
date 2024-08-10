@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,6 +40,9 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public BaseResponseDTO registerAccount(RegisterDto registerDto) {
@@ -421,32 +426,55 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseDto updatePassword(String token, String newPassword) {
-
         ResponseDto response = new ResponseDto();
 
         User user = userRepository.findByResetPasswordToken(token);
 
-        if (user != null) {
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
-            String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
-
-            user.setPassword(encodedPassword);
-
-            user.setResetPasswordToken(null);
-
-            userRepository.save(user);
-
-            response.setStatus(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("Successful");
-        } else {
-            response.setStatus(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("Email sent");
-
-            throw new UserNotFoundExceptions("Something went wrong");
+        if (user == null) {
+            response.setStatus(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+            response.setMessage("Invalid or expired token");
+            throw new UserNotFoundExceptions("Invalid or expired token");
         }
 
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+
+        user.setPassword(encodedPassword);
+        user.setResetPasswordToken(null);
+        userRepository.save(user);
+
+        response.setStatus(String.valueOf(HttpStatus.OK.value()));
+        response.setMessage("Password reset successful");
+
         return response;
+    }
+
+    public boolean validateResetToken(String token) {
+        return userRepository.findByResetPasswordToken(token) != null;
+    }
+
+    public boolean isSameAsOldPassword(String token, String newPassword) {
+        User user = userRepository.findByResetPasswordToken(token);
+        if (user == null) {
+            throw new UserNotFoundExceptions("Invalid or expired token");
+        }
+
+        return passwordEncoder.matches(newPassword, user.getPassword());
+    }
+
+    public void sendEmailWithTemplate(String toEmail, String subject, String htmlContent) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error while sending email", e);
+        }
     }
 
 }

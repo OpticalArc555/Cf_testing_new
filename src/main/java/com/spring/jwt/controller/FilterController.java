@@ -133,52 +133,76 @@ public class FilterController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ResponseDto> forgotPass(HttpServletRequest request) throws UserNotFoundExceptions {
         try {
-
             String email = request.getParameter("email");
-
             String token = RandomStringUtils.randomAlphabetic(40);
-
             LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(1);
 
             userService.updateResetPassword(token, email);
 
             String resetPasswordLink = "http://localhost:5173/reset-password?token=" + token;
 
+            String htmlContent = generateEmailTemplate(resetPasswordLink);
 
-            ResponseDto response = userService.forgotPass(email, resetPasswordLink, request.getServerName());
+            userService.sendEmailWithTemplate(email, "Reset Password", htmlContent);
 
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", response.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", "Password reset email sent."));
         } catch (UserNotFoundExceptions e) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("Unsuccessful", "Invalid email. Please register."));
         }
     }
 
+    private String generateEmailTemplate(String resetPasswordLink) {
+        return "<html>" +
+                "<body style='font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;'>" +
+                "<div style='max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>" +
+                "<h2 style='color: #333333;'>Reset Your Password</h2>" +
+                "<p>Dear user,</p>" +
+                "<p>You have requested to reset your password. Please click the button below to reset your password:</p>" +
+                "<a href='" + resetPasswordLink + "' style='display: inline-block; margin: 20px 0; padding: 10px 20px; color: #ffffff; background-color: #007bff; text-decoration: none; border-radius: 5px;'>Reset My Password</a>" +
+                "<p>If you did not request this, Please ignore this email.</p>" +
+                "<p>Thank you,<br>CarTechIndia.com</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+    }
+
+
+
     @PostMapping("/update-password")
     public ResponseEntity<ResponseDto> resetPassword(@RequestBody ResetPassword resetPassword) throws UserNotFoundExceptions {
-
         try {
             String token = resetPassword.getToken();
             String newPassword = resetPassword.getPassword();
-            String newPassword1 = resetPassword.getConfirmPassword();
+            String confirmPassword = resetPassword.getConfirmPassword();
 
-            if (newPassword.equals(newPassword1)) {
-
-                ResponseDto response = userService.updatePassword(token, newPassword);
-
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", response.getMessage()));
+            if (!newPassword.equals(confirmPassword)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDto("Unsuccessful", "Passwords do not match"));
             }
-            else{
-                return new ResponseEntity<ResponseDto>(HttpStatus.NOT_FOUND);
-            }
-        }
 
-        catch (UserNotFoundExceptions e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("Unsuccessful", "Something went wrong"));
+            boolean isTokenValid = userService.validateResetToken(token);
+            if (!isTokenValid) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDto("Unsuccessful", "The reset link is invalid or has expired"));
+            }
+
+            boolean isSameAsOldPassword = userService.isSameAsOldPassword(token, newPassword);
+            if (isSameAsOldPassword) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDto("Unsuccessful", "The new password cannot be the same as the old password"));
+            }
+
+            ResponseDto response = userService.updatePassword(token, newPassword);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("Successful", response.getMessage()));
+
+        } catch (UserNotFoundExceptions e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto("Unsuccessful", "Something went wrong"));
         }
     }
 
-//    @GetMapping("/reset-password")
+
+    //    @GetMapping("/reset-password")
 //    public ResponseEntity<String> resetPasswordPage(@RequestParam(name = "token") String token) {
 //        try {
 //            ClassPathResource resource = new ClassPathResource("templates/reset-password.html");
