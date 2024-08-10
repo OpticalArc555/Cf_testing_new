@@ -1,7 +1,6 @@
 package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.BeadingCarService;
-import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.dto.BidCarsDTO;
