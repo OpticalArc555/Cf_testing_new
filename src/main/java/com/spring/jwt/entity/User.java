@@ -50,8 +50,6 @@ public class User {
 
     private Integer profilePhotoId1;
 
-
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Userprofile profile;
 
