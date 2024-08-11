@@ -142,8 +142,6 @@ public class PlaceBidController {
         }
     }
 
-
-
     @GetMapping("/car/{bidCarId}")
     public ResponseEntity<ResponseAllPlacedBidDTO> getPlacedBidsByCarId(@PathVariable Integer bidCarId) {
         try {
