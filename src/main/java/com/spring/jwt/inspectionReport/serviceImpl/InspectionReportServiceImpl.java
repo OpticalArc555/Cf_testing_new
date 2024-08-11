@@ -133,6 +133,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         dto.setCNGLPGFitmentInRC(inspectionReport.getCNGLPGFitmentInRC());
         dto.setUserId(inspectionReport.getUserId());
         dto.setBeadingCarId(inspectionReport.getBeadingCarId());
+        dto.setNOCStatus(inspectionReport.getNOCStatus());
         return dto;
     }
 
@@ -156,6 +157,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         entity.setCNGLPGFitmentInRC(dto.getCNGLPGFitmentInRC());
         entity.setUserId(dto.getUserId());
         entity.setBeadingCarId(dto.getBeadingCarId());
+        entity.setNOCStatus(dto.getNOCStatus());
         return entity;
     }
 
@@ -207,6 +209,9 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         }
         if (dto.getCNGLPGFitmentInRC() != null) {
             entity.setCNGLPGFitmentInRC(dto.getCNGLPGFitmentInRC());
+        }
+        if (dto.getNOCStatus() != null) {
+            entity.setNOCStatus(dto.getNOCStatus());
         }
     }
 }

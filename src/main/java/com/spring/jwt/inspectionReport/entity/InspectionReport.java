@@ -72,6 +72,8 @@ public class InspectionReport {
     @Column(name = "beadingCarId")
     private Integer beadingCarId;
 
+    @Column(name = "NOCStatus")
+    private String NOCStatus;
 
     public InspectionReport() {
 
