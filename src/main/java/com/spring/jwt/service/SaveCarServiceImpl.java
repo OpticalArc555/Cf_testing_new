@@ -78,7 +78,7 @@ public class SaveCarServiceImpl implements SaveCarService {
 
     @Override
     public List<SaveCarDto> getSavedCar(int userId) {
-        List<SaveCar> savedCars = saveCarRepo.findByUserId(userId);
+        List<SaveCar> savedCars = saveCarRepo.findByUserIdOrderBySaveCarIdDesc(userId);
         if (savedCars.isEmpty()) {
             throw new UserNotFoundExceptions("No saved cars found for user with ID " + userId);
         }
