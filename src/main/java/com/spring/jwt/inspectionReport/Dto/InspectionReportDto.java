@@ -46,6 +46,8 @@ public class InspectionReportDto {
 
     private Integer beadingCarId;
 
+    private String NOCStatus;
+
     public InspectionReportDto() {
     }
 }
