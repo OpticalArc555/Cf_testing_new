@@ -168,7 +168,6 @@ public class FilterController {
     }
 
 
-
     @PostMapping("/update-password")
     public ResponseEntity<ResponseDto> resetPassword(@RequestBody ResetPassword resetPassword) throws UserNotFoundExceptions {
         try {

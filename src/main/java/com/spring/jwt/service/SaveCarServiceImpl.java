@@ -90,8 +90,8 @@ public class SaveCarServiceImpl implements SaveCarService {
     private SaveCarDto convertToDto(SaveCar saveCar) {
         SaveCarDto dto = new SaveCarDto();
         dto.setSaveCarId(saveCar.getSaveCarId());
-        dto.setCarId(saveCar.getCarId()); // Assuming Car has a carId field
-        dto.setUserId(saveCar.getUserId()); // Assuming User has a userId field
+        dto.setCarId(saveCar.getCarId());
+        dto.setUserId(saveCar.getUserId());
         return dto;
     }
 
@@ -120,6 +120,5 @@ public class SaveCarServiceImpl implements SaveCarService {
             throw new CarNotFoundException("No saved car found for user ID " + userId + " and car ID " + carId);
         }
     }
-
 
 }

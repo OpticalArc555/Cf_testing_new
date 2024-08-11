@@ -15,6 +15,7 @@ import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -123,22 +124,23 @@ public class PlaceBidController {
     }
 
     @GetMapping("/getAllDealerFinalBids")
-    public ResponseEntity<ResponseFinalBidsAll> getAllDealer(@RequestParam Integer buyerDealerId) {
+    public ResponseEntity<ResponseFinalBidsAll> getAllDealer(@RequestParam Integer buyerDealerId, @RequestParam(value = "pageNo") int pageNo,
+                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         try {
             logger.debug("Received request to fetch all dealer final bids for buyerDealerId: {}", buyerDealerId);
-            List<FinalBidDto> getbids = placedBidService.getDealerAllBids(buyerDealerId);
-            ResponseFinalBidsAll dtoo = new ResponseFinalBidsAll("Success");
-            dtoo.setFinalBids(getbids);
+            Page<FinalBidDto> getbids = placedBidService.getDealerAllBids(buyerDealerId, pageNo, pageSize);
+            ResponseFinalBidsAll response = new ResponseFinalBidsAll("Success");
+            response.setFinalBids(getbids.getContent());
+            response.setTotalPages(getbids.getTotalPages());
 
-            return ResponseEntity.status(HttpStatus.OK).body(dtoo);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (RuntimeException e) {
             logger.error("Error fetching dealer final bids for buyerDealerId: " + buyerDealerId, e);
-            ResponseFinalBidsAll profile = new ResponseFinalBidsAll("Unsuccessful");
-            profile.setException(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(profile);
+            ResponseFinalBidsAll response = new ResponseFinalBidsAll("Unsuccessful");
+            response.setException(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
-
 
     @GetMapping("/car/{bidCarId}")
     public ResponseEntity<ResponseAllPlacedBidDTO> getPlacedBidsByCarId(@PathVariable Integer bidCarId) {
