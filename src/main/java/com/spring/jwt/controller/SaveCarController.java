@@ -39,7 +39,6 @@ public class SaveCarController {
         } catch (CarNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("not available", "not found"));
         } catch (Exception e) {
-            // General exception handling
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "not found"));
         }
     }

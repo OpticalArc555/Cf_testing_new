@@ -17,7 +17,10 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -203,15 +206,16 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     }
 
     @Override
-    public List<FinalBidDto> getDealerAllBids(Integer buyerDealerId) {
+    public Page<FinalBidDto> getDealerAllBids(Integer buyerDealerId, int pageNo, int pageSize) {
         logger.debug("Fetching bids for buyerDealerId: {}", buyerDealerId);
 
-        List<FinalBid> bids = finalBidRepo.findByBuyerDealerId(buyerDealerId);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<FinalBid> bidsPage = finalBidRepo.findByBuyerDealerId(buyerDealerId, pageable);
 
-        if (bids != null && !bids.isEmpty()) {
-            logger.debug("Found {} bids for buyerDealerId: {}", bids.size(), buyerDealerId);
+        if (bidsPage != null && !bidsPage.isEmpty()) {
+            logger.debug("Found {} bids for buyerDealerId: {}", bidsPage.getTotalElements(), buyerDealerId);
 
-            return bids.stream().map(bid -> {
+            List<FinalBidDto> finalBidDtos = bidsPage.stream().map(bid -> {
                 FinalBidDto dto = new FinalBidDto();
                 dto.setFinalBidId(bid.getFinalBidId());
                 dto.setSellerDealerId(bid.getSellerDealerId());
@@ -222,11 +226,15 @@ public class PlacedBidServiceImpl implements PlacedBidService {
                 dto.setBeadingCarId(beadingCarId);
                 return dto;
             }).collect(Collectors.toList());
+
+            return new PageImpl<>(finalBidDtos, pageable, bidsPage.getTotalElements());
         } else {
             logger.error("No bids found for buyerDealerId: {}", buyerDealerId);
             throw new RuntimeException("No bids found for buyerDealerId: " + buyerDealerId);
         }
     }
+
+
 
 
 //    @Override
