@@ -14,4 +14,6 @@ public interface SaveCarRepo extends JpaRepository<SaveCar,Integer> {
     List<SaveCar> findByUserId(int userId);
 
     Optional<SaveCar> findByUserIdAndCarId(int userId, Integer carId);
+
+    List<SaveCar> findByUserIdOrderBySaveCarIdDesc(int userId);
 }

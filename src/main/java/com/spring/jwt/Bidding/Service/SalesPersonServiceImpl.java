@@ -16,10 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,7 +55,7 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     @Override
     public Page<SalesPersonDto> getAllProfiles(Integer pageNo, Integer pageSize) {
-            Pageable pageable = PageRequest.of(pageNo, pageSize);
+            Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("salesPersonId").descending());
             Page<SalesPerson> allProfiles = salesPersonRepository.findAll(pageable);
 
             int totalPages = (int) Math.ceil((double) allProfiles.getTotalElements() / pageSize);
