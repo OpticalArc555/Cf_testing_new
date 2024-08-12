@@ -196,9 +196,19 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 
             return topBidDTO;
         } else {
-            throw new BidNotFoundExceptions("No bids found for car ID: " + bidCarId);
+            BidCars car = bidCarsRepo.findById(bidCarId)
+                    .orElseThrow(() -> new BidNotFoundExceptions("Car not found for ID: " + bidCarId));
+            System.err.println("BasePrice for" + " " + car.getBasePrice());
+            PlacedBidDTO basePriceDTO = new PlacedBidDTO();
+            basePriceDTO.setBidCarId(car.getBeadingCarId());
+            basePriceDTO.setAmount(car.getBasePrice());
+
+            sendTopBidUpdate(basePriceDTO);
+
+            return basePriceDTO;
         }
     }
+
 
     public void sendTopBidUpdate(PlacedBidDTO bid) {
         logger.info("Publishing top bid update: " + bid);

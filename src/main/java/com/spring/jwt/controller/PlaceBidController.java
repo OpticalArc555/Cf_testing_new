@@ -71,7 +71,6 @@ public class PlaceBidController {
             } else {
                 System.out.println("BidCar not found with ID: " + bidCarId);
             }
-
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -90,7 +89,6 @@ public class PlaceBidController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseAllPlacedBidDTO("An error occurred: " + e.getMessage(), null, null));
         }
     }
-
 
     @GetMapping("/{placedBidId}")
     public ResponseEntity<ResponseSinglePlacedBid> getPlacedBidById(@PathVariable Integer placedBidId) {
