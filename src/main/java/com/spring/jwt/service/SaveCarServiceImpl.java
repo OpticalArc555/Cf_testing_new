@@ -1,8 +1,6 @@
 package com.spring.jwt.service;
 
 import com.spring.jwt.Interfaces.SaveCarService;
-import com.spring.jwt.dto.ResponceDto;
-import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.saveCar.SaveCarDto;
 import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.SaveCar;
@@ -16,7 +14,6 @@ import com.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +26,6 @@ public class SaveCarServiceImpl implements SaveCarService {
     private final UserRepository userRepository;
 
     private final CarRepo carRepo;
-
 
     @Override
     public String saveCars(SaveCarDto saveCarDto) {
@@ -56,11 +52,6 @@ public class SaveCarServiceImpl implements SaveCarService {
         }
     }
 
-
-
-
-
-
     @Override
     public SaveCar getSavedCarbyId(Integer saveCarId) {
         try {
@@ -71,7 +62,6 @@ public class SaveCarServiceImpl implements SaveCarService {
                 throw new CarNotFoundException("Saved car with ID " + saveCarId + " not found.");
             }
         } catch (Exception e) {
-            // Log the exception and rethrow it if needed
             throw new RuntimeException("Error retrieving saved car: " + e.getMessage(), e);
         }
     }
@@ -94,7 +84,6 @@ public class SaveCarServiceImpl implements SaveCarService {
         dto.setUserId(saveCar.getUserId());
         return dto;
     }
-
 
     @Override
     public String deleteSavedCarById(Integer saveCarId) {
@@ -120,5 +109,4 @@ public class SaveCarServiceImpl implements SaveCarService {
             throw new CarNotFoundException("No saved car found for user ID " + userId + " and car ID " + carId);
         }
     }
-
 }
