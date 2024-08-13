@@ -10,6 +10,7 @@ public class ResponseAllDealerDto {
     private String message;
     private List<DealerDto> list;
     private String exception;
+    private Integer totalDealers;
 
     public ResponseAllDealerDto(String message){
         this.message=message;

@@ -10,6 +10,7 @@ import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.repository.CarRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,14 +53,17 @@ CarController {
         }
 
     }
+
     @GetMapping("/getAllCars")
-    public ResponseEntity<?> getAllCars(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseEntity<ResponseAllCarDto> getAllCars(@RequestParam int pageNo,
+                                                        @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            List<CarDto> listOfCar = iCarRegister.getAllCarsWithPages(pageNo, pageSize);
-            int totalPages = getTotalPages(pageSize);
+            Page<CarDto> listOfCar = (Page<CarDto>) iCarRegister.getAllCarsWithPage(pageNo, pageSize);
+            long totalEntries = iCarRegister.getTotalCars();
 
             ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("success");
-            responseAllCarDto.setList(listOfCar);
+            responseAllCarDto.setList(listOfCar.getContent());
+            responseAllCarDto.setTotalCars(totalEntries);
 
             return ResponseEntity.status(HttpStatus.OK).body(responseAllCarDto);
         } catch (CarNotFoundException carNotFoundException) {
@@ -72,6 +76,8 @@ CarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
         }
     }
+
+
 
     private int getTotalPages(int pageSize) {
         int totalCars = carRepo.getPendingAndActivateCarOrderedByIdDesc().size();

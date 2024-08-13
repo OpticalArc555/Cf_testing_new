@@ -3,6 +3,8 @@ package com.spring.jwt.repository;
 
 import com.spring.jwt.entity.Car;
 import com.spring.jwt.entity.Status;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -54,6 +56,10 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
             "OR LOWER(c.transmission) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Car> searchCarsByKeyword(@Param("keyword") String keyword);
 
+    Page<Car> findByCarStatusInOrderByIdDesc(List<Status> statuses, Pageable pageable);
+
+    @Query("SELECT COUNT(c) FROM Car c WHERE c.carStatus <> com.spring.jwt.entity.Status.SOLD")
+    long countAllByCarStatusNotSold();
 }
 
 
