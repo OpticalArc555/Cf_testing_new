@@ -114,6 +114,7 @@ public class StartBidingController {
             return;
         }
 
+
         BiddingTimerRequest biddingTimer = biddingTimerOpt.get();
         biddingTimer.setStatus("CLOSED");
         biddingTImerRepo.save(biddingTimer);
