@@ -30,13 +30,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SalesPersonServiceImpl implements SalesPersonService {
 
-    private final ModelMapper modelMapper;
-
     private final SalesPersonRepository salesPersonRepository;
 
     private final UserRepository userRepository;
-
-    private final DealerRepository dealerRepository;
 
     private final BCryptPasswordEncoder passwordEncoder;
 

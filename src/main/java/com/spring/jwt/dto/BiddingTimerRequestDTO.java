@@ -20,4 +20,6 @@ public class BiddingTimerRequestDTO {
     private LocalDateTime endTime;
 
 
+
+
 }

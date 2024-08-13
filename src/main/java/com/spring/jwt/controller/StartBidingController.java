@@ -107,7 +107,19 @@ public class StartBidingController {
     }
 
     private void createBiddingOnTimerEnd(int biddingTimerId) {
+
+        Optional<BiddingTimerRequest> biddingTimerOpt = biddingTImerRepo.findById(biddingTimerId);
+        if (!biddingTimerOpt.isPresent()) {
+            logger.error("BiddingTimer not found for BiddingTimerId: " + biddingTimerId);
+            return;
+        }
+
+        BiddingTimerRequest biddingTimer = biddingTimerOpt.get();
+        biddingTimer.setStatus("CLOSED");
+        biddingTImerRepo.save(biddingTimer);
+
         BiddingTimerRequestDTO biddingTimerRequest = biddingTimerRequests.get(biddingTimerId);
+
         if (biddingTimerRequest == null) {
             logger.error("BiddingTimerRequest not found for BiddingTimerId: " + biddingTimerId);
             return;
