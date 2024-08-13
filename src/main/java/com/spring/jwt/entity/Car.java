@@ -38,7 +38,6 @@ public class Car {
     @Column(name = "child_safety_locks")
     private Boolean childSafetyLocks;
 
-
     @Column(name = "ac_feature")
     private Boolean acFeature;
 

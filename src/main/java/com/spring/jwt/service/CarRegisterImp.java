@@ -139,6 +139,24 @@ public class CarRegisterImp implements ICarRegister {
         return listOfCarDto;
     }
 
+    @Override
+    public Page<CarDto> getAllCarsWithPage(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        List<Status> statuses = Arrays.asList(Status.PENDING, Status.ACTIVE);
+
+        Page<Car> pageOfCars = carRepo.findByCarStatusInOrderByIdDesc(statuses, pageable);
+        if (pageOfCars.isEmpty()) {
+            throw new CarNotFoundException("Car not found");
+        }
+
+        return pageOfCars.map(CarDto::new);
+    }
+
+    @Override
+    public long getTotalCars() {
+        return carRepo.countAllByCarStatusNotSold();
+    }
+
 
     @Override
     public String deleteCar(int carId, int dealerId) {

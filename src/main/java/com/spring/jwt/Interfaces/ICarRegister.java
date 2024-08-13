@@ -3,6 +3,7 @@ package com.spring.jwt.Interfaces;
 import com.spring.jwt.dto.CarDto;
 import com.spring.jwt.dto.FilterDto;
 import com.spring.jwt.entity.Status;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -28,4 +29,8 @@ public interface ICarRegister {
     public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo);
 
     List<String> getAutocompleteSuggestions(String query);
+
+    long getTotalCars();
+
+    Page<CarDto> getAllCarsWithPage(int pageNo, int pageSize);
 }

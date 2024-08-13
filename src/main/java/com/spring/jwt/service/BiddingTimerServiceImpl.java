@@ -80,6 +80,7 @@ public class BiddingTimerServiceImpl implements BiddingTimerService {
         biddingTimerRequest.setEndTime(kolkataEndTime);
 
         BiddingTimerRequest biddingTimerRequestEntity = convertToEntity(biddingTimerRequest);
+        biddingTimerRequestEntity.setStatus("PENDING");
         BiddingTimerRequest savedRequest = biddingTImerRepo.save(biddingTimerRequestEntity);
 
         return convertToDto(savedRequest);

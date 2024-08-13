@@ -10,6 +10,7 @@ import com.spring.jwt.entity.User;
 import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
+import com.spring.jwt.repository.DealerRepository;
 import com.spring.jwt.repository.UserRepository;
 import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SalesPersonServiceImpl implements SalesPersonService {
-
-    private final ModelMapper modelMapper;
 
     private final SalesPersonRepository salesPersonRepository;
 
@@ -160,6 +159,7 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         }
         return response;
     }
+
 
 
     private SalesPersonDto convertToDto(SalesPerson salesPerson) {

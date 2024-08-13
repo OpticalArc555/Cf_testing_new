@@ -140,7 +140,6 @@ public class WebSocketBidController {
         }
     }
 
-
     @PreAuthorize("permitAll")
     @MessageMapping("/liveCars")
     @SendTo("/topic/liveCars")

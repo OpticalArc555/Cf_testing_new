@@ -29,4 +29,8 @@ public class BiddingTimerRequest {
     @Column(name="endTime")
     private LocalDateTime endTime;
 
+    @Column
+    private String Status;
+    //    Set Status to Pending CLOSED
+
 }

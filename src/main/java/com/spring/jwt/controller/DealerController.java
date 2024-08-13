@@ -151,7 +151,9 @@ public class DealerController {
     public ResponseEntity<ResponseAllDealerDto> getDealerSalePerson (@RequestParam Integer salesPersonID){
         try {
             List<DealerDto> dealers = dealerService.getAllDealersBySalesPersonId(salesPersonID);
+            Integer size= dealers.size();
             ResponseAllDealerDto responseAllDealerDto = new ResponseAllDealerDto("success");
+            responseAllDealerDto.setTotalDealers(size);
             responseAllDealerDto.setList(dealers);
             return ResponseEntity.status(HttpStatus.OK).body(responseAllDealerDto);
         } catch (DealerNotFoundException dealerNotFoundException) {

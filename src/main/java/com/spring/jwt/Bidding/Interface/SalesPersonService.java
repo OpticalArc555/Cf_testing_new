@@ -17,4 +17,5 @@ public interface SalesPersonService {
     public String deleteProfile(Integer salePersonId);
 
     BaseResponseDTO changePassword(int id, PasswordChange passwordChange);
+
 }

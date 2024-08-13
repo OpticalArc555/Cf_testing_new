@@ -9,6 +9,7 @@ public class ResponseAllCarDto {
     private String message;
     private List<CarDto> list;
     private String exception;
+    private long totalCars;
 
     public ResponseAllCarDto(String message){
         this.message=message;

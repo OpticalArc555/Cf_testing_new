@@ -209,7 +209,6 @@ public class PlacedBidServiceImpl implements PlacedBidService {
         }
     }
 
-
     public void sendTopBidUpdate(PlacedBidDTO bid) {
         logger.info("Publishing top bid update: " + bid);
         messagingTemplate.convertAndSend("/topic/topBids/" + bid.getBidCarId(), bid);
@@ -243,9 +242,6 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             throw new RuntimeException("No bids found for buyerDealerId: " + buyerDealerId);
         }
     }
-
-
-
 
 //    @Override
 //    public PlacedBidDTO getTopBid(Integer bidCarId) {
