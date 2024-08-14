@@ -74,6 +74,7 @@ public class BeadingCARDto {
     private String uniqueBeadingCarId;
 
 
+
     public BeadingCARDto() {
     }
 
