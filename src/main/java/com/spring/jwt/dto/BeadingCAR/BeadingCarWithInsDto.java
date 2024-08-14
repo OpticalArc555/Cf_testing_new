@@ -74,6 +74,8 @@ public class BeadingCarWithInsDto {
 
     private String biddingTimerStatus;
 
+    private String uniqueBeadingCarId;
+
 
     public BeadingCarWithInsDto() {
     }
@@ -112,6 +114,7 @@ public class BeadingCarWithInsDto {
         this.buttonStart=beadingCAR.getButtonStart();
         this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
         this.biddingTimerStatus =biddingTimerStatus;
+        this.uniqueBeadingCarId=beadingCAR.getUniqueBeadingCarId();
     }
 }
 
