@@ -21,11 +21,11 @@ public class DealerDto {
     private Integer userId;
     private Boolean status;
     public Integer salesPersonId;
-    private int carCount;
+    private int totalCarCount;
     public DealerDto() {
     }
 
-    public DealerDto(Dealer dealer, int carCount) {
+    public DealerDto(Dealer dealer, int totalCarCount) {
         this.address = dealer.getAddress();
         this.status=dealer.getStatus();
         this.area = dealer.getArea();
@@ -38,7 +38,7 @@ public class DealerDto {
         this.salesPersonId= dealer.getSalesPersonId();
         this.dealer_id = dealer.getId();
         this.userId = dealer.getUser().getId();
-        this.carCount = carCount;
+        this.totalCarCount = totalCarCount;
 
     }
 
