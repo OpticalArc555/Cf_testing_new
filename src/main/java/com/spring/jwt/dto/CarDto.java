@@ -123,5 +123,6 @@ public class CarDto {
         this.sunroof=car.getSunroof();
         this.childSafetyLocks=car.getChildSafetyLocks();
         this.mainCarId=car.getMainCarId();
+
     }
 }
