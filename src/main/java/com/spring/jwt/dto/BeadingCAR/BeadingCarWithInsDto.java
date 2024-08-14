@@ -113,6 +113,5 @@ public class BeadingCarWithInsDto {
         this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
         this.biddingTimerStatus =biddingTimerStatus;
     }
-
 }
 
