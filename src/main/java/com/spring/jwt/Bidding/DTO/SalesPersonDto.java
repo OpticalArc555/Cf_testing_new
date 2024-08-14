@@ -36,6 +36,7 @@ public class SalesPersonDto {
 
         private Integer UserId;
 
+        private int totalAddedDealers;
 
     }
 

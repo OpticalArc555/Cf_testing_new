@@ -34,6 +34,8 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     private final UserRepository userRepository;
 
+    private final DealerRepository dealerRepository;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(SalesPersonServiceImpl.class);
@@ -54,24 +56,32 @@ public class SalesPersonServiceImpl implements SalesPersonService {
 
     @Override
     public Page<SalesPersonDto> getAllProfiles(Integer pageNo, Integer pageSize) {
-            Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("salesPersonId").descending());
-            Page<SalesPerson> allProfiles = salesPersonRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("salesPersonId").descending());
+        Page<SalesPerson> allProfiles = salesPersonRepository.findAll(pageable);
 
-            int totalPages = (int) Math.ceil((double) allProfiles.getTotalElements() / pageSize);
+        int totalPages = (int) Math.ceil((double) allProfiles.getTotalElements() / pageSize);
 
-            if (pageNo >= totalPages) {
-                throw new PageNotFoundException("Page number " + pageNo + " exceeds available pages");
-            }
-
-            if (!allProfiles.hasContent()) {
-                throw new RuntimeException("No data found for page: " + pageNo);
-            }
-            List<SalesPersonDto> all = allProfiles.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-
-            return new PageImpl<>(all, pageable, allProfiles.getTotalElements());
+        if (pageNo >= totalPages) {
+            throw new PageNotFoundException("Page number " + pageNo + " exceeds available pages");
         }
+
+        if (!allProfiles.hasContent()) {
+            throw new RuntimeException("No data found for page: " + pageNo);
+        }
+
+        List<SalesPersonDto> all = allProfiles.stream()
+                .map(salesPerson -> {
+                    SalesPersonDto dto = convertToDto(salesPerson);
+
+                    int dealerCount = dealerRepository.countBySalesPersonId(salesPerson.getUser().getId());
+                    dto.setTotalAddedDealers(dealerCount);
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(all, pageable, allProfiles.getTotalElements());
+    }
 
     @Override
     public String updateProfile(SalesPersonDto salesPersonDto, Integer salesPersonId) {

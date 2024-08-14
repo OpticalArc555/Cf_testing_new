@@ -60,6 +60,8 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
 
     @Query("SELECT COUNT(c) FROM Car c WHERE c.carStatus <> com.spring.jwt.entity.Status.SOLD")
     long countAllByCarStatusNotSold();
+
+    int countByDealerId(int dealerId);
 }
 
 
