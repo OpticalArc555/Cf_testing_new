@@ -198,7 +198,16 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     public BeadingCarWithInsDto getBCarById(Integer beadingCarId) {
         BeadingCAR beadingCAR = beadingCarRepo.findById(beadingCarId)
                 .orElseThrow(() -> new BeadingCarNotFoundException("Beading car not found with id: " + beadingCarId, HttpStatus.NOT_FOUND));
-        return new BeadingCarWithInsDto(beadingCAR);
+        BiddingTimerRequest biddingTimer = biddingTImerRepo.findByBeadingCarId(beadingCarId);
+
+        BeadingCarWithInsDto beadingCarWithInsDto = new BeadingCarWithInsDto(beadingCAR);
+        if (biddingTimer != null) {
+            beadingCarWithInsDto.setBiddingTimerStatus(biddingTimer.getStatus());
+        } else {
+            beadingCarWithInsDto.setBiddingTimerStatus("null");
+        }
+
+        return beadingCarWithInsDto;
     }
 
     @Override
