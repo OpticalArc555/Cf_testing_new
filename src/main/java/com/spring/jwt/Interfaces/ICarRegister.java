@@ -33,4 +33,7 @@ public interface ICarRegister {
     long getTotalCars();
 
     Page<CarDto> getAllCarsWithPage(int pageNo, int pageSize);
+
+    public CarDto findByMainCarId(String mainCarId);
+
 }
