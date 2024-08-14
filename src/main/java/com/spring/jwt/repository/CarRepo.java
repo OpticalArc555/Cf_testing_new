@@ -65,6 +65,7 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
     Optional<Long> findMaxId();
     Optional<Car> findByMainCarId(String mainCarId);
 
+    int countByDealerId(int dealerId);
 }
 
 
