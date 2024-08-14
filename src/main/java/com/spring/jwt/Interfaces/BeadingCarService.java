@@ -31,4 +31,6 @@ public interface BeadingCarService {
     Integer getCountByStatusAndDealerId(String carStatus, Integer dealerId);
 
     public List<BidCarsDTO> getAllLiveCars();
+
+    public BeadingCarWithInsDto getBCarByUniqueBeadingCarId(String uniqueBeadingCarId);
 }

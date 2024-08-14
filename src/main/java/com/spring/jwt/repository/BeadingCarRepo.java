@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaSpecificationExecutor<BeadingCAR> {
     @Query("SELECT b FROM BeadingCAR b WHERE b.userId = :userId ORDER BY b.id DESC")
@@ -21,5 +22,9 @@ public interface BeadingCarRepo extends JpaRepository<BeadingCAR, Integer>, JpaS
     @Query("SELECT COUNT(b) FROM BeadingCAR b WHERE b.carStatus = :carStatus AND b.dealerId = :dealerId")
     Integer getCountByStatusAndDealerId(@Param("carStatus") String carStatus, @Param("dealerId") Integer dealerId);
 
+    @Query("SELECT MAX(c.id) FROM BeadingCAR c")
+    Optional<Long> findMaxId();
 
+
+    Optional<Object> findByUniqueBeadingCarId(String uniqueBeadingCarId);
 }

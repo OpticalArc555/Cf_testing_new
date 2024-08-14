@@ -116,6 +116,9 @@ public class BeadingCAR {
     @Column(name = "carInsuranceType")
     private String carInsuranceType;
 
+    @Column(name = "uniqueBeadingCarId")
+    private String uniqueBeadingCarId;
+
 
 
 
@@ -154,6 +157,8 @@ public class BeadingCAR {
         this.airbag=beadingCARDto.getAirbag();
         this.buttonStart=beadingCARDto.getButtonStart();
         this.childSafetyLocks=beadingCARDto.getChildSafetyLocks();
+        this.uniqueBeadingCarId=beadingCARDto.getUniqueBeadingCarId();
+
     }
 
 

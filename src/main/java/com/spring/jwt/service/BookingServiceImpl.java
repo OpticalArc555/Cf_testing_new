@@ -43,7 +43,7 @@ public class BookingServiceImpl implements BookingService {
         if (car.getCarStatus() == Status.SOLD) {
             throw new BookingException("Car is not available for booking as it's already sold.");
         }
-
+        bookingDto.setMainCarId(car.getMainCarId());
         Booking booking = new Booking();
         BeanUtils.copyProperties(bookingDto, booking);
         booking.setStatus("confirm");
@@ -223,6 +223,16 @@ public class BookingServiceImpl implements BookingService {
             return "Booking and Car status cancel successfully.";
         } else {
             throw new BookingNotFoundException("No booking found with this id");
+        }
+    }
+
+    @Override
+    public BookingDto getBookingByMainCarId(String mainCarId) {
+        Optional<Booking> booking= bookingRepository.findByMainCarId(mainCarId);
+        if (booking.isPresent()){
+            return new BookingDto(booking.get());
+        }else {
+            throw new BookingNotFoundException("No booking found");
         }
     }
 }

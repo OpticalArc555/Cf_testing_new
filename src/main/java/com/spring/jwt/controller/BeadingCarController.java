@@ -135,6 +135,17 @@ public class BeadingCarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading cars"));
         }
     }
+    @GetMapping("/getByUniqueBeadingCarId")
+    public ResponseEntity<?> getBeadingCarByUniqueBeadingCarId(@RequestParam("uniqueBeadingCarId") String uniqueBeadingCarId) {
+        try {
+            BeadingCarWithInsDto beadingCar = beadingCarService.getBCarByUniqueBeadingCarId(uniqueBeadingCarId);
+            return ResponseEntity.status(HttpStatus.OK).body(beadingCar);
+        } catch (BeadingCarNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("error", "Beading car not found with id: " + uniqueBeadingCarId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto("error", "An error occurred while retrieving beading car"));
+        }
+    }
 
    }
 
