@@ -86,6 +86,8 @@ public class CarDto {
 
     private String carInsuranceType;
 
+    private String mainCarId;
+
 
 
     public CarDto(Car car){
@@ -120,5 +122,6 @@ public class CarDto {
         this.buttonStart=car.getButtonStart();
         this.sunroof=car.getSunroof();
         this.childSafetyLocks=car.getChildSafetyLocks();
+        this.mainCarId=car.getMainCarId();
     }
 }

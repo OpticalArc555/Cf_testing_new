@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -41,12 +42,32 @@ public class CarRegisterImp implements ICarRegister {
 
 
 
+
+    private static final String MAIN_CAR_ID_FORMAT = "%02d%02d%06d";
+
+    public String generateMainCarId() {
+        LocalDate now = LocalDate.now();
+        int year = now.getYear() % 100;
+        int month = now.getMonthValue();
+        long nextSequenceNumber = getNextSequenceNumber();
+        return String.format(MAIN_CAR_ID_FORMAT, year, month, nextSequenceNumber);
+    }
+
+    private long getNextSequenceNumber() {
+        Optional<Long> lastId = carRepo.findMaxId();
+        return lastId.map(id -> id + 1).orElse(1L);
+    }
+
+
+
     @Override
     public int AddCarDetails(CarDto carDto) {
         Dealer dealer = dealerRepo.findById(carDto.getDealer_id())
                 .orElseThrow(() -> new CarNotFoundException("Dealer Not Found For ID " + carDto.getDealer_id(), HttpStatus.NOT_FOUND));
 
         Car car = new Car(carDto);
+        String mainCarId = generateMainCarId();
+        car.setMainCarId(mainCarId);
         car = carRepo.save(car);
         return car.getId();
     }

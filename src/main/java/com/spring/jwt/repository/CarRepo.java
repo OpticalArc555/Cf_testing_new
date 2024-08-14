@@ -60,6 +60,9 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
 
     @Query("SELECT COUNT(c) FROM Car c WHERE c.carStatus <> com.spring.jwt.entity.Status.SOLD")
     long countAllByCarStatusNotSold();
+
+    @Query("SELECT MAX(c.id) FROM Car c")
+    Optional<Long> findMaxId();
 }
 
 
