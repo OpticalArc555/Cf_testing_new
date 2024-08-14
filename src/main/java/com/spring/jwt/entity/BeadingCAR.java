@@ -1,12 +1,10 @@
 package com.spring.jwt.entity;
 
 import com.spring.jwt.dto.BeadingCAR.BeadingCARDto;
-import com.spring.jwt.dto.CarDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;

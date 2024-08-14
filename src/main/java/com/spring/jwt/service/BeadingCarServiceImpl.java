@@ -177,7 +177,9 @@ public class BeadingCarServiceImpl implements BeadingCarService {
                 .map(car -> {
                     BeadingCarWithInsDto dto = new BeadingCarWithInsDto(car);
                     BiddingTimerRequest biddingTimer = biddingTImerRepo.findByBeadingCarId(car.getBeadingCarId());
+
                     if (biddingTimer != null) {
+                        dto.setBiddingTimerStatus(biddingTimer.getStatus());
                         dto.setBiddingTimerId(biddingTimer.getBiddingTimerId());
                     }
                     return dto;
