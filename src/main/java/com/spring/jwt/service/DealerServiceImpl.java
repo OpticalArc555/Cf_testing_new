@@ -91,42 +91,39 @@ public class DealerServiceImpl implements DealerService {
     @Override
     public List<DealerDto> getAllDealers(int pageNo) {
         List<Dealer> dealers = dealerRepository.findAllByOrderByIdDesc();
-        if (dealers.size() < 0) {
+        if (dealers.isEmpty()) {
             throw new DealerNotFoundException("Dealer not found");
         }
-        if((pageNo*10)>dealers.size()-1){
-            throw new PageNotFoundException("page not found");
-
+        if ((pageNo * 10) > dealers.size() - 1) {
+            throw new PageNotFoundException("Page not found");
         }
-        ///////
-//        List<Car> listOfCar = carRepo.findAll();
-//        CarNotFoundException carNotFoundException;
 
-//        if(dealers.size()<=0){throw new CarNotFoundException("car not found",HttpStatus.NOT_FOUND);}
-//        System.out.println("list of de"+listOfCar.size());
         List<DealerDto> listOfDealerDto = new ArrayList<>();
 
-        int pageStart=pageNo*10;
-        int pageEnd=pageStart+10;
-        int diff=(dealers.size()) - pageStart;
-        for(int counter=pageStart,i=1;counter<pageEnd;counter++,i++){
-            if(pageStart>dealers.size()){break;}
-            System.err.println("inside dealer");
-            System.out.println("*");
-            DealerDto dealerDto = new DealerDto(dealers.get(counter));
-            System.err.println(dealerDto.toString());
-//            dealerDto.setUserId(dealers.get(counter).getUser().getId());
+        int pageStart = pageNo * 10;
+        int pageEnd = pageStart + 10;
+        int diff = (dealers.size()) - pageStart;
+
+        for (int counter = pageStart, i = 1; counter < pageEnd; counter++, i++) {
+            if (pageStart > dealers.size()) {
+                break;
+            }
+
+            // Fetch the car count for the current dealer
+            int carCount = carRepo.countByDealerId(dealers.get(counter).getId());
+
+            DealerDto dealerDto = new DealerDto(dealers.get(counter), carCount);
             listOfDealerDto.add(dealerDto);
-            if(diff == i){
+
+            if (diff == i) {
                 break;
             }
         }
-
-//        return dealers.stream()
-//                .map(this::convertToDto)
-//                .collect(Collectors.toList());
         return listOfDealerDto;
     }
+
+
+
 
     @Override
     public DealerDto getDealerById(Integer dealerId) {

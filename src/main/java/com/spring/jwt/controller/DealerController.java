@@ -40,7 +40,6 @@ public class DealerController {
         }
     }
 
-
     @GetMapping("/allDealers/{pageNo}")
     public ResponseEntity<ResponseAllDealerDto> getAllDealers(@PathVariable int pageNo) {
         try{
