@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -37,6 +38,25 @@ public class BeadingCarServiceImpl implements BeadingCarService {
     private final BiddingTImerRepo biddingTImerRepo;
 
     private final BidCarsRepo bidCarsRepo;
+
+
+
+
+    private static final String MAIN_CAR_ID_FORMAT = "%02d%02d%05d";
+
+    public String generateMainCarId() {
+        LocalDate now = LocalDate.now();
+        int year = now.getYear() % 100;
+        int month = now.getMonthValue();
+        long nextSequenceNumber = getNextSequenceNumber();
+        return String.format(MAIN_CAR_ID_FORMAT, year, month, nextSequenceNumber);
+    }
+
+    private long getNextSequenceNumber() {
+        Optional<Long> lastId = beadingCarRepo.findMaxId();
+        return lastId.map(id -> id + 1).orElse(1L);
+    }
+
 
     @Override
     public String AddBCar(BeadingCARDto beadingCARDto) {
@@ -61,6 +81,8 @@ public class BeadingCarServiceImpl implements BeadingCarService {
         }
         BeadingCAR beadingCAR = new BeadingCAR(beadingCARDto);
         beadingCAR.setCarStatus("pending");
+        String uniqueBeadingCarId = generateMainCarId();
+        beadingCAR.setUniqueBeadingCarId(uniqueBeadingCarId);
         beadingCAR = beadingCarRepo.save(beadingCAR);
         return String.valueOf(beadingCAR.getBeadingCarId());
     }
@@ -255,6 +277,14 @@ public class BeadingCarServiceImpl implements BeadingCarService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public BeadingCarWithInsDto getBCarByUniqueBeadingCarId(String uniqueBeadingCarId) {
+        BeadingCAR beadingCAR = (BeadingCAR) beadingCarRepo.findByUniqueBeadingCarId(uniqueBeadingCarId)
+                .orElseThrow(() -> new BeadingCarNotFoundException("Beading car not found with id: " + uniqueBeadingCarId, HttpStatus.NOT_FOUND));
+        return new BeadingCarWithInsDto(beadingCAR);
+    }
+
 
     private BidCarsDTO convertToDto(BidCars beadingCar) {
         BidCarsDTO dto = new BidCarsDTO();

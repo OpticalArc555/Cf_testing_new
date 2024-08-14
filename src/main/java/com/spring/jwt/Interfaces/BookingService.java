@@ -19,4 +19,6 @@ public interface BookingService {
 
     public String editById(int id);
 
+    public BookingDto getBookingByMainCarId(String mainCarId);
+
 }

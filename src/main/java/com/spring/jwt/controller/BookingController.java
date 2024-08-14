@@ -121,4 +121,19 @@ public class BookingController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @GetMapping("/getBookingByMainCarId")
+    public ResponseEntity<BookingResponse> getBookingByMainCarId(@RequestParam String mainCarId) {
+        try {
+            BookingDto bookingDto = bookingService.getBookingByMainCarId(mainCarId);
+            BookingResponse bookingResponse = new BookingResponse("Successful");
+            bookingResponse.setBookingDto(bookingDto);
+            return ResponseEntity.status(HttpStatus.OK).body(bookingResponse);
+        } catch (BookingNotFoundException e) {
+            BookingResponse bookingResponse = new BookingResponse("Unsuccessful");
+            bookingResponse.setException("Booking not found for MainCarId: " + mainCarId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bookingResponse);
+        }
+    }
+
 }
