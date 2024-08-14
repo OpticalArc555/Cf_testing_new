@@ -174,6 +174,15 @@ public class CarRegisterImp implements ICarRegister {
     }
 
     @Override
+    public CarDto findByMainCarId(String mainCarId) {
+        Car car = carRepo.findByMainCarId(mainCarId)
+                .orElseThrow(() -> new CarNotFoundException("Car not found for MainCarId: " + mainCarId, HttpStatus.NOT_FOUND));
+
+        return new CarDto(car);
+    }
+
+
+    @Override
     public long getTotalCars() {
         return carRepo.countAllByCarStatusNotSold();
     }

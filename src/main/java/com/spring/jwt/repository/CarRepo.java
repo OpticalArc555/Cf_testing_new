@@ -63,6 +63,8 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
 
     @Query("SELECT MAX(c.id) FROM Car c")
     Optional<Long> findMaxId();
+    Optional<Car> findByMainCarId(String mainCarId);
+
 }
 
 

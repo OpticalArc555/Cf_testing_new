@@ -13,4 +13,22 @@ public class ResponseSingleCarDto {
     public ResponseSingleCarDto(String message) {
         this.message = message;
     }
+
+    public ResponseSingleCarDto(String message,String exception, Object object) {
+        this.message = message;
+        this.object = object;
+        this.exception = exception;
+    }
+
+    public ResponseSingleCarDto(String success, CarDto car) {
+    }
+
+    public ResponseSingleCarDto(String unsuccess, String s) {
+    }
+
+    // Constructor for error response with exception
+
+
+    // Constructor for simple success message
+
 }
