@@ -118,6 +118,9 @@ public class Car {
     private int dealerId;
     private long carPhotoId;
 
+    @Column(name = "main_car_id", nullable = false)
+    private String mainCarId;
+
     @OneToMany(mappedBy = "carCar")
     private Set<PendingBooking> pendingBookings = new LinkedHashSet<>();
 
@@ -152,6 +155,7 @@ public class Car {
         this.airbag=carDto.getAirbag();
         this.buttonStart=carDto.getButtonStart();
         this.childSafetyLocks=carDto.getChildSafetyLocks();
+        this.mainCarId=carDto.getMainCarId();
     }
 
 }

@@ -164,6 +164,20 @@ CarController {
         }
     }
 
+    @GetMapping("/getCarByMainCarId")
+    public ResponseEntity<?> findByMainCarId(@RequestParam String mainCarId) {
+        try {
+            CarDto car = iCarRegister.findByMainCarId(mainCarId);
+            ResponceDto responseDto = new ResponceDto("success", car);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        } catch (CarNotFoundException e) {
+            ResponseDto responseDto = new ResponseDto("unsuccess", "Car not found for MainCarId: " + mainCarId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+        }
+    }
+
+
+
 }
 
 
