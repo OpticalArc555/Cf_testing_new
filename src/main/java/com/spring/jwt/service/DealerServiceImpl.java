@@ -258,8 +258,6 @@ public class DealerServiceImpl implements DealerService {
         return response;
     }
 
-
-
     @Override
     public int getDealerIdByEmail(String email) {
         Optional<Dealer> dealer = dealerRepository.findByEmail(email);
