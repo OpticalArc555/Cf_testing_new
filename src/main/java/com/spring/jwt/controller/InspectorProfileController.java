@@ -2,6 +2,7 @@ package com.spring.jwt.controller;
 
 import com.spring.jwt.Interfaces.InspectorProfileService;
 import com.spring.jwt.dto.*;
+import com.spring.jwt.exception.DuplicateRecordException;
 import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
@@ -32,8 +33,11 @@ public class InspectorProfileController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", result));
         } catch (UserNotFoundExceptions  profileNotFoundException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess", "Profile not found"));
+        }catch (DuplicateRecordException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseDto("unsuccess", e.getMessage()));
         }
     }
+
     @GetMapping("/inspector")
     public ResponseEntity<?> getByProfile(@RequestParam Integer inspectorProfileId) {
         try {

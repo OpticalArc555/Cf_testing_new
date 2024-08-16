@@ -117,8 +117,6 @@ public class BeadingCAR {
     private String carInsuranceType;
 
 
-
-
     public BeadingCAR() {
     }
 

@@ -1,7 +1,6 @@
 package com.spring.jwt.repository;
 
 import com.spring.jwt.entity.Dealer;
-import com.spring.jwt.entity.Role;
 import com.spring.jwt.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -38,4 +37,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.name = :roleName")
     long countByRoleName(@Param("roleName") String roleName);
 
+    boolean existsByEmail(String email);
+
+    boolean existsByMobileNo(String mobileNo);
 }

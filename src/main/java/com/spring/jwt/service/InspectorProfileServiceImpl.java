@@ -7,6 +7,7 @@ import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.entity.InspectorProfile;
 import com.spring.jwt.entity.User;
 import com.spring.jwt.entity.Userprofile;
+import com.spring.jwt.exception.DuplicateRecordException;
 import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
@@ -41,9 +42,10 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
 
 
     @Override
-    public String updateProfile(InspectorProfileDto inspectorProfileDto, Integer InspectorProfileId) {
-        InspectorProfile profile = inspectorProfileRepo.findById(InspectorProfileId).orElseThrow(() -> new UserNotFoundExceptions("Profile not found", HttpStatus.NOT_FOUND));
+    public String updateProfile(InspectorProfileDto inspectorProfileDto, Integer inspectorProfileId) {
 
+        InspectorProfile profile = inspectorProfileRepo.findById(inspectorProfileId)
+                .orElseThrow(() -> new UserNotFoundExceptions("Profile not found", HttpStatus.NOT_FOUND));
 
         if (inspectorProfileDto.getAddress() != null) {
             profile.setAddress(inspectorProfileDto.getAddress());
@@ -64,14 +66,27 @@ public class InspectorProfileServiceImpl implements InspectorProfileService {
         inspectorProfileRepo.save(profile);
 
         User user = profile.getUser();
-
         if (user != null) {
-            if (inspectorProfileDto.getMobileNo() != null) {
-                user.setMobileNo(inspectorProfileDto.getMobileNo());
+            if (inspectorProfileDto.getMobileNo() != null && !inspectorProfileDto.getMobileNo().isEmpty()) {
+                if (!inspectorProfileDto.getMobileNo().equals(user.getMobileNo())) {
+                    boolean mobileExists = userRepository.existsByMobileNo(inspectorProfileDto.getMobileNo());
+                    if (mobileExists) {
+                        throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                    }
+                    user.setMobileNo(inspectorProfileDto.getMobileNo());
+                }
             }
-            if (inspectorProfileDto.getEmail() != null) {
-                user.setEmail(inspectorProfileDto.getEmail());
+
+            if (inspectorProfileDto.getEmail() != null && !inspectorProfileDto.getEmail().isEmpty()) {
+                if (!inspectorProfileDto.getEmail().equals(user.getEmail())) {
+                    boolean emailExists = userRepository.existsByEmail(inspectorProfileDto.getEmail());
+                    if (emailExists) {
+                        throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                    }
+                    user.setEmail(inspectorProfileDto.getEmail());
+                }
             }
+
             userRepository.save(user);
         }
 

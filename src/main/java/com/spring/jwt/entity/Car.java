@@ -2,6 +2,7 @@ package com.spring.jwt.entity;
 
 import com.spring.jwt.dto.CarDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -74,7 +75,8 @@ public class Car {
     @Column(name = "color", length = 45)
     private String color;
 
-    @Column(name = "description", length = 250)
+    @Column(name = "description", length = 5000)
+    @Size(max = 5000, message = "Description cannot exceed 5000 characters")
     private String description;
 
     @Column(name = "fuel_type", length = 45)

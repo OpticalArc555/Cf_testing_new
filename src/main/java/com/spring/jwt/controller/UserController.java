@@ -3,7 +3,9 @@ package com.spring.jwt.controller;
 import com.spring.jwt.Interfaces.UserService;
 import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.dto.ResponseAllUsersDto;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.dto.UserProfileDto;
+import com.spring.jwt.exception.DuplicateRecordException;
 import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
@@ -52,12 +54,13 @@ public class UserController {
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> editUser(@RequestBody UserProfileDto userProfileDto, @PathVariable int id){
-
         try {
             BaseResponseDTO result = userService.editUser(userProfileDto,id);
             return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Successful",result.getMessage()));
         }catch (UserNotFoundExceptions exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponseDTO("Unsuccessful","user not found"));
+        }catch (DuplicateRecordException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseDto("unsuccess", e.getMessage()));
         }
     }
 

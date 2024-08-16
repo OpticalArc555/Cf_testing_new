@@ -283,27 +283,60 @@ public class UserServiceImpl implements UserService {
 
         BaseResponseDTO response = new BaseResponseDTO();
 
-        Optional<Userprofile> user = userProfileRepository.findById(id);
+        Optional<Userprofile> optionalUser = userProfileRepository.findById(id);
 
-        if (user.isPresent()) {
-            user.get().setFirstName(userProfileDto.getFirstName());
-            user.get().setLastName(userProfileDto.getLastName());
-            user.get().setAddress(userProfileDto.getAddress());
-            user.get().getUser().setMobileNo(userProfileDto.getMobile_no());
-            user.get().getUser().setEmail(userProfileDto.getEmail());
-            user.get().setCity(userProfileDto.getCity());
+        if (optionalUser.isPresent()) {
+            Userprofile userProfile = optionalUser.get();
 
-            userProfileRepository.save(user.get());
+            User user = userProfile.getUser();
+
+            if (userProfileDto.getFirstName() != null) {
+                userProfile.setFirstName(userProfileDto.getFirstName());
+            }
+            if (userProfileDto.getLastName() != null) {
+                userProfile.setLastName(userProfileDto.getLastName());
+            }
+            if (userProfileDto.getAddress() != null) {
+                userProfile.setAddress(userProfileDto.getAddress());
+            }
+            if (userProfileDto.getCity() != null) {
+                userProfile.setCity(userProfileDto.getCity());
+            }
+            if (user != null) {
+                if (userProfileDto.getMobile_no() != null && !userProfileDto.getMobile_no().isEmpty()) {
+                    if (!userProfileDto.getMobile_no().equals(user.getMobileNo())) {
+                        boolean mobileExists = userRepository.existsByMobileNo(userProfileDto.getMobile_no());
+                        if (mobileExists) {
+                            throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
+                        user.setMobileNo(userProfileDto.getMobile_no());
+                    }
+                }
+            }
+
+            if (userProfileDto.getEmail() != null && !userProfileDto.getEmail().isEmpty()) {
+                if (!userProfileDto.getEmail().equals(user.getEmail())) {
+                    boolean emailExists = userRepository.existsByEmail(userProfileDto.getEmail());
+                    if (emailExists) {
+                        throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                    }
+                    user.setEmail(userProfileDto.getEmail());
+                }
+            }
+
+            userProfileRepository.save(userProfile);
+            userRepository.save(user);
 
             response.setCode(String.valueOf(HttpStatus.OK.value()));
-            response.setMessage("User edited");
+            response.setMessage("User edited successfully");
         } else {
             response.setCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
-            throw new UserNotFoundExceptions("No user found");
+            response.setMessage("No user found");
         }
 
         return response;
     }
+
 
     @Override
     @Transactional
