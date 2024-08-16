@@ -120,8 +120,6 @@ public class BeadingCAR {
     private String uniqueBeadingCarId;
 
 
-
-
     public BeadingCAR() {
     }
 

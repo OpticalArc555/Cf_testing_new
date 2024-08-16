@@ -151,8 +151,14 @@ public class BidCarsServiceImpl implements BidCarsService {
                     finalBid.setBuyerDealerId(bid.getUserId());
                     finalBid.setBidCarId(bidCar.getBidCarId());
                     finalBid.setPrice(bid.getAmount());
-
                     finalBidRepo.save(finalBid);
+                    BeadingCAR beadingCAR = beadingCarRepo.findById(bidCar.getBeadingCarId()).orElse(null);
+
+                    if (beadingCAR!= null){
+                        beadingCAR.setCarStatus("SOLD");
+                        beadingCarRepo.save(beadingCAR);
+                        log.info("Successfully updated status to SOLD for car: {}", bidCar.getBidCarId());
+                    }
                     log.info("Successfully saved final bid for car: {} with amount: {}", bidCar.getBidCarId(), bid.getAmount());
                 } else {
                     log.warn("Invalid bid or bidCar data for car: {}", bidCar.getBidCarId());

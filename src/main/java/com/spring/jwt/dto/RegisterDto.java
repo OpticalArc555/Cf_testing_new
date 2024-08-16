@@ -11,7 +11,6 @@ import java.util.Date;
 @Setter
 public class RegisterDto {
 
-
     public String email;
     @NotBlank(message = "Password cannot be blank")
     private String password;
@@ -29,7 +28,5 @@ public class RegisterDto {
     private Integer documentId;
     private Date joiningdate;
     private Integer salesPersonId;
-
-
 
 }
