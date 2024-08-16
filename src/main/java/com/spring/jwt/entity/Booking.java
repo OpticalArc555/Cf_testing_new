@@ -33,6 +33,9 @@ public class Booking {
     @Column(name = "status", length = 45)
     private String status;
 
+    @Column(name = "mainCarId")
+    private String mainCarId;
+
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "pending_booking")
 //    private PendingBooking pendingBooking;

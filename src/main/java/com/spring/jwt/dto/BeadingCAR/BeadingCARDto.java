@@ -71,6 +71,9 @@ public class BeadingCARDto {
 
     private String carInsuranceType;
 
+    private String uniqueBeadingCarId;
+
+
 
     public BeadingCARDto() {
     }
@@ -107,6 +110,7 @@ public class BeadingCARDto {
         this.airbag=beadingCAR.getAirbag();
         this.buttonStart=beadingCAR.getButtonStart();
         this.childSafetyLocks=beadingCAR.getChildSafetyLocks();
+        this.uniqueBeadingCarId=beadingCAR.getUniqueBeadingCarId();
 
     }
 }
