@@ -18,7 +18,5 @@ public class FinalBidDto {
 
     private Integer price;
 
-    private Integer beadingCarId;
-
 
 }
