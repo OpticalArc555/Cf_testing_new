@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FinalBidRepository extends JpaRepository<FinalBid, Integer> {
@@ -16,4 +17,6 @@ public interface FinalBidRepository extends JpaRepository<FinalBid, Integer> {
 
     Page<FinalBid> findByBuyerDealerId(Integer buyerDealerId, Pageable pageable);
 
+
+    Optional<FinalBid> findByBidCarId(Integer bidCarId);
 }

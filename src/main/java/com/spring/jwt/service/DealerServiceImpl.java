@@ -218,7 +218,6 @@ public class DealerServiceImpl implements DealerService {
             throw new DealerNotFoundException("Dealer not found");
         }
 
-
     }
 
     @Override
@@ -334,4 +333,3 @@ public class DealerServiceImpl implements DealerService {
     }
 
 }
-

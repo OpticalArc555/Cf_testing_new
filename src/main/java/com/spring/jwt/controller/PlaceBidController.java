@@ -121,6 +121,12 @@ public class PlaceBidController {
         return ResponseEntity.ok(finalBids);
     }
 
+    @GetMapping("getFinalBidById")
+    public ResponseEntity<?> getfinalbidById(final Integer bidCarId) {
+        ResponseEntity<?> finalbidById = placedBidService.getFinalbidById(bidCarId);
+        return finalbidById;
+    }
+
     @GetMapping("/getAllDealerFinalBids")
     public ResponseEntity<ResponseFinalBidsAll> getAllDealer(@RequestParam Integer buyerDealerId, @RequestParam(value = "pageNo") int pageNo,
                                                              @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
