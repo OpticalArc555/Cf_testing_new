@@ -177,6 +177,17 @@ CarController {
     }
 
 
+    @GetMapping("/count")
+    public ResponseEntity<ResponceDto> getCountByStatusAndDealer(
+            @RequestParam Status carStatus,
+            @RequestParam int dealerId) {
+
+        int carCount = iCarRegister.getCarCountByStatusAndDealer(carStatus, dealerId);
+
+        ResponceDto responseDto = new ResponceDto("Success", carCount);
+        return ResponseEntity.ok(responseDto);
+    }
+
 
 }
 

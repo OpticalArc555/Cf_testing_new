@@ -36,4 +36,6 @@ public interface ICarRegister {
 
     public CarDto findByMainCarId(String mainCarId);
 
+
+    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId);
 }

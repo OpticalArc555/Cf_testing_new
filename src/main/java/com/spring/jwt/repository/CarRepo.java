@@ -66,6 +66,8 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
     Optional<Car> findByMainCarId(String mainCarId);
 
     int countByDealerId(int dealerId);
+
+    int countByCarStatusAndDealerId(Status carStatus, int dealerId);
 }
 
 
