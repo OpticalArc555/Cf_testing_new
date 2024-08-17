@@ -370,4 +370,8 @@ public class CarRegisterImp implements ICarRegister {
         return carDto;
     }
 
+    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId) {
+        return carRepo.countByCarStatusAndDealerId(carStatus, dealerId);
+    }
+
 }
