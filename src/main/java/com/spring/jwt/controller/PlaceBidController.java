@@ -40,7 +40,6 @@ public class PlaceBidController {
 
     private static final Logger logger = LoggerFactory.getLogger(PlaceBidController.class);
 
-
     @PostMapping("/placeBid")
     private ResponseEntity<?> placeBid(@RequestBody PlacedBidDTO placedBidDTO, @RequestParam Integer bidCarId) {
         try {
