@@ -322,7 +322,7 @@ public class DealerServiceImpl implements DealerService {
 
     @Override
     public List<DealerDto> getAllDealersBySalesPersonId(Integer salesPersonID) {
-        List<Dealer> bySalesPersonId = dealerRepository.getBySalesPersonId(salesPersonID);
+        List<Dealer> bySalesPersonId = dealerRepository.findBySalesPersonIdOrderByIdDesc(salesPersonID);
         List<DealerDto> listOfDealerDto = new ArrayList<>();
         for (Dealer sales : bySalesPersonId) {
             DealerDto bySales = new DealerDto(sales);
