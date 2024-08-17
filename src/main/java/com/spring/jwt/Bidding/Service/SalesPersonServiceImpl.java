@@ -7,6 +7,7 @@ import com.spring.jwt.dto.PasswordChange;
 import com.spring.jwt.entity.InspectorProfile;
 import com.spring.jwt.entity.SalesPerson;
 import com.spring.jwt.entity.User;
+import com.spring.jwt.exception.DuplicateRecordException;
 import com.spring.jwt.exception.InvalidPasswordException;
 import com.spring.jwt.exception.PageNotFoundException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
@@ -108,12 +109,26 @@ public class SalesPersonServiceImpl implements SalesPersonService {
         salesPersonRepository.save(profile);
 
         User user = profile.getUser();
-        if (user != null) {
-            if (salesPersonDto.getMobileNo() != null && !salesPersonDto.getMobileNo().isEmpty()) {
-                user.setMobileNo(salesPersonDto.getMobileNo());
-            }
-            if (salesPersonDto.getEmail() != null && !salesPersonDto.getEmail().isEmpty()) {
-                user.setEmail(salesPersonDto.getEmail());
+            if (user != null) {
+                if (salesPersonDto.getMobileNo() != null && !salesPersonDto.getMobileNo().isEmpty()) {
+                    if (!salesPersonDto.getMobileNo().equals(user.getMobileNo())) {
+                        boolean mobileExists = userRepository.existsByMobileNo(salesPersonDto.getMobileNo());
+                        if (mobileExists) {
+                            throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
+                        user.setMobileNo(salesPersonDto.getMobileNo());
+                    }
+                }
+
+                if (salesPersonDto.getEmail() != null && !salesPersonDto.getEmail().isEmpty()) {
+                    if (!salesPersonDto.getEmail().equals(user.getEmail())) {
+                        boolean emailExists = userRepository.existsByEmail(salesPersonDto.getEmail());
+                        if (emailExists) {
+                            throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
+                        user.setEmail(salesPersonDto.getEmail());
+                    }
+
             }
             userRepository.save(user);
         }

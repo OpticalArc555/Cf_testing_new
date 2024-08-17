@@ -57,37 +57,63 @@ public class DealerServiceImpl implements DealerService {
                     return response;
 
                 } else {
-
                     throw new DealerDeatilsNotFoundException("Dealer details not found");
                 }
             } else {
-
-
                 throw new UserNotDealerException("User is not a dealer");
             }
         } else {
-
             throw new UserNotFoundExceptions("User not found");
-
         }
-
     }
 
     private void updateDealerDetails(Dealer dealer, RegisterDto registerDto) {
-        dealer.setAddress(registerDto.getAddress());
-        dealer.setArea(registerDto.getArea());
-        dealer.setCity(registerDto.getCity());
-        dealer.setFirstname(registerDto.getFirstName());
-        dealer.setLastName(registerDto.getLastName());
-        dealer.setMobileNo(registerDto.getMobileNo());
-        dealer.setShopName(registerDto.getShopName());
-        dealer.setEmail(registerDto.getEmail());
 
-        User user = dealer.getUser();
-        user.setEmail(registerDto.getEmail());
-        user.setMobileNo(registerDto.getMobileNo());
-        userRepository.save(user);
+        if (registerDto.getAddress() != null) {
+            dealer.setAddress(registerDto.getAddress());
+        }
+        if (registerDto.getArea() != null) {
+            dealer.setArea(registerDto.getArea());
+        }
+        if (registerDto.getCity() != null) {
+            dealer.setCity(registerDto.getCity());
+        }
+        if (registerDto.getFirstName() != null) {
+            dealer.setFirstname(registerDto.getFirstName());
+        }
+        if (registerDto.getLastName() != null) {
+            dealer.setLastName(registerDto.getLastName());
+        }
+        if (registerDto.getShopName() != null) {
+            dealer.setShopName(registerDto.getShopName());
+        }
+
+            User user = dealer.getUser();
+            if (user != null) {
+                if (registerDto.getMobileNo() != null && !registerDto.getMobileNo().isEmpty()) {
+                    if (!registerDto.getMobileNo().equals(user.getMobileNo())) {
+                        boolean mobileExists = userRepository.existsByMobileNo(registerDto.getMobileNo());
+                        if (mobileExists) {
+                            throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
+                        user.setMobileNo(registerDto.getMobileNo());
+                    }
+                }
+
+                if (registerDto.getEmail() != null && !registerDto.getEmail().isEmpty()) {
+                    if (!registerDto.getEmail().equals(user.getEmail())) {
+                        boolean emailExists = userRepository.existsByEmail(registerDto.getEmail());
+                        if (emailExists) {
+                            throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
+                        user.setEmail(registerDto.getEmail());
+                    }
+
+                }
+            }
+
     }
+
     @Override
     public List<DealerDto> getAllDealers(int pageNo) {
         List<Dealer> dealers = dealerRepository.findAllByOrderByIdDesc();
@@ -121,8 +147,6 @@ public class DealerServiceImpl implements DealerService {
         }
         return listOfDealerDto;
     }
-
-
 
 
     @Override
@@ -233,8 +257,6 @@ public class DealerServiceImpl implements DealerService {
 
         return response;
     }
-
-
 
     @Override
     public int getDealerIdByEmail(String email) {

@@ -38,6 +38,9 @@ public class DealerController {
         catch (UserNotFoundExceptions userNotFoundExceptions){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess","user not found exception"));
         }
+        catch (DuplicateRecordException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseDto("unsuccess", e.getMessage()));
+        }
     }
 
     @GetMapping("/allDealers/{pageNo}")
