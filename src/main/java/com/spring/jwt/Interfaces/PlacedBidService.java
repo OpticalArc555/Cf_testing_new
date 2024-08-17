@@ -7,6 +7,7 @@ import com.spring.jwt.entity.PlacedBid;
 import com.spring.jwt.exception.BidAmountLessException;
 import com.spring.jwt.exception.BidForSelfAuctionException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -29,4 +30,5 @@ public interface PlacedBidService {
 
     Page<FinalBidDto> getDealerAllBids(Integer buyerDealerId, int pageNo, int pageSize);
 
+    ResponseEntity<?> getFinalbidById(Integer bidCarId);
 }

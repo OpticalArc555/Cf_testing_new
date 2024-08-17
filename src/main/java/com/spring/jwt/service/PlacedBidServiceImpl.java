@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -241,6 +242,26 @@ public class PlacedBidServiceImpl implements PlacedBidService {
             logger.error("No bids found for buyerDealerId: {}", buyerDealerId);
             throw new RuntimeException("No bids found for buyerDealerId: " + buyerDealerId);
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getFinalbidById(Integer bidCarId) {
+        FinalBidDto finalBidDto = finalBidRepo.findByBidCarId(bidCarId)
+                .map(bid -> {
+
+                    FinalBidDto dto = new FinalBidDto();
+                    dto.setFinalBidId(bid.getFinalBidId());
+                    dto.setPrice(bid.getPrice());
+                    dto.setSellerDealerId(bid.getSellerDealerId());
+                    dto.setBuyerDealerId(bid.getBuyerDealerId());
+                    dto.setBidCarId(bid.getBidCarId());
+
+                    System.err.println(dto);
+                    return dto;
+                })
+                .orElseThrow(() -> new RuntimeException("No Data Found"));
+
+        return ResponseEntity.ok(finalBidDto);
     }
 
 //    @Override

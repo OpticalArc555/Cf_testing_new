@@ -40,7 +40,6 @@ public class PlaceBidController {
 
     private static final Logger logger = LoggerFactory.getLogger(PlaceBidController.class);
 
-
     @PostMapping("/placeBid")
     private ResponseEntity<?> placeBid(@RequestBody PlacedBidDTO placedBidDTO, @RequestParam Integer bidCarId) {
         try {
@@ -119,6 +118,12 @@ public class PlaceBidController {
     public ResponseEntity<List<FinalBid>> getAllFinalBids() {
         List<FinalBid> finalBids = placedBidService.getAllFinalBids();
         return ResponseEntity.ok(finalBids);
+    }
+
+    @GetMapping("getFinalBidById")
+    public ResponseEntity<?> getfinalbidById(final Integer bidCarId) {
+        ResponseEntity<?> finalbidById = placedBidService.getFinalbidById(bidCarId);
+        return finalbidById;
     }
 
     @GetMapping("/getAllDealerFinalBids")
