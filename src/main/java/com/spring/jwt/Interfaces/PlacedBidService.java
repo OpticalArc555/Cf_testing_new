@@ -22,7 +22,7 @@ public interface PlacedBidService {
 
     public PlacedBidDTO getById(Integer placedBidId);
 
-    List<FinalBid> getAllFinalBids();
+    List<FinalBidDto> getAllFinalBids();
 
     public  List<PlacedBidDTO> getTopThree(Integer bidCarId);
 
@@ -30,5 +30,5 @@ public interface PlacedBidService {
 
     Page<FinalBidDto> getDealerAllBids(Integer buyerDealerId, int pageNo, int pageSize);
 
-    ResponseEntity<?> getFinalbidById(Integer bidCarId);
+    ResponseEntity<FinalBidDto> getFinalbidById(Integer bidCarId);
 }
