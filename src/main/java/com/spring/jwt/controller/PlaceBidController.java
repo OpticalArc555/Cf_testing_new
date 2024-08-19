@@ -1,15 +1,12 @@
 package com.spring.jwt.controller;
 
-import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
 import com.spring.jwt.Interfaces.PlacedBidService;
 import com.spring.jwt.dto.*;
 import com.spring.jwt.dto.BeedingDtos.PlacedBidDTO;
 import com.spring.jwt.entity.BidCars;
-import com.spring.jwt.entity.FinalBid;
 import com.spring.jwt.exception.*;
 import com.spring.jwt.repository.BidCarsRepo;
-import com.spring.jwt.repository.BiddingTImerRepo;
 import com.spring.jwt.service.BidCarsServiceImpl;
 import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -115,16 +110,25 @@ public class PlaceBidController {
     }
 
     @GetMapping("/finalBids")
-    public ResponseEntity<List<FinalBid>> getAllFinalBids() {
-        List<FinalBid> finalBids = placedBidService.getAllFinalBids();
-        return ResponseEntity.ok(finalBids);
+    public ResponseEntity<ResponseFinalBidDto> getAllFinalBids() {
+        try {
+            List<FinalBidDto> finalBids = placedBidService.getAllFinalBids();
+            return ResponseEntity.ok(new ResponseFinalBidDto("Top three bids for car ID " + " retrieved successfully", finalBids, null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseFinalBidDto("An error occurred: " + e.getMessage(), null, null));
+        }
     }
 
     @GetMapping("getFinalBidById")
     public ResponseEntity<?> getfinalbidById(final Integer bidCarId) {
-        ResponseEntity<?> finalbidById = placedBidService.getFinalbidById(bidCarId);
-        return finalbidById;
+        try {
+            FinalBidDto finalBidDto = placedBidService.getFinalbidById(bidCarId).getBody();
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", finalBidDto));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", "Data Not Found for specified Id"));
+        }
     }
+
 
     @GetMapping("/getAllDealerFinalBids")
     public ResponseEntity<ResponseFinalBidsAll> getAllDealer(@RequestParam Integer buyerDealerId, @RequestParam(value = "pageNo") int pageNo,

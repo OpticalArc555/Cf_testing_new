@@ -245,7 +245,7 @@ public class PlacedBidServiceImpl implements PlacedBidService {
     }
 
     @Override
-    public ResponseEntity<?> getFinalbidById(Integer bidCarId) {
+    public ResponseEntity<FinalBidDto> getFinalbidById(Integer bidCarId) {
         FinalBidDto finalBidDto = finalBidRepo.findByBidCarId(bidCarId)
                 .map(bid -> {
 
@@ -279,10 +279,21 @@ public class PlacedBidServiceImpl implements PlacedBidService {
 //    }
 
     @Override
-    public List<FinalBid> getAllFinalBids() {
-        return finalBidRepo.findAll();
-    }
+    public List<FinalBidDto> getAllFinalBids() {
+        List<FinalBid> all = finalBidRepo.findAll();
 
+        return all.stream()
+                .map(finalBid -> {
+                    FinalBidDto dto = new FinalBidDto();
+            dto.setFinalBidId(finalBid.getFinalBidId());
+            dto.setBidCarId(finalBid.getBidCarId());
+            dto.setPrice(finalBid.getPrice());
+            dto.setBuyerDealerId(finalBid.getBuyerDealerId());
+            dto.setSellerDealerId(dto.getSellerDealerId());
+            return dto;
+    })
+                .collect(Collectors.toList());
+    }
 
     public PlacedBid convertToEntity(PlacedBidDTO placedBidDTO){
         PlacedBid toEntity = modelMapper.map(placedBidDTO, PlacedBid.class);
