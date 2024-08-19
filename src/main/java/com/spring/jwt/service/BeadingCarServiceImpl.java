@@ -39,9 +39,6 @@ public class BeadingCarServiceImpl implements BeadingCarService {
 
     private final BidCarsRepo bidCarsRepo;
 
-
-
-
     private static final String MAIN_CAR_ID_FORMAT = "%02d%02d%05d";
 
     public String generateMainCarId() {

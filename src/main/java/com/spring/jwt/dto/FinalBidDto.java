@@ -1,6 +1,5 @@
 package com.spring.jwt.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
