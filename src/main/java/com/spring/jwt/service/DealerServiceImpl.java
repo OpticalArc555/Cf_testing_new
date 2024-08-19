@@ -33,8 +33,10 @@ public class DealerServiceImpl implements DealerService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
     @Autowired
     private DealerRepository dealerRepository;
+
     @Autowired
     private CarRepo carRepo;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -92,26 +94,41 @@ public class DealerServiceImpl implements DealerService {
             if (user != null) {
                 if (registerDto.getMobileNo() != null && !registerDto.getMobileNo().isEmpty()) {
                     if (!registerDto.getMobileNo().equals(user.getMobileNo())) {
+
                         boolean mobileExists = userRepository.existsByMobileNo(registerDto.getMobileNo());
                         if (mobileExists) {
                             throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
                         }
+                        boolean existsmobile = dealerRepository.existsByMobileNo(registerDto.getMobileNo());
+                        if (existsmobile){
+                            throw new DuplicateRecordException("The Mobile Number you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+
+                        }
+                        dealer.setMobileNo(registerDto.getMobileNo());
                         user.setMobileNo(registerDto.getMobileNo());
                     }
                 }
 
                 if (registerDto.getEmail() != null && !registerDto.getEmail().isEmpty()) {
                     if (!registerDto.getEmail().equals(user.getEmail())) {
+
                         boolean emailExists = userRepository.existsByEmail(registerDto.getEmail());
+
+                        boolean emails = dealerRepository.existsByEmail(registerDto.getEmail());
+
+                        if (emails){
+                            throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
+                        }
                         if (emailExists) {
                             throw new DuplicateRecordException("The email address you entered is already in use. Please try another one", HttpStatus.CONFLICT);
                         }
                         user.setEmail(registerDto.getEmail());
+
+                        dealer.setEmail(registerDto.getEmail());
                     }
 
                 }
             }
-
     }
 
     @Override
