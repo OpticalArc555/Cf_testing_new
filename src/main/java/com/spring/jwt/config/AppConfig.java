@@ -127,6 +127,7 @@ public class AppConfig {
                 .requestMatchers("/transactions/**").permitAll()
                 .requestMatchers("/uploadFileBidCar/**").permitAll()
                 .requestMatchers("/inspectionReport/**").permitAll()
+                .requestMatchers("/userFormController/**").permitAll()
                 .requestMatchers("/saveCar/**").permitAll()
                 .requestMatchers("/ProfilePhoto/**").permitAll()
                 .anyRequest().authenticated()
