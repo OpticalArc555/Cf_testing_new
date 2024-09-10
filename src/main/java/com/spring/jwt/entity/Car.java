@@ -118,10 +118,14 @@ public class Car {
 
     @Column(name = "dealer_id")
     private int dealerId;
+
     private long carPhotoId;
 
     @Column(name = "main_car_id", nullable = false)
     private String mainCarId;
+
+    @Column(name = "carType", nullable = false)
+    private String carType;
 
     @OneToMany(mappedBy = "carCar")
     private Set<PendingBooking> pendingBookings = new LinkedHashSet<>();
