@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ICarRegister {
-    public int AddCarDetails(CarDto carDto);
+//    public int AddCarDetails(CarDto carDto);
+
+    public int AddCarDetails(CarDto carDto, String carType);
 
     public String editCarDetails(CarDto carDto,int id);
 
@@ -26,7 +28,7 @@ public interface ICarRegister {
 
     public String editCarDetails(CarDto carDto);
 
-    public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo);
+    public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo,String carType);
 
     List<String> getAutocompleteSuggestions(String query);
 

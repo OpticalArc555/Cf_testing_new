@@ -1,4 +1,7 @@
 package com.spring.jwt.userForm.controller;
+
+import com.spring.jwt.dto.ResponceDto;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.userForm.Dto.ResponseAllUserFormDto;
 import com.spring.jwt.userForm.Dto.userFormDto;
 import com.spring.jwt.userForm.Dto.userFormDtoPost;
@@ -14,18 +17,18 @@ import java.util.List;
 @RequestMapping("/userFormController")
 public class userFormController {
 
-
     @Autowired
     private userFormServiceImpl userFormService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addForm(@RequestBody userFormDtoPost userFormDtoPost) {
+    public ResponseEntity<ResponseDto> addForm(@RequestBody userFormDtoPost userFormDtoPost) {
         try {
             userFormDtoPost createdForm = userFormService.addForm(userFormDtoPost);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdForm);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseDto("success","Form created successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseAllUserFormDto("Failed to add form: " + e.getMessage()));
+                    .body(new ResponseDto("Failed to add form: " + e.getMessage(), null));
         }
     }
 
@@ -33,10 +36,10 @@ public class userFormController {
     public ResponseEntity<?> getByFormId(@RequestParam Integer userFormId) {
         try {
             userFormDto form = userFormService.getByFormId(userFormId);
-            return ResponseEntity.ok(form);
+            return ResponseEntity.ok(new ResponceDto("Form retrieved successfully", form));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseAllUserFormDto("Form not found with ID: " + userFormId));
+                    .body(new ResponseDto("unsuccessful" ,"not found"));
         }
     }
 
@@ -44,41 +47,30 @@ public class userFormController {
     public ResponseEntity<?> updateForm(@RequestParam Integer userFormId, @RequestBody userFormDto userFormDto) {
         try {
             userFormDto updatedForm = userFormService.updateForm(userFormId, userFormDto);
-            return ResponseEntity.ok(updatedForm);
+            return ResponseEntity.ok(new ResponceDto("Form updated successfully", updatedForm));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseAllUserFormDto("Failed to update form: " + e.getMessage()));
+                    .body(new ResponseDto("successfully" + e.getMessage(),"not found"));
         }
     }
 
-//    @PatchMapping("/patch/{id}")
-//    public ResponseEntity<?> patchForm(@PathVariable("id") Integer userFormId, @RequestBody userFormDto userFormDto) {
-//        try {
-//            userFormDto patchedForm = userFormService.updateForm(userFormId, userFormDto);
-//            return ResponseEntity.ok(patchedForm);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ResponseAllUserFormDto("Failed to patch form: " + e.getMessage()));
-//        }
-//    }
-
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteForm(@RequestParam Integer userFormId) {
+    public ResponseEntity<ResponseDto> deleteForm(@RequestParam Integer userFormId) {
         try {
             userFormService.deleteForm(userFormId);
-            return ResponseEntity.ok(new ResponseAllUserFormDto("Form deleted successfully"));
+            return ResponseEntity.ok(new ResponseDto("successfully", "Form deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseAllUserFormDto("Failed to delete form: " + e.getMessage()));
+                    .body(new ResponseDto("Failed to delete form: " + e.getMessage(), null));
         }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllForms( @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ResponseAllUserFormDto> getAllForms(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
         try {
             List<userFormDto> forms = userFormService.getAllForms(page, size);
-            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Success");
+            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Forms retrieved successfully");
             response.setList(forms);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -88,10 +80,10 @@ public class userFormController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<?> getByUserId(@RequestParam Integer userId) {
+    public ResponseEntity<ResponseAllUserFormDto> getByUserId(@RequestParam Integer userId) {
         try {
             List<userFormDto> forms = userFormService.getByUserId(userId);
-            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Success");
+            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Forms retrieved successfully");
             response.setList(forms);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -101,13 +93,12 @@ public class userFormController {
     }
 
     @GetMapping("/salesPerson")
-    public ResponseEntity<?> getBySalesPersonId(
-            @RequestParam Integer salesPersonId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ResponseAllUserFormDto> getBySalesPersonId(@RequestParam Integer salesPersonId,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int size) {
         try {
             List<userFormDto> forms = userFormService.getBySalesPersonId(salesPersonId, page, size);
-            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Success");
+            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Forms retrieved successfully");
             response.setList(forms);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -117,12 +108,12 @@ public class userFormController {
     }
 
     @GetMapping("/inspector")
-    public ResponseEntity<?> getByInspectorId(@RequestParam Integer inspectorId,
-                                              @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ResponseAllUserFormDto> getByInspectorId(@RequestParam Integer inspectorId,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size) {
         try {
-            List<userFormDto> forms = userFormService.getByInspectorId(inspectorId,page,size);
-            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Success");
+            List<userFormDto> forms = userFormService.getByInspectorId(inspectorId, page, size);
+            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Forms retrieved successfully");
             response.setList(forms);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -132,10 +123,10 @@ public class userFormController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<?> getByStatus(@RequestParam String status) {
+    public ResponseEntity<ResponseAllUserFormDto> getByStatus(@RequestParam String status) {
         try {
             List<userFormDto> forms = userFormService.getByStatus(status);
-            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Success");
+            ResponseAllUserFormDto response = new ResponseAllUserFormDto("Forms retrieved successfully");
             response.setList(forms);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
