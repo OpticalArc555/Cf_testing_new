@@ -58,19 +58,39 @@ public class CarRegisterImp implements ICarRegister {
         return lastId.map(id -> id + 1).orElse(1L);
     }
 
-
-
     @Override
-    public int AddCarDetails(CarDto carDto) {
+    public int AddCarDetails(CarDto carDto, String carType) {
+        // Find the dealer
         Dealer dealer = dealerRepo.findById(carDto.getDealer_id())
                 .orElseThrow(() -> new CarNotFoundException("Dealer Not Found For ID " + carDto.getDealer_id(), HttpStatus.NOT_FOUND));
 
+        // Create a new Car entity from CarDto
         Car car = new Car(carDto);
+
+        // Generate the mainCarId
         String mainCarId = generateMainCarId();
         car.setMainCarId(mainCarId);
+
+        // Set the carType from request parameter
+        car.setCarType(carType);
+
+        // Save the car entity
         car = carRepo.save(car);
         return car.getId();
     }
+
+
+//    @Override
+//    public int AddCarDetails(CarDto carDto) {
+//        Dealer dealer = dealerRepo.findById(carDto.getDealer_id())
+//                .orElseThrow(() -> new CarNotFoundException("Dealer Not Found For ID " + carDto.getDealer_id(), HttpStatus.NOT_FOUND));
+//
+//        Car car = new Car(carDto);
+//        String mainCarId = generateMainCarId();
+//        car.setMainCarId(mainCarId);
+//        car = carRepo.save(car);
+//        return car.getId();
+//    }
     /////////////////////////////////////////////////////////////////////
     //
     //  Method Name :  editCarDetails
@@ -295,12 +315,12 @@ public class CarRegisterImp implements ICarRegister {
 
 
     @Override
-    public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo) {
+    public List<CarDto> getDetails(int dealerId, Status carStatus, int pageNo,String carType) {
         if (!dealerExists(dealerId)) {
             throw new DealerNotFoundException("Dealer not found by id");
         }
 
-        List<Car> listOfCar = carRepo.findByDealerIdAndCarStatus(dealerId, carStatus);
+        List<Car> listOfCar = carRepo.findByDealerIdAndCarStatusAndCarTypeOrderByIdDesc(dealerId, carStatus,carType);
 
         if (listOfCar.isEmpty()) {
             throw new CarNotFoundException("Car not found", HttpStatus.NOT_FOUND);

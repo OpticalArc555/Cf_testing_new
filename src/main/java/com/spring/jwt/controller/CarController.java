@@ -29,9 +29,12 @@ CarController {
     private final CarRepo carRepo;
 
     @PostMapping(value = "/carregister")
-    public ResponseEntity<ResponseDto> carRegistration(@RequestBody CarDto carDto) {
+    public ResponseEntity<ResponseDto> carRegistration(
+            @RequestBody CarDto carDto,
+            @RequestParam (defaultValue = "Normal")String carType) {
         try {
-            Integer carId = iCarRegister.AddCarDetails(carDto);
+            // Pass carDto and carType to the service layer
+            Integer carId = iCarRegister.AddCarDetails(carDto, carType);
             String result = String.valueOf(carId);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("success", result));
@@ -40,6 +43,8 @@ CarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto("unsuccess", "Dealer not found"));
         }
     }
+
+
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<ResponseDto> carEdit(@RequestBody CarDto carDto, @PathVariable int id) {
@@ -139,11 +144,12 @@ CarController {
     public ResponseEntity<ResponseAllCarDto> getDetails(
             @RequestParam Integer dealerId,
             @RequestParam String carStatus,
-            @RequestParam int pageNo) {
+            @RequestParam int pageNo,
+            @RequestParam(defaultValue = "normal")String carType) {
 
         try {
             Status status = Status.fromString(carStatus);
-            List<CarDto> cars = iCarRegister.getDetails(dealerId, status, pageNo);
+            List<CarDto> cars = iCarRegister.getDetails(dealerId, status, pageNo,carType);
             ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("success");
             responseAllCarDto.setList(cars);
             return ResponseEntity.status(HttpStatus.OK).body(responseAllCarDto);
