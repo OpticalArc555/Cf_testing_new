@@ -6,6 +6,7 @@ import com.spring.jwt.userForm.Dto.userFormDto;
 import com.spring.jwt.userForm.Dto.userFormDtoPost;
 import com.spring.jwt.userForm.Interface.userFormService;
 import com.spring.jwt.userForm.entity.UserForm;
+import com.spring.jwt.userForm.exception.FormsNotFoundException;
 import com.spring.jwt.userForm.exception.ResourceNotFoundException;
 import com.spring.jwt.userForm.exception.OperationFailedException;
 import com.spring.jwt.userForm.repository.UserFormRepo;
@@ -134,18 +135,44 @@ public class userFormServiceImpl implements userFormService {
         }
     }
 
-    @Override
-    public List<userFormDto> getByUserId(Integer userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundExceptions("User with ID " + userId + " not found.");
-        }
-        try {
-            List<UserForm> entities = userFormRepository.findByUserIdOrderByUserFormIdDesc(userId);
-            return entities.stream().map(this::convertEntityToDto).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new OperationFailedException("Failed to retrieve forms by User ID: " + userId);
-        }
+//    @Override
+//    public List<userFormDto> getByUserId(Integer userId) {
+//        if (!userRepository.existsById(userId)) {
+//            throw new UserNotFoundExceptions("User with ID " + userId + " not found.");
+//        }
+//        try {
+//            if( )
+//            {
+//            List<UserForm> entities = userFormRepository.findByUserIdOrderByUserFormIdDesc(userId);
+//            return entities.stream().map(this::convertEntityToDto).collect(Collectors.toList());}
+//        } catch (Exception e) {
+//            throw new OperationFailedException("Failed to retrieve forms by User ID: " + userId);
+//        }
+//    }
+@Override
+public List<userFormDto> getByUserId(Integer userId) {
+    // Check if the user exists in the user repository
+    if (!userRepository.existsById(userId)) {
+        throw new UserNotFoundExceptions("User with ID " + userId + " not found.");
     }
+
+    try {
+        // Retrieve the list of forms by userId
+        List<UserForm> entities = userFormRepository.findByUserIdOrderByUserFormIdDesc(userId);
+
+        // If no forms are found, throw an exception
+        if (entities.isEmpty()) {
+            throw new FormsNotFoundException("No forms found for user with ID " + userId);
+        }
+
+        // Convert the forms to DTOs
+        return entities.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+
+    } catch (Exception e) {
+        throw new OperationFailedException("Failed to retrieve forms by User ID: " + userId);
+    }
+}
+
 
     @Override
     public List<userFormDto> getBySalesPersonId(Integer salesPersonId, int page, int size) {
