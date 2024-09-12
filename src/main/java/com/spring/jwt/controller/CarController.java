@@ -186,14 +186,38 @@ CarController {
     @GetMapping("/count")
     public ResponseEntity<ResponceDto> getCountByStatusAndDealer(
             @RequestParam Status carStatus,
-            @RequestParam int dealerId) {
+            @RequestParam int dealerId,
+            @RequestParam(defaultValue = "normal")String carType) {
 
-        int carCount = iCarRegister.getCarCountByStatusAndDealer(carStatus, dealerId);
+        int carCount = iCarRegister.getCarCountByStatusAndDealer(carStatus, dealerId,carType);
 
         ResponceDto responseDto = new ResponceDto("Success", carCount);
         return ResponseEntity.ok(responseDto);
     }
 
+
+
+    @GetMapping("/getAllCarsWithCarType")
+    public ResponseEntity<ResponseAllCarDto> getAllCarsWithCarType(@RequestParam int pageNo , @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "normal")String carType) {
+        try {
+            Page<CarDto> listOfCar = (Page<CarDto>) iCarRegister.getAllCarsWithCarTypeandPage(pageNo, pageSize,carType);
+            long totalEntries = iCarRegister.getTotalCars();
+
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("success");
+            responseAllCarDto.setList(listOfCar.getContent());
+            responseAllCarDto.setTotalCars(totalEntries);
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseAllCarDto);
+        } catch (CarNotFoundException carNotFoundException) {
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccessful");
+            responseAllCarDto.setException("Car not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccessful");
+            responseAllCarDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
+        }
+    }
 
 
 }

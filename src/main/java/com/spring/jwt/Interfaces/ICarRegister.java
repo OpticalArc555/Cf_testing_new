@@ -16,6 +16,8 @@ public interface ICarRegister {
 
     public List<CarDto> getAllCarsWithPages(int PageNo, int pageSize);
 
+    public List<CarDto> getAllCarsWithCarTypeandPage(int PageNo, int pageSize,String carType);
+
     public String deleteCar(int carId, int DealerId);
 
     CarDto getCarById(int carId);
@@ -39,5 +41,5 @@ public interface ICarRegister {
     public CarDto findByMainCarId(String mainCarId);
 
 
-    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId);
+    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId, String carType);
 }
