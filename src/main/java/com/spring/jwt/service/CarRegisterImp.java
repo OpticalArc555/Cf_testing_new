@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CarRegisterImp implements ICarRegister {
@@ -390,8 +391,27 @@ public class CarRegisterImp implements ICarRegister {
         return carDto;
     }
 
-    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId) {
-        return carRepo.countByCarStatusAndDealerId(carStatus, dealerId);
+    public int getCarCountByStatusAndDealer(Status carStatus, int dealerId, String carType) {
+        return carRepo.countByCarStatusAndDealerIdAndCarType(carStatus, dealerId,carType);
     }
+
+    @Override
+    public List<CarDto> getAllCarsWithCarTypeandPage(int pageNo, int pageSize, String carType) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        List<Status> statuses = Arrays.asList(Status.PENDING, Status.ACTIVE);
+
+        // Fetch cars by status and carType
+        Page<Car> pageOfCars = carRepo.findByCarStatusInAndCarTypeOrderByIdDesc(statuses, carType, pageable);
+
+        if (pageOfCars.isEmpty()) {
+            throw new CarNotFoundException("Car not found");
+        }
+
+        // Map to CarDto
+        return pageOfCars.stream()
+                .map(CarDto::new)
+                .collect(Collectors.toList());
+    }
+
 
 }

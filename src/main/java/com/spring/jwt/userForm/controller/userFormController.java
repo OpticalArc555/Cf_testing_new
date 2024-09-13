@@ -50,7 +50,21 @@ public class userFormController {
     public ResponseEntity<?> updateForm(@RequestParam Integer userFormId, @RequestBody userFormDto userFormDto) {
         try {
             userFormDto updatedForm = userFormService.updateForm(userFormId, userFormDto);
-            return ResponseEntity.ok(new ResponceDto("Form updated successfully", updatedForm));
+            return ResponseEntity.ok(new ResponseDto(" success", "Form updated successfully"));
+        } catch (FormsNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto("unsuccessful", "Form not found"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto("unsuccessful " + e.getMessage(), null));
+        }
+    }
+
+    @PatchMapping("/updateStatus")
+    public ResponseEntity<?> updateFormwithStatus(@RequestParam Integer userFormId, @RequestBody userFormDto userFormDto) {
+        try {
+            userFormDto updatedForm = userFormService.updateFormStatus(userFormId, userFormDto);
+            return ResponseEntity.ok(new ResponseDto("success","Form updated successfully"));
         } catch (FormsNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDto("unsuccessful", "Form not found"));

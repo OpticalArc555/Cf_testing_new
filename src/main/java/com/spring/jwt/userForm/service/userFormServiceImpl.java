@@ -90,15 +90,15 @@ public class userFormServiceImpl implements userFormService {
             if (userFormDto.getCreatedTime() != null) {
                 entity.setCreatedTime(userFormDto.getCreatedTime());
             }
-            if (userFormDto.getStatus() != null) {
-                entity.setStatus(userFormDto.getStatus());
-            }
+//            if (userFormDto.getStatus() != null) {
+//                entity.setStatus(userFormDto.getStatus());
+//            }
 //            if (userFormDto.getUserId() != null) {
 //                entity.setUserId(userFormDto.getUserId());
 //            }
-//            if (userFormDto.getSalesPersonId() != null) {
-//                entity.setSalesPersonId(userFormDto.getSalesPersonId());
-//            }
+            if (userFormDto.getSalesPersonId() != null) {
+                entity.setSalesPersonId(userFormDto.getSalesPersonId());
+            }
             if (userFormDto.getInspectorId() != null) {
                 entity.setInspectorId(userFormDto.getInspectorId());
             }
@@ -113,6 +113,72 @@ public class userFormServiceImpl implements userFormService {
 
 
     @Override
+    public userFormDto updateFormStatus(Integer userFormId, userFormDto userFormDto) {
+            UserForm entity = userFormRepository.findById(userFormId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Form not found with ID: " + userFormId));
+
+            try {
+                // Check and update CarOwnerName, and set status to "In Progress"
+                if (userFormDto.getCarOwnerName() != null) {
+                    entity.setCarOwnerName(userFormDto.getCarOwnerName());
+
+                }
+
+                if (userFormDto.getBrand() != null) {
+                    entity.setBrand(userFormDto.getBrand());
+                }
+                if (userFormDto.getModel() != null) {
+                    entity.setModel(userFormDto.getModel());
+                }
+                if (userFormDto.getVariant() != null) {
+                    entity.setVariant(userFormDto.getVariant());
+                }
+                if (userFormDto.getRegNo() != null) {
+                    entity.setRegNo(userFormDto.getRegNo());
+                }
+                if (userFormDto.getAddress1() != null) {
+                    entity.setAddress1(userFormDto.getAddress1());
+                }
+                if (userFormDto.getAddress2() != null) {
+                    entity.setAddress2(userFormDto.getAddress2());
+                }
+                if (userFormDto.getPinCode() != null) {
+                    entity.setPinCode(userFormDto.getPinCode());
+                }
+                if (userFormDto.getRc() != null) {
+                    entity.setRc(userFormDto.getRc());
+                }
+                if (userFormDto.getInspectionDate() != null) {
+                    entity.setInspectionDate(userFormDto.getInspectionDate());
+                }
+                if (userFormDto.getMobileNo() != null) {
+                    entity.setMobileNo(userFormDto.getMobileNo());
+                }
+                if (userFormDto.getCreatedTime() != null) {
+                    entity.setCreatedTime(userFormDto.getCreatedTime());
+                }
+                // Only set status if it's provided in userFormDto
+                if (userFormDto.getStatus() != null) {
+                    entity.setStatus(userFormDto.getStatus());
+                }
+                if (userFormDto.getSalesPersonId() != null) {
+                    entity.setSalesPersonId(userFormDto.getSalesPersonId());
+                }
+                if (userFormDto.getInspectorId() != null) {
+                    entity.setInspectorId(userFormDto.getInspectorId());
+                    entity.setStatus("InProgress");
+                }
+
+
+                entity = userFormRepository.save(entity);
+                return convertEntityToDto(entity);
+
+            } catch (Exception e) {
+                throw new OperationFailedException("Failed to patch form with ID: " + userFormId);
+            }
+        }
+
+        @Override
     public void deleteForm(Integer userFormId) {
         UserForm entity = userFormRepository.findById(userFormId)
                 .orElseThrow(() -> new ResourceNotFoundException("Form not found with ID: " + userFormId));

@@ -14,6 +14,8 @@ public interface userFormService {
 
     userFormDto updateForm(Integer userFormId, userFormDto userFormDto);
 
+    public userFormDto updateFormStatus(Integer userFormId, userFormDto userFormDto);
+
     void deleteForm(Integer userFormId);
 
     public List<userFormDto> getAllForms(int page, int size);
