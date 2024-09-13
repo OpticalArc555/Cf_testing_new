@@ -394,9 +394,8 @@ public class CarRegisterImp implements ICarRegister {
     public int getCarCountByStatusAndDealer(Status carStatus, int dealerId, String carType) {
         return carRepo.countByCarStatusAndDealerIdAndCarType(carStatus, dealerId,carType);
     }
-
     @Override
-    public List<CarDto> getAllCarsWithCarTypeandPage(int pageNo, int pageSize, String carType) {
+    public Page<CarDto> getAllCarsWithCarTypeandPage(int pageNo, int pageSize, String carType) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         List<Status> statuses = Arrays.asList(Status.PENDING, Status.ACTIVE);
 
@@ -407,11 +406,10 @@ public class CarRegisterImp implements ICarRegister {
             throw new CarNotFoundException("Car not found");
         }
 
-        // Map to CarDto
-        return pageOfCars.stream()
-                .map(CarDto::new)
-                .collect(Collectors.toList());
+        // Map to CarDto and return a Page
+        return pageOfCars.map(CarDto::new);
     }
+
 
 
 }
