@@ -16,7 +16,7 @@ public interface ICarRegister {
 
     public List<CarDto> getAllCarsWithPages(int PageNo, int pageSize);
 
-    public List<CarDto> getAllCarsWithCarTypeandPage(int PageNo, int pageSize,String carType);
+    public Page<CarDto> getAllCarsWithCarTypeandPage(int pageNo, int pageSize, String carType);
 
     public String deleteCar(int carId, int DealerId);
 

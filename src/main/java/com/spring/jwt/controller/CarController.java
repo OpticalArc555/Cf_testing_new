@@ -198,9 +198,11 @@ CarController {
 
 
     @GetMapping("/getAllCarsWithCarType")
-    public ResponseEntity<ResponseAllCarDto> getAllCarsWithCarType(@RequestParam int pageNo , @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "normal")String carType) {
+    public ResponseEntity<ResponseAllCarDto> getAllCarsWithCarType(@RequestParam int pageNo,
+                                                                   @RequestParam(defaultValue = "10") int pageSize,
+                                                                   @RequestParam(defaultValue = "normal") String carType) {
         try {
-            Page<CarDto> listOfCar = (Page<CarDto>) iCarRegister.getAllCarsWithCarTypeandPage(pageNo, pageSize,carType);
+            Page<CarDto> listOfCar = iCarRegister.getAllCarsWithCarTypeandPage(pageNo, pageSize, carType);
             long totalEntries = iCarRegister.getTotalCars();
 
             ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("success");
@@ -218,6 +220,7 @@ CarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
         }
     }
+
 
 
 }
