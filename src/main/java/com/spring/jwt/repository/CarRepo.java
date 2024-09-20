@@ -65,8 +65,12 @@ public interface CarRepo extends JpaRepository<Car, Integer>, JpaSpecificationEx
     @Query("SELECT MAX(c.id) FROM Car c")
     Optional<Long> findMaxId();
     Optional<Car> findByMainCarId(String mainCarId);
+    @Query("SELECT COUNT(c) FROM Car c WHERE c.carType = 'normal' AND c.dealerId = :keyword")
+    int countByDealerId(@Param("keyword")int dealerId);
 
-    int countByDealerId(int dealerId);
+    @Query("SELECT COUNT(c) FROM Car c WHERE c.carType = 'premium' AND c.dealerId = :keyword")
+    int countByDealerIdAndCarType(@Param("keyword") int dealerId);
+
 
     int countByCarStatusAndDealerIdAndCarType(Status carStatus, int dealerId, String carType);
 

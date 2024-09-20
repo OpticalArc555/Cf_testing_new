@@ -155,7 +155,9 @@ public class DealerServiceImpl implements DealerService {
             // Fetch the car count for the current dealer
             int carCount = carRepo.countByDealerId(dealers.get(counter).getId());
 
-            DealerDto dealerDto = new DealerDto(dealers.get(counter), carCount);
+            int premiumCarCount= carRepo.countByDealerIdAndCarType(dealers.get(counter).getId());
+
+            DealerDto dealerDto = new DealerDto(dealers.get(counter), carCount,premiumCarCount);
             listOfDealerDto.add(dealerDto);
 
             if (diff == i) {
