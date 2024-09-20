@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,11 +51,19 @@ public class FilterController {
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String model,
             @RequestParam(required = false) String transmission,
-            @RequestParam(required = false) String fuelType) {
+            @RequestParam(required = false) String fuelType,
+            @RequestParam(defaultValue = "normal") String carType) {
 
-        Integer convertedYear = year != null && !year.isEmpty() ? Integer.valueOf(year) : null;
+        Integer convertedYear = null;
+        try {
+            convertedYear = (year != null && !year.isEmpty()) ? Integer.valueOf(year) : null;
+        } catch (NumberFormatException e) {
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
+            responseAllCarDto.setException("Invalid year format");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseAllCarDto);
+        }
 
-        FilterDto filterDto = new FilterDto(minPrice, maxPrice, area, brand, model, transmission, fuelType, convertedYear);
+        FilterDto filterDto = new FilterDto(minPrice, maxPrice, area, brand, model, transmission, fuelType, convertedYear,carType);
 
         try {
             List<CarDto> listOfCar = filterService.searchByFilter(filterDto);
@@ -63,10 +72,15 @@ public class FilterController {
             return ResponseEntity.status(HttpStatus.OK).body(responseAllCarDto);
         } catch (PageNotFoundException pageNotFoundException) {
             ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
-            responseAllCarDto.setException("page not found");
+            responseAllCarDto.setException("Page not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllCarDto);
+        } catch (Exception e) {
+            ResponseAllCarDto responseAllCarDto = new ResponseAllCarDto("unsuccess");
+            responseAllCarDto.setException("An error occurred while filtering cars");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseAllCarDto);
         }
     }
+
 
     @GetMapping("/searchBarFilter")
     public ResponseEntity<?> searchBarFilter(@RequestParam String searchBarInput) {

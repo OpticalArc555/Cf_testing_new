@@ -59,6 +59,9 @@ public class FilterServiceImpl implements FilterService {
             if (filterDto.getFuelType() != null && !filterDto.getFuelType().isEmpty()) {
                 predicates.add(criteriaBuilder.equal(root.get("fuelType"), filterDto.getFuelType()));
             }
+            if (filterDto.getCarType() != null && !filterDto.getCarType().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("carType"), filterDto.getCarType()));
+            }
             Predicate statusPredicate = criteriaBuilder.or(
                     criteriaBuilder.equal(root.get("carStatus"), Status.ACTIVE),
                     criteriaBuilder.equal(root.get("carStatus"), Status.PENDING)
