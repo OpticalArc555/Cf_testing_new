@@ -8,7 +8,6 @@ public interface BookingService {
 
     BookingDto saveBooking(BookingDto bookingDTO);
 
-
     List<BookingDto> getAllBooking(int pageNo);
 
     BookingDto getAllBookingsByUserId(int userId);

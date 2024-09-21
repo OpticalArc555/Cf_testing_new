@@ -99,8 +99,6 @@ public class WebSocketBidController {
         }
     }
 
-
-    @PreAuthorize("permitAll")
     @MessageMapping("/topThreeBids")
     @SendTo("/topic/topThreeBids")
     public List<PlacedBidDTO> getTopThreeBids(PlacedBidDTO placedBidDTO) {
