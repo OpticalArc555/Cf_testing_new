@@ -34,10 +34,13 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private UserProfileRepository userProfileRepository;
+
     @Autowired
     private RoleRepository roleRepository;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -45,21 +48,12 @@ public class UserServiceImpl implements UserService {
     private JavaMailSender mailSender;
 
     @Override
+    @Transactional
     public BaseResponseDTO registerAccount(RegisterDto registerDto) {
 
         BaseResponseDTO response = new BaseResponseDTO();
 
         validateAccount(registerDto);
-
-//        if (registerDto.getRoles().equalsIgnoreCase("ADMIN")) {
-//            long adminCount = userRepository.countByRoleName("ADMIN");
-//            if (adminCount >= 3) {
-//               throw new UnauthorizedException ("You are not Authorized to Create This Account");
-//            }
-//        }
-//        if (isDealerOrInspector(registerDto.getRoles()) && !userHasAdminAuthority()) {
-//            throw new UnauthorizedException("User does not have the authority of ADMIN to create this account.");
-//        }
 
         User user = insertUser(registerDto);
 
@@ -77,15 +71,6 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-//    private boolean isDealerOrInspector(String role) {
-//        return role.equals("DEALER") || role.equals("INSPECTOR");
-//    }
-//
-//    private boolean userHasAdminAuthority() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        return authentication != null && authentication.getAuthorities().stream()
-//                .anyMatch(authority -> authority.getAuthority().equals("ADMIN"));
-//    }
 
     private User insertUser(RegisterDto registerDto) {
         User user = new User();
@@ -165,6 +150,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(registerDto.getEmail());
         if (!ObjectUtils.isEmpty(user)) {
             throw new UserAlreadyExistException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Username already exists !!");
+        }
+        User mobileNo = userRepository.findByMobileNo(registerDto.getMobileNo());
+        if (!ObjectUtils.isEmpty(mobileNo)){
+            throw new UserAlreadyExistException(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Mobile number already exists !!");
         }
 
         List<String> roles = roleRepository.findAll().stream().map(Role::getName).toList();
@@ -417,7 +406,7 @@ public class UserServiceImpl implements UserService {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
 
-                return new PasswordAuthentication("ashutoshshedgeas87@gmail.com", "xextkpjtrmczkjsh");
+                return new PasswordAuthentication("ss", "dd");
             }
 
         });

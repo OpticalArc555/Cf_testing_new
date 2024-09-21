@@ -49,8 +49,6 @@ public class DoProfilePhotoController {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
 
-            System.out.println("File path: " + filePath.toString());
-
             if (!Files.exists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());
             }
@@ -68,7 +66,6 @@ public class DoProfilePhotoController {
             payloadObject.put("contentType", file.getContentType());
             payloadObject.put("contentLength", imageBytes.length);
             String uniqueName = this.doService.generateRandomString(15) + fileName;
-            System.err.println(fileName.length());
             payloadObject.put("imageName", uniqueName);
             if (uniqueName.isEmpty()) {
                 throw new RuntimeException("profile photo not found");
@@ -90,15 +87,11 @@ public class DoProfilePhotoController {
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
         } catch (RuntimeException e) {
-//            System.err.println(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
         } catch (IOException e) {
-            System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
         } catch (Exception e) {
-
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
 

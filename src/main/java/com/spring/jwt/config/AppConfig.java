@@ -66,6 +66,11 @@ public class AppConfig {
         return new UserDetailsServiceCustom();
     }
 
+    @Bean
+    public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
+        return new JwtTokenAuthenticationFilter(jwtConfig, jwtService);
+    }
+
     @Autowired
     public void configGlobal(final AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(customAuthenticationProvider);
@@ -106,6 +111,7 @@ public class AppConfig {
                 .requestMatchers("/BeadingCarController/**").permitAll()
                 .requestMatchers("/booking/**").permitAll()
                 .requestMatchers("/userProfilePhoto/**").permitAll()
+                .requestMatchers("/api/jwtUnAuthorize/**").permitAll()
                 .requestMatchers("/uploadFile/**").permitAll()
                 .requestMatchers("/confirmBooking/**").permitAll()
                 .requestMatchers("/photo/**").permitAll()

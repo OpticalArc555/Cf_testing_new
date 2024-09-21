@@ -93,7 +93,6 @@ public class PendingBookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unsuccessful");
 
         }
-
     }
 
     @GetMapping("/getAllpendingBookings")
@@ -112,12 +111,9 @@ public class PendingBookingController {
             ResponseAllPendingBookingDto responseAllPendingBookingDto = new ResponseAllPendingBookingDto("unsuccess");
             responseAllPendingBookingDto.setException("page not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllPendingBookingDto);
-
         }
 
-
     }
-
 
     @GetMapping("/getByUserId")
     public ResponseEntity<?> getByUserId(@RequestParam int pageNo,@RequestParam int userId) {
