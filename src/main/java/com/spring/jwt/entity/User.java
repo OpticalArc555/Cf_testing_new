@@ -45,6 +45,7 @@ public class User {
     @Column(name = "password", nullable = false, length = 250)
     private String password;
 
+
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
