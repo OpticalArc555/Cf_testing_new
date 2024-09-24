@@ -28,7 +28,7 @@ public class userFormDtoPost {
 
     public  String rc;
 
-    public Date inspectionDate;
+    public LocalDateTime inspectionDate;
 
     public String mobileNo;
 
