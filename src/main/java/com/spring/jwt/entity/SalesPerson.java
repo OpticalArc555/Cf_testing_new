@@ -26,7 +26,7 @@ public class SalesPerson {
     private String lastName;
 
     @Column(name = "document_id")
-    private Integer documentId;
+    private Long  documentId;
 
     @Column(name = "area")
     private String area;
