@@ -136,6 +136,7 @@ public class AppConfig {
                 .requestMatchers("/userFormController/**").permitAll()
                 .requestMatchers("/saveCar/**").permitAll()
                 .requestMatchers("/ProfilePhoto/**").permitAll()
+                .requestMatchers("/colors/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)
