@@ -20,6 +20,7 @@ public class ColorServiceImpl implements ColorService {
     @Autowired
     private ColorRepository colorRepository;
 
+    // Create a new color
     @Override
     public Color createColor(ColorDto colorDto) {
         // Check if color already exists
