@@ -1,14 +1,9 @@
 package com.spring.jwt.B2B;
 
-import com.spring.jwt.B2B.B2BService;
-import com.spring.jwt.dto.*;
-import com.spring.jwt.B2B.B2B;
-import com.spring.jwt.entity.Dealer;
+import com.spring.jwt.dto.ResponceDto;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.entity.Status;
-import com.spring.jwt.B2B.B2BNotFoundExceptions;
-import com.spring.jwt.exception.CarNotFoundException;
-import com.spring.jwt.B2B.RequestAlreadyActiveException;
-import com.spring.jwt.exception.UserNotFoundExceptions;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,128 +12,186 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/B2B")
+@RequestMapping("/b2b")
 @RequiredArgsConstructor
 public class B2BController {
 
     private final B2BService b2BService;
 
-
-    @PostMapping("/createB2B")
-    public ResponseEntity<?> B2BCreate(@RequestBody B2BDto b2BDto) {
+    @PostMapping("/add")
+    public ResponseEntity<ResponseAllB2BDto> addB2B(@Valid @RequestBody B2BPostDto b2BPostDto) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
-            if (b2BDto.getRequestStatus() != Status.ACTIVE &&
-                    b2BDto.getRequestStatus() != Status.DEACTIVATE &&
-                    b2BDto.getRequestStatus() != Status.SOLD) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new B2BNotFoundResponse("Invalid Status", "Only Active, Deactivate, or Sold statuses are allowed."));
-            }
-            String string = b2BService.addB2B(b2BDto);
-            return ResponseEntity.status(HttpStatus.OK).body(new B2bResponse("Request Submitted Successfully", string));
-        } catch (CarNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("Car Not Found", "Car with ID " + b2BDto.getBeadingCarId() + " not found."));
-        } catch (UserNotFoundExceptions e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("User Not Found", "User with Dealer ID " + b2BDto.getBuyerDealerId() + " not found."));
+            String message = b2BService.addB2B(b2BPostDto);
+            response.setStatus("success");
+            response.setMessage(message);
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new B2BNotFoundResponse("Request Failed", e.getMessage()));
+            response.setStatus("error");
+            response.setMessage("Failed to add B2B transaction.");
+            response.setException(e.getMessage());
+            return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/dealer/{beadingCarId}")
-    public ResponseEntity<Dealer> getDealerByCarId(@PathVariable Integer beadingCarId) {
-        Dealer dealer = b2BService.getDealerByCarId(beadingCarId);
-        return ResponseEntity.ok(dealer);
-    }
-
-
-    @GetMapping("/user-info/{dealerId}")
-    public ResponseEntity<?> getUserInfoByDealerId(@PathVariable Integer dealerId) {
+    @GetMapping("/by-beading-car")
+    public ResponseEntity<ResponseAllB2BDto> getByBeadingCarId(
+            @RequestParam Status requestStatus,
+            @RequestParam Integer beadingCarId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
-            UserInfoDto userInfoDto = b2BService.getUserInfoFromDealerId(dealerId);
-            return ResponseEntity.ok(userInfoDto);
-        } catch (UserNotFoundExceptions e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("User Not Found", "User associated with Dealer ID " + dealerId + " not found."));
+            List<B2BDto> b2bList = b2BService.getByBeadingCarId(requestStatus, beadingCarId);
+            response.setStatus("success");
+            response.setMessage("B2B transactions retrieved successfully.");
+            response.setList(b2bList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new B2BNotFoundResponse("Error Retrieving User Info", e.getMessage()));
+            response.setStatus("error");
+            response.setMessage("No B2B transactions found.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
-
-    @GetMapping("/getB2BById/{id}")
-    public ResponseEntity<?> getB2BById(@PathVariable Integer id) {
+    @GetMapping("/getById")
+    public ResponseEntity<ResponseAllB2BDto> getByB2BId(@RequestParam Integer b2BId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
-            B2B b2B = b2BService.getB2BById(id);
-            return ResponseEntity.ok(b2B);
+            B2BDto b2bDto = b2BService.getByB2bId(b2BId);
+            response.setStatus("success");
+            response.setMessage("B2B transaction retrieved successfully.");
+            response.setList(List.of(b2bDto)); // Wrap single result in a list
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("B2B Not Found", e.getMessage()));
-        }
-    }
-
-    @GetMapping("/GetAll")
-    public ResponseEntity<List<B2B>> getAllB2BRecords() {
-        List<B2B> b2BRecords = b2BService.getAllB2BRecords();
-        return ResponseEntity.ok(b2BRecords);
-    }
-
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id) {
-        try {
-            b2BService.deleteB2B(id);
-            return ResponseEntity.ok("B2B deleted successfully!");
-        } catch (B2BNotFoundExceptions e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("B2B Not Found", e.getMessage()));
-
+            response.setStatus("error");
+            response.setMessage("B2B transaction not found.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/count")
-    public ResponseEntity<ResponceDto> getCountByStatusAndDealer(
+    public ResponseEntity<ResponseAllB2BDto> getB2BCountByStatusAndDealer(
             @RequestParam Status requestStatus,
-            @RequestParam int dealerId) {
-
-        int b2bCount = b2BService.getB2BCountByStatusAndDealer(requestStatus, dealerId);
-
-        ResponceDto responseDto = new ResponceDto("Success", b2bCount);
-        return ResponseEntity.ok(responseDto);
-    }
-
-    @PutMapping("/ConfirmBooking/{id}")
-    public ResponseEntity<?> updateB2B(@PathVariable Integer id) {
+            @RequestParam Integer sellerDealerId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
-            B2B b2B = b2BService.updateB2B(id);
-            B2bResponse response = new B2bResponse("success", "Car has been successfully sold.");
-            response.setResponse(new B2BDto(b2B));
-            return ResponseEntity.ok(response);
-        } catch (B2BNotFoundExceptions e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new B2BNotFoundResponse("B2B Not Found", e.getMessage()));
+            int count = b2BService.getB2BCountByStatusAndDealer(requestStatus, sellerDealerId);
+            response.setStatus("success");
+            response.setMessage("Count retrieved successfully.");
+            response.setList(List.of());
+            response.setException("Count: " + count);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new B2BNotFoundResponse("Update Failed", e.getMessage()));
+            response.setStatus("error");
+            response.setMessage("Error retrieving count.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/cancel/{id}")
-    public ResponseEntity<?> cancelSoldRequest(@PathVariable Integer id) {
-       try {
-           b2BService.cancelSoldRequest(id);
-           return ResponseEntity.ok("Sold request canceled and all deactivated requests reactivated.");
-       }catch (B2BNotFoundExceptions e) {
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new B2BNotFoundResponse("Something Went Wrong", e.getMessage()));
-       } catch (RequestAlreadyActiveException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
-    }
-    }
-
-
-    @GetMapping("/deactivatedRequest")
-    public ResponseEntity<List<B2BDto>> getAllDeactivateRequests() {
-        List<B2BDto> deactivatedRequests = b2BService.getAllDeactivateRequests();
-        return ResponseEntity.ok(deactivatedRequests);
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseAllB2BDto> deleteB2B(@RequestParam Integer b2BId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        try {
+            b2BService.deleteB2B(b2BId);
+            response.setStatus("success");
+            response.setMessage("B2B transaction deleted successfully.");
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("B2B transaction not found for deletion.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<ResponseAllB2BDto> getAllB2BRecords() {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        try {
+            List<B2BDto> b2bList = b2BService.getAllB2BRecords();
+            response.setStatus("success");
+            response.setMessage("All B2B records retrieved successfully.");
+            response.setList(b2bList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("No B2B records found.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @GetMapping("/by-status")
+    public ResponseEntity<ResponseAllB2BDto> getByStatus(@RequestParam Status requestStatus) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        try {
+            List<B2BDto> b2bList = b2BService.getByStatus(requestStatus);
+            response.setStatus("success");
+            response.setMessage("B2B records retrieved successfully.");
+            response.setList(b2bList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("No B2B records found.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @GetMapping("/by-buyer-dealer")
+    public ResponseEntity<ResponseAllB2BDto2> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
+        ResponseAllB2BDto2 response = new ResponseAllB2BDto2();
+        try {
+            List<B2BPostDto> b2bList = b2BService.getByBuyerDealerId(buyerDealerId);
+            response.setStatus("success");
+            response.setMessage("B2B records retrieved successfully.");
+            response.setList(b2bList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("No B2B records found.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @GetMapping("/count-by-beading-car")
+    public ResponseEntity<?> getCountByBeadingCarId(@RequestParam Integer beadingCarId) {
+        ResponceDto response = new ResponceDto();
+        try {
+            int count = b2BService.getCountByBeadingCarId(beadingCarId);
+            response.setMessage("B2B count retrieved successfully.");
+            response.setObject(List.of(count));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            ResponseDto response1 = new ResponseDto();
+            response1.setMessage("Error retrieving B2B count.");
+           response1.setStatus("error");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ResponseAllB2BDto> updateB2B(@RequestParam Integer b2BId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        try {
+            B2B updatedB2B = b2BService.updateB2B(b2BId);
+            response.setStatus("success");
+            response.setMessage("B2B transaction updated successfully.");
+            response.setList(List.of(mapToB2BDto(updatedB2B))); // Wrap single result in a list
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("Error updating B2B transaction.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+    private B2BDto mapToB2BDto(B2B b2b) {
+        B2BDto b2bDto = new B2BDto();
+        b2bDto.setB2BId(b2b.getB2BId());
+        return b2bDto;
+    }
 }
