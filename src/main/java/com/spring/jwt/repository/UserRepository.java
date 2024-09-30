@@ -42,9 +42,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByMobileNo(String mobileNo);
 
 
-
-
-
-    @Query("SELECT u FROM User u WHERE u.dealer.id = :dealerId")
-    Optional<User> findUserByDealerId(@Param("dealerId") Integer dealerId);
 }
