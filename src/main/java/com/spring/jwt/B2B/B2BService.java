@@ -1,32 +1,28 @@
 package com.spring.jwt.B2B;
 
-
-import com.spring.jwt.entity.Dealer;
 import com.spring.jwt.entity.Status;
 
 import java.util.List;
 
 public interface B2BService {
-   String addB2B(B2BDto b2BDto);
+   String addB2B(B2BPostDto b2BPostDto);
 
-   Dealer getDealerByCarId(Integer beadingCarId);
+   List<B2BDto> getByBeadingCarId(Status requestStatus,Integer beadingCarId);
 
+   B2BDto getByB2bId(Integer b2BId);
 
-   UserInfoDto getUserInfoFromDealerId(Integer dealerId);
+   int getB2BCountByStatusAndDealer(Status requestStatus, Integer sellerDealerId);
 
-   B2B getB2BById(Integer id);
+   List<B2BDto> getAllB2BRecords();
 
-   List<B2B> getAllB2BRecords();
+   void deleteB2B(Integer b2BId);
 
+   List<B2BDto> getByStatus(Status requestStatus);
 
-   void deleteB2B(Integer id);
+   List<B2BPostDto> getByBuyerDealerId(Integer buyerDealerId);
 
+   int getCountByBeadingCarId(Integer beadingCarId);
 
-   int getB2BCountByStatusAndDealer(Status requestStatus, int dealerId);
+   B2B updateB2B(Integer b2BId);
 
-   B2B updateB2B(Integer id);
-
-   void cancelSoldRequest(Integer id);
-
-   List<B2BDto> getAllDeactivateRequests();
 }

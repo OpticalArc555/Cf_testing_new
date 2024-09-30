@@ -6,173 +6,152 @@ import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 
 import com.spring.jwt.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class B2BServiceImpl implements B2BService {
 
     private final B2BRepo b2BRepo;
-
-    private final CarRepo carRepo;
-
-    private final UserRepository userRepository;
-
-    private final UserProfileRepository userProfileRepository;
-
     private final BeadingCarRepo beadingCarRepo;
-
+    private final DealerRepository dealerRepository;
 
     @Override
-    public String addB2B(B2BDto b2BDto) {
+    @Transactional
+    public String addB2B(B2BPostDto b2BPostDto) {
+        try {
+            B2B b2B = new B2B();
 
-        if (b2BDto.getRequestStatus() != Status.ACTIVE &&
-                b2BDto.getRequestStatus() != Status.DEACTIVATE &&
-                b2BDto.getRequestStatus() != Status.SOLD) {
-            throw new IllegalArgumentException("Invalid status: " + b2BDto.getRequestStatus());
+            b2B.setBeadingCarId(b2BPostDto.getBeadingCarId());
+            b2B.setBuyerDealerId(b2BPostDto.getBuyerDealerId());
+            b2B.setTime(b2BPostDto.getTime().atStartOfDay());
+
+            b2B.setRequestStatus(Status.ACTIVE);
+
+            BeadingCAR beadingCar = beadingCarRepo.findById(b2BPostDto.getBeadingCarId())
+                    .orElseThrow(() -> new RuntimeException("BeadingCar not found with id: " + b2BPostDto.getBeadingCarId()));
+
+            b2B.setSellerDealerId(beadingCar.getDealerId());
+            b2B.setSalesPersonId(null);
+            b2BRepo.save(b2B);
+
+            return "B2B transaction added successfully.";
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error while adding B2B transaction: " + e.getMessage());
         }
-
-        Optional<Car> byId = carRepo.findById(b2BDto.getBeadingCarId());
-        if (byId.isEmpty()) {
-            throw new RuntimeException("Car Not Found By Id");
-        }
-
-        User byUserId = userRepository.findByUserId(b2BDto.getBuyerDealerId());
-        if (byUserId == null) {
-            throw new UserNotFoundExceptions("User Not Found");
-        }
-
-        B2B b2B = new B2B(b2BDto);
-        b2BRepo.save(b2B);
-        return "Request For CarID:" + b2B.getBeadingCarId() + "Submitted Successfully";
-    }
-
-
-    @Override
-    public Dealer getDealerByCarId(Integer beadingCarId) {
-        Optional<BeadingCAR> byId = beadingCarRepo.findById(beadingCarId);
-        if (byId.isEmpty()) {
-            throw new RuntimeException("Car not found with ID: " + beadingCarId);
-        }
-
-        BeadingCAR beadingCAR = byId.get();
-        Integer dealerId = beadingCAR.getDealerId();
-        if (dealerId == null) {
-            throw new RuntimeException("Dealer not found for the car with ID: " + byId);
-        }
-        Dealer dealer = userRepository.findDealerById(dealerId);
-        if (dealer == null) {
-            throw new RuntimeException("Dealer not found with ID: " + dealerId);
-        }
-
-        return dealer;
-    }
-
-    @Override
-    public UserInfoDto getUserInfoFromDealerId(Integer dealerId) {
-        User user = userRepository.findUserByDealerId(dealerId)
-                .orElseThrow(() -> new RuntimeException("User not found for dealerId: " + dealerId));
-
-        Userprofile userProfile = userProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("UserProfile not found for userId: " + user.getId()));
-
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setUserId(user.getId());
-        userInfoDto.setEmail(user.getEmail());
-        userInfoDto.setMobileNo(user.getMobileNo());
-        userInfoDto.setFirstName(userProfile.getFirstName());
-        userInfoDto.setLastName(userProfile.getLastName());
-        userInfoDto.setAddress(userProfile.getAddress());
-
-        return userInfoDto;
-    }
-
-    @Override
-    public B2B getB2BById(Integer id) {
-        return b2BRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("B2B record not found with ID: " + id));
-    }
-
-    @Override
-    public List<B2B> getAllB2BRecords() {
-        return b2BRepo.findAll();
-    }
-
-
-    @Override
-    public void deleteB2B(Integer id) {
-        B2B b2B = b2BRepo.findById(id).orElseThrow(() -> new B2BNotFoundExceptions("B2B with ID " + id + " not found"));
-        b2B.setDeleted(true);
-        b2BRepo.save(b2B);
-
-    }
-
-    @Override
-    public int getB2BCountByStatusAndDealer(Status requestStatus, int dealerId) {
-        return b2BRepo.countByRequestStatusAndBuyerDealerId(requestStatus, dealerId);
     }
 
 
 
     @Override
-    public B2B updateB2B(Integer id) {
-        B2B existingB2B = b2BRepo.findById(id)
-                .orElseThrow(() -> new B2BNotFoundExceptions("B2B with ID " + id + " not found"));
+    public List<B2BDto> getByBeadingCarId(Status requestStatus, Integer beadingCarId) {
+        List<B2B> b2bList = b2BRepo.findByRequestStatusAndBeadingCarId(requestStatus, beadingCarId);
 
-        if (existingB2B.getRequestStatus() != Status.ACTIVE) {
-            throw new RuntimeException("car Not Found");
-        }
-        List<B2B> allRequests = b2BRepo.findAll();
-        for (B2B b2B : allRequests) {
-            if (b2B.getId() != id && b2B.getRequestStatus() != Status.SOLD) {
-                b2B.setRequestStatus(Status.DEACTIVATE);
-                b2BRepo.save(b2B);
-            }
-        }
-        existingB2B.setRequestStatus(Status.SOLD);
-
-        return b2BRepo.save(existingB2B);
-    }
-
-
-    public void cancelSoldRequest(Integer id) {
-        B2B soldRequest = b2BRepo.findById(id)
-                .orElseThrow(() -> new B2BNotFoundExceptions("Sold request with ID " + id + " not found"));
-
-        if (soldRequest.getRequestStatus() == Status.ACTIVE) {
-            throw new B2BNotFoundExceptions("This car is already active and cannot be canceled.");
+        if (b2bList.isEmpty()) {
+            throw new RuntimeException("No B2B transactions found for BeadingCarId: " + beadingCarId + " with status: " + requestStatus);
         }
 
-        if (soldRequest.getRequestStatus() == Status.SOLD) {
-
-            soldRequest.setRequestStatus(Status.DEACTIVATE);
-            b2BRepo.save(soldRequest);
-
-            List<B2B> allRequests = b2BRepo.findAll();
-            for (B2B b2B : allRequests) {
-                if (b2B.getRequestStatus() == Status.DEACTIVATE) {
-                    b2B.setRequestStatus(Status.ACTIVE);
-                    b2BRepo.save(b2B);
-                }
-            }
-        }
+        return b2bList.stream().map(this::mapToB2BDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<B2BDto> getAllDeactivateRequests() {
-        List<B2B> deactivatedRequests = b2BRepo.findByRequestStatus(Status.DEACTIVATE);
-        if (deactivatedRequests.isEmpty()) {
-            throw new B2BNotFoundExceptions("No deactivated requests found");
+    public B2BDto getByB2bId(Integer b2BId) {
+        B2B b2b = b2BRepo.findById(b2BId).orElseThrow(() -> new RuntimeException("B2B not found with id: " + b2BId));
+        return mapToB2BDto(b2b);
+    }
+
+
+    @Override
+    public int getB2BCountByStatusAndDealer(Status requestStatus, Integer sellerDealerId) {
+        return b2BRepo.countByRequestStatusAndSellerDealerId(requestStatus, sellerDealerId);
+    }
+
+    @Override
+    public int getCountByBeadingCarId(Integer beadingCarId) {
+        return b2BRepo.countByBeadingCarId(beadingCarId);
+    }
+
+    @Override
+    public List<B2BDto> getByStatus(Status requestStatus) {
+        List<B2B> b2bList = b2BRepo.findByRequestStatus(requestStatus);
+
+        if (b2bList.isEmpty()) {
+            throw new RuntimeException("No B2B records found with status: " + requestStatus);
         }
-        return deactivatedRequests.stream()
-                .map(B2BDto::new)
+        return b2bList.stream()
+                .map(this::mapToB2BDto)
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<B2BPostDto> getByBuyerDealerId(Integer buyerDealerId) {
+        List<B2B> b2bList = b2BRepo.findByBuyerDealerId(buyerDealerId);
+        if (b2bList.isEmpty()) {
+            throw new RuntimeException("No B2B records found for buyerDealerId: " + buyerDealerId);
+        }
+        return b2bList.stream()
+                .map(this::mapToB2BPostDto)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<B2BDto> getAllB2BRecords() {
+        List<B2B> b2bList = b2BRepo.findAll();
+        if (b2bList.isEmpty()) {
+            throw new RuntimeException("No B2B records found.");
+        }
+
+        return b2bList.stream()
+                .map(this::mapToB2BDto)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public void deleteB2B(Integer b2BId) {
+        B2B b2b = b2BRepo.findById(b2BId)
+                .orElseThrow(() -> new RuntimeException("B2B not found with id: " + b2BId));
+        b2BRepo.delete(b2b);
+    }
+
+    @Override
+    public B2B updateB2B(Integer b2BId) {
+        B2B existingB2B = b2BRepo.findById(b2BId)
+                .orElseThrow(() -> new RuntimeException("B2B not found with id: " + b2BId));
+        b2BRepo.save(existingB2B);
+        return existingB2B;
+    }
+
+
+    private B2BPostDto mapToB2BPostDto(B2B b2b) {
+        B2BPostDto dto = new B2BPostDto();
+        dto.setBeadingCarId(b2b.getBeadingCarId());
+        dto.setBuyerDealerId(b2b.getBuyerDealerId());
+        dto.setTime(b2b.getTime().toLocalDate());
+        return dto;
+    }
+
+    private B2BDto mapToB2BDto(B2B b2b) {
+        B2BDto b2bDto = new B2BDto();
+
+        b2bDto.setB2BId(b2b.getB2BId());
+        b2bDto.setBeadingCarId(b2b.getBeadingCarId());
+        b2bDto.setBuyerDealerId(b2b.getBuyerDealerId());
+        b2bDto.setSellerDealerId(b2b.getSellerDealerId());
+        b2bDto.setTime(LocalDate.from(b2b.getTime()));
+        b2bDto.setMessage(b2b.getMessage());
+        b2bDto.setRequestStatus(b2b.getRequestStatus());
+        b2bDto.setSalesPersonId(b2b.getSalesPersonId());
+
+        return b2bDto;
+    }
 
 }
