@@ -33,17 +33,18 @@ public class User {
     @NotBlank(message = "Email cannot be blank")
     @Email
     @Pattern(regexp = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email format")
-    @Column(name = "email", nullable = false, length = 250)
+    @Column(name = "email", nullable = false, length = 250, unique = true)
     private String email;
 
     @NotBlank(message = "Mobile number Cannot be blank")
     @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be of 10 digits")
-    @Column(name = "mobile_no")
+    @Column(name = "mobile_no", unique = true)
     private String mobileNo;
 
     @NotBlank(message = "Password cannot be blank")
     @Column(name = "password", nullable = false, length = 250)
     private String password;
+
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
@@ -86,7 +87,7 @@ public class User {
         }
 
     }
-//yes
+
     @Override
     public String toString() {
         return "User{" +

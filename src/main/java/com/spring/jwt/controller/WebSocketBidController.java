@@ -31,6 +31,7 @@ import java.util.Optional;
 public class WebSocketBidController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketBidController.class);
+
     private final PlacedBidService placedBidService;
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -98,8 +99,6 @@ public class WebSocketBidController {
         }
     }
 
-
-    @PreAuthorize("permitAll")
     @MessageMapping("/topThreeBids")
     @SendTo("/topic/topThreeBids")
     public List<PlacedBidDTO> getTopThreeBids(PlacedBidDTO placedBidDTO) {

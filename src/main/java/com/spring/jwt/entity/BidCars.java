@@ -40,7 +40,7 @@ public class BidCars {
         }
 
         if (closingTime == null) {
-            closingTime = createdAt.plusMinutes(15);
+            closingTime = createdAt.plusMinutes(30);
         }
     }
 }

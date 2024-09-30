@@ -10,4 +10,17 @@ public class UserAlreadyExistException extends RuntimeException{
 
     private String message;
 
+    public UserAlreadyExistException(String message) {
+        super(message);
+        this.message = message;
+    }
+
+    // Getters for code and message
+    public String getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

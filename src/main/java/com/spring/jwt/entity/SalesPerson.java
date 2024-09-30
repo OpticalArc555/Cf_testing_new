@@ -25,7 +25,6 @@ public class SalesPerson {
     @Column (name = "last_name")
     private String lastName;
 
-
     @Column(name = "document_id")
     private Long  documentId;
 

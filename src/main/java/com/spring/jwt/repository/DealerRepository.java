@@ -20,4 +20,8 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
 
 
     int countBySalesPersonId(Integer salesPersonId);
+
+    boolean existsByMobileNo(String mobileNo);
+
+    boolean existsByEmail(String email);
 }

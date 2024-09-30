@@ -57,8 +57,6 @@ public class DOBidCarUploadController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
         }  catch (Exception e) {
 
-            System.err.println(e);
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
 
         }
@@ -70,7 +68,6 @@ public class DOBidCarUploadController {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, fileName);
 
-            System.out.println("File path: " + filePath.toString());
 
             if (!Files.exists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());
@@ -89,7 +86,6 @@ public class DOBidCarUploadController {
             payloadObject.put("contentType", file.getContentType());
             payloadObject.put("contentLength", imageBytes.length);
             String uniqueName = this.doService.generateRandomString(15) + fileName;
-            System.err.println(fileName.length());
             payloadObject.put("imageName", uniqueName);
             if (uniqueName.isEmpty()) {
                 throw new RuntimeException("BidCarPhoto not found");
@@ -102,19 +98,16 @@ public class DOBidCarUploadController {
                     String.class
             );
 
-//            System.err.println();
+
 
 //            String arr[] = documentDto.split(",");
-//            System.out.println("1"+arr[0]);
-//            System.out.println("2"+arr[1]);
-//            System.out.println(response.getStatusCode());
+
             String serviceResponse = null;
 
             if (!response.getBody().isEmpty()) {
 //                JSONArray jsonArray = new JSONArray(documentJSONArray);
 //                JSONObject jsonArray = new JSONObject(documentJSONArray);
 
-//                System.out.println(jsonArray.toString());
                 BidCarDto documentDto = new BidCarDto();
                 documentDto.setComment(comment);
                 documentDto.setDoctype(doctype);
@@ -133,15 +126,12 @@ public class DOBidCarUploadController {
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponceDto("success", serviceResponse));
         } catch (RuntimeException e) {
-//            System.err.println(e);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
         } catch (IOException e) {
-            System.err.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
         } catch (Exception e) {
-
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponceDto("unsuccess", "Failed to upload image"));
 
@@ -155,7 +145,6 @@ public class DOBidCarUploadController {
             ResponseDto responceDto = new ResponseDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
@@ -169,7 +158,6 @@ public class DOBidCarUploadController {
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
@@ -183,7 +171,7 @@ public class DOBidCarUploadController {
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
+
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
@@ -197,7 +185,6 @@ public class DOBidCarUploadController {
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
@@ -210,7 +197,6 @@ public class DOBidCarUploadController {
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 
@@ -225,7 +211,6 @@ public class DOBidCarUploadController {
             ResponceDto responceDto = new ResponceDto("success",documents);
             return ResponseEntity.status(HttpStatus.OK).body(responceDto);
         } catch (Exception e) {
-            System.err.println(e);
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponceDto("unsuccess", String.valueOf(e)));
 

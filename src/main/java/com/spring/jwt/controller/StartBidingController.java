@@ -1,6 +1,5 @@
 package com.spring.jwt.controller;
 
-import com.spring.jwt.Bidding.Interface.SmsService;
 import com.spring.jwt.Interfaces.BeadingCarService;
 import com.spring.jwt.Interfaces.BidCarsService;
 import com.spring.jwt.Interfaces.BiddingTimerService;
@@ -23,8 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -45,8 +42,8 @@ public class StartBidingController {
     private final SimpMessagingTemplate messagingTemplate;
     private final BeadingCarService beadingCarService;
     private final BidCarsService bidCarsService;
+
     private final BeadingCarRepo beadingCarRepo;
-    private final SmsService smsService;
 
     private final BiddingTImerRepo biddingTImerRepo;
 
