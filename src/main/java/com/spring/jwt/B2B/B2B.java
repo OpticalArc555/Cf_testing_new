@@ -24,7 +24,7 @@ public class B2B {
     @Column(name = "buyerDealerId")
     private Integer buyerDealerId;
 
-    @Column(name = "sellerId")
+    @Column(name = "sellerDealerId")
     private Integer sellerDealerId;
 
     @Column(name = "time")
