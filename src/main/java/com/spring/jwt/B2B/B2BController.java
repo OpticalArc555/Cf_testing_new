@@ -2,6 +2,7 @@ package com.spring.jwt.B2B;
 
 import com.spring.jwt.dto.ResponceDto;
 import com.spring.jwt.dto.ResponseDto;
+import com.spring.jwt.dto.ResponseSingleCarDto;
 import com.spring.jwt.entity.Status;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,16 +55,14 @@ public class B2BController {
     }
 
     @GetMapping("/getById")
-    public ResponseEntity<ResponseAllB2BDto> getByB2BId(@RequestParam Integer b2BId) {
-        ResponseAllB2BDto response = new ResponseAllB2BDto();
+    public ResponseEntity<?> getByB2BId(@RequestParam Integer b2BId) {
+        ResponseSingleCarDto response = new ResponseSingleCarDto();
         try {
             B2BDto b2bDto = b2BService.getByB2bId(b2BId);
-            response.setStatus("success");
             response.setMessage("B2B transaction retrieved successfully.");
-            response.setList(List.of(b2bDto)); // Wrap single result in a list
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            response.setObject((b2bDto));
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            response.setStatus("error");
             response.setMessage("B2B transaction not found.");
             response.setException(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -71,21 +70,19 @@ public class B2BController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<ResponseAllB2BDto> getB2BCountByStatusAndDealer(
+    public ResponseEntity<?> getB2BCountByStatusAndDealer(
             @RequestParam Status requestStatus,
             @RequestParam Integer sellerDealerId) {
-        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        ResponceDto response = new ResponceDto();
         try {
             int count = b2BService.getB2BCountByStatusAndDealer(requestStatus, sellerDealerId);
-            response.setStatus("success");
             response.setMessage("Count retrieved successfully.");
-            response.setList(List.of());
-            response.setException("Count: " + count);
+            response.setObject( count);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            response.setStatus("error");
-            response.setMessage("Error retrieving count.");
-            response.setException(e.getMessage());
+            ResponseDto response1 = new ResponseDto();
+            response1.setStatus("error");
+            response1.setMessage("Error retrieving count.");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -163,13 +160,13 @@ public class B2BController {
         try {
             int count = b2BService.getCountByBeadingCarId(beadingCarId);
             response.setMessage("B2B count retrieved successfully.");
-            response.setObject(List.of(count));
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            response.setObject((count));
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (RuntimeException e) {
             ResponseDto response1 = new ResponseDto();
             response1.setMessage("Error retrieving B2B count.");
            response1.setStatus("error");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
     }
 
