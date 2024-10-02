@@ -32,7 +32,6 @@ public class B2BServiceImpl implements B2BService {
             b2B.setBuyerDealerId(b2BPostDto.getBuyerDealerId());
             b2B.setTime(b2BPostDto.getTime().atStartOfDay());
 
-            b2B.setRequestStatus(Status.PENDING);
 
             BeadingCAR beadingCar = beadingCarRepo.findById(b2BPostDto.getBeadingCarId())
                     .orElseThrow(() -> new RuntimeException("BeadingCar not found with id: " + b2BPostDto.getBeadingCarId()));
@@ -42,6 +41,7 @@ public class B2BServiceImpl implements B2BService {
             }
             b2B.setSellerDealerId(beadingCar.getDealerId());
             b2B.setSalesPersonId(null);
+            b2B.setRequestStatus("PENDING");
             b2BRepo.save(b2B);
 
             return "B2B transaction added successfully.";
@@ -53,7 +53,7 @@ public class B2BServiceImpl implements B2BService {
 
 
     @Override
-    public List<B2BDto> getByBeadingCarId(Status requestStatus, Integer beadingCarId) {
+    public List<B2BDto> getByBeadingCarId(String requestStatus, Integer beadingCarId) {
         List<B2B> b2bList = b2BRepo.findByRequestStatusAndBeadingCarId(requestStatus, beadingCarId);
 
         if (b2bList.isEmpty()) {
@@ -71,7 +71,7 @@ public class B2BServiceImpl implements B2BService {
 
 
     @Override
-    public int getB2BCountByStatusAndDealer(Status requestStatus, Integer sellerDealerId) {
+    public int getB2BCountByStatusAndDealer(String requestStatus, Integer sellerDealerId) {
         return b2BRepo.countByRequestStatusAndSellerDealerId(requestStatus, sellerDealerId);
     }
 
@@ -81,7 +81,7 @@ public class B2BServiceImpl implements B2BService {
     }
 
     @Override
-    public List<B2BDto> getByStatus(Status requestStatus) {
+    public List<B2BDto> getByStatus(String requestStatus) {
         List<B2B> b2bList = b2BRepo.findByRequestStatus(requestStatus);
 
         if (b2bList.isEmpty()) {

@@ -1,18 +1,22 @@
-package com.spring.jwt.B2B;
+package com.spring.jwt.B2BConfirm;
+
 import com.spring.jwt.entity.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Date;
 import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "B2B")
-public class B2B {
+@Table(name = "PendingB2B")
+public class PendingB2B {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "B2BId", nullable = false)
@@ -39,6 +43,7 @@ public class B2B {
     @Column(name = "salesPersonId")
     private Integer salesPersonId;
 
-
+    @Column(name = "CreatedTime")
+    private Date CreatedTime;
 
 }
