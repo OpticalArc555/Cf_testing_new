@@ -20,18 +20,17 @@ public class B2BController {
     private final B2BService b2BService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseAllB2BDto> addB2B(@Valid @RequestBody B2BPostDto b2BPostDto) {
-        ResponseAllB2BDto response = new ResponseAllB2BDto();
+    public ResponseEntity<?> addB2B(@Valid @RequestBody B2BPostDto b2BPostDto) {
+        ResponseDto response = new ResponseDto();
         try {
             String message = b2BService.addB2B(b2BPostDto);
             response.setStatus("success");
             response.setMessage(message);
-            return new ResponseEntity(HttpStatus.CREATED);
+            return new ResponseEntity(response,HttpStatus.CREATED);
         } catch (RuntimeException e) {
             response.setStatus("error");
-            response.setMessage("Failed to add B2B transaction.");
-            response.setException(e.getMessage());
-            return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity( response,HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

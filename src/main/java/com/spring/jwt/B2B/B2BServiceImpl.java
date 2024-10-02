@@ -32,11 +32,14 @@ public class B2BServiceImpl implements B2BService {
             b2B.setBuyerDealerId(b2BPostDto.getBuyerDealerId());
             b2B.setTime(b2BPostDto.getTime().atStartOfDay());
 
-            b2B.setRequestStatus(Status.ACTIVE);
+            b2B.setRequestStatus(Status.PENDING);
 
             BeadingCAR beadingCar = beadingCarRepo.findById(b2BPostDto.getBeadingCarId())
                     .orElseThrow(() -> new RuntimeException("BeadingCar not found with id: " + b2BPostDto.getBeadingCarId()));
 
+            if (!beadingCar.getCarStatus().equals(Status.ACTIVE)) {
+                throw new RuntimeException("Car is not active.");
+            }
             b2B.setSellerDealerId(beadingCar.getDealerId());
             b2B.setSalesPersonId(null);
             b2BRepo.save(b2B);
