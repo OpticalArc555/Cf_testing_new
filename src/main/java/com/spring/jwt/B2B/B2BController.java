@@ -36,7 +36,7 @@ public class B2BController {
 
     @GetMapping("/by-beading-car")
     public ResponseEntity<ResponseAllB2BDto> getByBeadingCarId(
-            @RequestParam Status requestStatus,
+            @RequestParam String requestStatus,
             @RequestParam Integer beadingCarId) {
         ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
@@ -70,7 +70,7 @@ public class B2BController {
 
     @GetMapping("/count")
     public ResponseEntity<?> getB2BCountByStatusAndDealer(
-            @RequestParam Status requestStatus,
+            @RequestParam String requestStatus,
             @RequestParam Integer sellerDealerId) {
         ResponceDto response = new ResponceDto();
         try {
@@ -120,7 +120,7 @@ public class B2BController {
     }
 
     @GetMapping("/by-status")
-    public ResponseEntity<ResponseAllB2BDto> getByStatus(@RequestParam Status requestStatus) {
+    public ResponseEntity<ResponseAllB2BDto> getByStatus(@RequestParam String requestStatus) {
         ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
             List<B2BDto> b2bList = b2BService.getByStatus(requestStatus);

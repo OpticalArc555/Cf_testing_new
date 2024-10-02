@@ -24,7 +24,7 @@ public class B2BDto {
 
     private String message;
 
-    private Status requestStatus;
+    private String requestStatus;
 
     private Integer salesPersonId;
 
@@ -32,7 +32,7 @@ public class B2BDto {
 //    public B2BDto(Integer b2BId, Integer beadingCarId, Integer buyerDealerId, Integer sellerDealerId, LocalDateTime time, Status requestStatus) {
 //    }
 
-    public B2BDto(Integer b2BId, Integer beadingCarId, Integer buyerDealerId, Integer sellerDealerId, LocalDateTime time, Status requestStatus) {
+    public B2BDto(Integer b2BId, Integer beadingCarId, Integer buyerDealerId, Integer sellerDealerId, LocalDateTime time, String requestStatus) {
         this.B2BId = b2BId;
         this.beadingCarId = beadingCarId;
         this.buyerDealerId = buyerDealerId;

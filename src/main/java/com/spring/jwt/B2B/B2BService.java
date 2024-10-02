@@ -7,17 +7,17 @@ import java.util.List;
 public interface B2BService {
    String addB2B(B2BPostDto b2BPostDto);
 
-   List<B2BDto> getByBeadingCarId(Status requestStatus,Integer beadingCarId);
+   List<B2BDto> getByBeadingCarId(String requestStatus,Integer beadingCarId);
 
    B2BDto getByB2bId(Integer b2BId);
 
-   int getB2BCountByStatusAndDealer(Status requestStatus, Integer sellerDealerId);
+   int getB2BCountByStatusAndDealer(String requestStatus, Integer sellerDealerId);
 
    List<B2BDto> getAllB2BRecords();
 
    void deleteB2B(Integer b2BId);
 
-   List<B2BDto> getByStatus(Status requestStatus);
+   List<B2BDto> getByStatus(String requestStatus);
 
    List<B2BPostDto> getByBuyerDealerId(Integer buyerDealerId);
 
