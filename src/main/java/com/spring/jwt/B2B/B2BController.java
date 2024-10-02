@@ -169,14 +169,15 @@ public class B2BController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<ResponseAllB2BDto> updateB2B(@RequestParam Integer b2BId) {
+
+    @PatchMapping("/update")
+    public ResponseEntity<ResponseAllB2BDto> updateB2B(@RequestParam Integer b2BId, @RequestBody B2BDto b2BDto) {
         ResponseAllB2BDto response = new ResponseAllB2BDto();
         try {
-            B2B updatedB2B = b2BService.updateB2B(b2BId);
+            B2B updatedB2B = b2BService.updateB2B(b2BId, b2BDto);
             response.setStatus("success");
             response.setMessage("B2B transaction updated successfully.");
-            response.setList(List.of(mapToB2BDto(updatedB2B))); // Wrap single result in a list
+//            response.setList(List.of(mapToB2BDto(updatedB2B))); // Wrap single result in a list
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
             response.setStatus("error");
@@ -185,9 +186,16 @@ public class B2BController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
-    private B2BDto mapToB2BDto(B2B b2b) {
-        B2BDto b2bDto = new B2BDto();
-        b2bDto.setB2BId(b2b.getB2BId());
-        return b2bDto;
+
+    private B2BDto mapToB2BDto(B2B b2B) {
+        B2BDto b2BDto = new B2BDto();
+        b2BDto.setB2BId(b2B.getB2BId());
+        b2BDto.setBeadingCarId(b2B.getBeadingCarId());
+        b2BDto.setBuyerDealerId(b2B.getBuyerDealerId());
+        b2BDto.setSellerDealerId(b2B.getSellerDealerId());
+        b2BDto.setTime(b2B.getTime().toLocalDate());
+        b2BDto.setRequestStatus(b2B.getRequestStatus());
+        b2BDto.setSalesPersonId(b2B.getSalesPersonId());
+        return b2BDto;
     }
 }
