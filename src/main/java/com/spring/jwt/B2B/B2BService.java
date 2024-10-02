@@ -23,6 +23,6 @@ public interface B2BService {
 
    int getCountByBeadingCarId(Integer beadingCarId);
 
-   B2B updateB2B(Integer b2BId);
+   B2B updateB2B(Integer b2BId ,B2BDto b2BDto);
 
 }

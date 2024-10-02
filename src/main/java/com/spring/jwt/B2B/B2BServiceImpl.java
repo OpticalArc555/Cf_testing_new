@@ -37,7 +37,7 @@ public class B2BServiceImpl implements B2BService {
             BeadingCAR beadingCar = beadingCarRepo.findById(b2BPostDto.getBeadingCarId())
                     .orElseThrow(() -> new RuntimeException("BeadingCar not found with id: " + b2BPostDto.getBeadingCarId()));
 
-            if (!beadingCar.getCarStatus().equals(Status.ACTIVE)) {
+            if (!beadingCar.getCarStatus().trim().equalsIgnoreCase("ACTIVE")) {
                 throw new RuntimeException("Car is not active.");
             }
             b2B.setSellerDealerId(beadingCar.getDealerId());
@@ -46,7 +46,7 @@ public class B2BServiceImpl implements B2BService {
 
             return "B2B transaction added successfully.";
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error while adding B2B transaction: " + e.getMessage());
+            throw new RuntimeException("Exception :"+e.getMessage());
         }
     }
 
@@ -126,12 +126,38 @@ public class B2BServiceImpl implements B2BService {
     }
 
     @Override
-    public B2B updateB2B(Integer b2BId) {
+    @Transactional
+    public B2B updateB2B(Integer b2BId, B2BDto b2BDto) {
         B2B existingB2B = b2BRepo.findById(b2BId)
                 .orElseThrow(() -> new RuntimeException("B2B not found with id: " + b2BId));
+
+        if (b2BDto.getBeadingCarId() != null) {
+            existingB2B.setBeadingCarId(b2BDto.getBeadingCarId());
+        }
+        if (b2BDto.getBuyerDealerId() != null) {
+            existingB2B.setBuyerDealerId(b2BDto.getBuyerDealerId());
+        }
+        if (b2BDto.getSellerDealerId() != null) {
+            existingB2B.setSellerDealerId(b2BDto.getSellerDealerId());
+        }
+        if (b2BDto.getTime() != null) {
+            existingB2B.setTime(b2BDto.getTime().atStartOfDay());
+        }
+        if (b2BDto.getRequestStatus() != null) {
+            existingB2B.setRequestStatus(b2BDto.getRequestStatus());
+        }
+        if (b2BDto.getSalesPersonId() != null) {
+            existingB2B.setSalesPersonId(b2BDto.getSalesPersonId());
+        }
+        if (b2BDto.getMessage() != null) {
+            existingB2B.setMessage(b2BDto.getMessage());
+        }
+
         b2BRepo.save(existingB2B);
         return existingB2B;
     }
+
+
 
 
     private B2BPostDto mapToB2BPostDto(B2B b2b) {

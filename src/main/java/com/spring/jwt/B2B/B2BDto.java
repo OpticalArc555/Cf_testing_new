@@ -29,6 +29,15 @@ public class B2BDto {
     private Integer salesPersonId;
 
 
+//    public B2BDto(Integer b2BId, Integer beadingCarId, Integer buyerDealerId, Integer sellerDealerId, LocalDateTime time, Status requestStatus) {
+//    }
+
     public B2BDto(Integer b2BId, Integer beadingCarId, Integer buyerDealerId, Integer sellerDealerId, LocalDateTime time, Status requestStatus) {
+        this.B2BId = b2BId;
+        this.beadingCarId = beadingCarId;
+        this.buyerDealerId = buyerDealerId;
+        this.sellerDealerId = sellerDealerId;
+        this.time = time.toLocalDate();
+        this.requestStatus = requestStatus;
     }
 }
