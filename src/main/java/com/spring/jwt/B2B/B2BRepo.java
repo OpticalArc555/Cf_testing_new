@@ -25,5 +25,7 @@ public interface B2BRepo extends JpaRepository<B2B, Integer> {
     int countByBeadingCarId(Integer beadingCarId);
 
     List<B2B> findByBeadingCarId(Integer beadingCarId);
+
+    List<B2B> findBySalesPersonId(Integer salesPersonId);
 }
 
