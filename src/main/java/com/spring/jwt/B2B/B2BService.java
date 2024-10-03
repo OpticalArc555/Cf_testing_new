@@ -25,4 +25,6 @@ public interface B2BService {
 
    B2B updateB2B(Integer b2BId ,B2BDto b2BDto);
 
+   List<B2BDto> getBySealsPerson(Integer salesPersonId);
+
 }

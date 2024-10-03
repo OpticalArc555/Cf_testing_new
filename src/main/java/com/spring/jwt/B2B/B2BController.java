@@ -186,6 +186,22 @@ public class B2BController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/by-sales-person")
+    public ResponseEntity<ResponseAllB2BDto> getBySalesPerson(@RequestParam Integer salesPersonId) {
+        ResponseAllB2BDto response = new ResponseAllB2BDto();
+        try {
+            List<B2BDto> b2bList = b2BService.getBySealsPerson(salesPersonId);
+            response.setStatus("success");
+            response.setMessage("B2B records retrieved successfully.");
+            response.setList(b2bList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.setStatus("error");
+            response.setMessage("No B2B records found for the provided sales person ID.");
+            response.setException(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
     private B2BDto mapToB2BDto(B2B b2B) {
         B2BDto b2BDto = new B2BDto();

@@ -157,6 +157,22 @@ public class B2BServiceImpl implements B2BService {
         return existingB2B;
     }
 
+    @Override
+    public List<B2BDto> getBySealsPerson(Integer salesPersonId) {
+        try {
+            List<B2B> b2bList = b2BRepo.findBySalesPersonId(salesPersonId);
+
+            if (b2bList.isEmpty()) {
+                throw new RuntimeException("No B2B records found for SalesPersonId: " + salesPersonId);
+            }
+
+            return b2bList.stream()
+                    .map(this::mapToB2BDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving B2B records for SalesPersonId: " + salesPersonId + ". Exception: " + e.getMessage());
+        }
+    }
 
 
 
