@@ -101,24 +101,24 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
         try {
             List<B2BConfirm> confirms = b2BConfirmRepo.findBySellerDealerId(sellerDealerId);
             if (confirms.isEmpty()) {
-                throw new RuntimeException("No B2BConfirm records found for sellerDealerId: " + sellerDealerId);
+                throw new RuntimeException("No B2BConfirm records found for sellerDealerId: " );
             }
             return confirms.stream().map(this::mapToDto).collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error  " + e.getMessage());
         }
     }
-
     @Override
     public List<B2BConfirmDto> getBySalesPersonId(Integer salesPersonId) {
         try {
             List<B2BConfirm> confirms = b2BConfirmRepo.findBySalesPersonId(salesPersonId);
             if (confirms.isEmpty()) {
-                throw new RuntimeException("No B2BConfirm records found for salesPersonId: " + salesPersonId);
+                throw new RuntimeException("No B2BConfirm records found for salesPersonId: " );
             }
             return confirms.stream().map(this::mapToDto).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error  " + e.getMessage());
+            // Adding more context to the error message
+            throw new RuntimeException("Error "+ e.getMessage());
         }
     }
 

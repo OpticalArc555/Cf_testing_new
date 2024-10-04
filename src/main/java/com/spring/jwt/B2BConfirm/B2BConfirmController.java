@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,7 @@ public class B2BConfirmController {
     public ResponseEntity<ResponseForList> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getByBuyerDealerId(buyerDealerId);
-            return ResponseEntity.ok(new ResponseForList("Records found", result, null));
+            return ResponseEntity.ok(new ResponseForList("Records found", Collections.singletonList(result), null));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
         }
@@ -48,7 +49,7 @@ public class B2BConfirmController {
     public ResponseEntity<ResponseForList> getBySellerDealerId(@RequestParam Integer sellerDealerId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getBySellerDealerId(sellerDealerId);
-            return ResponseEntity.ok(new ResponseForList("Records found", result, null));
+            return ResponseEntity.ok(new ResponseForList("Records found", Collections.singletonList(result), null));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
         }
@@ -58,9 +59,11 @@ public class B2BConfirmController {
     public ResponseEntity<ResponseForList> getBySalesPersonId(@RequestParam Integer salesPersonId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getBySalesPersonId(salesPersonId);
-            return ResponseEntity.ok(new ResponseForList("Records found", result, null));
+            return ResponseEntity.ok(new ResponseForList("Records fetched successfully", Collections.singletonList(result), "success"));
         } catch (RuntimeException e) {
+            // Returning proper error message with exception details
             return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
         }
     }
+
 }
