@@ -36,33 +36,33 @@ public class B2BConfirmController {
     }
 
     @GetMapping("/buyerId")
-    public ResponseEntity<ResponseForList> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
+    public ResponseEntity<ResponceAllConfirmDto> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getByBuyerDealerId(buyerDealerId);
-            return ResponseEntity.ok(new ResponseForList("Records found", Collections.singletonList(result), null));
+            return ResponseEntity.ok(new ResponceAllConfirmDto("Records found", (result), null));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponceAllConfirmDto("Error fetching records", null, e.getMessage()));
         }
     }
 
     @GetMapping("/sellerId")
-    public ResponseEntity<ResponseForList> getBySellerDealerId(@RequestParam Integer sellerDealerId) {
+    public ResponseEntity<ResponceAllConfirmDto> getBySellerDealerId(@RequestParam Integer sellerDealerId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getBySellerDealerId(sellerDealerId);
-            return ResponseEntity.ok(new ResponseForList("Records found", Collections.singletonList(result), null));
+            return ResponseEntity.ok(new ResponceAllConfirmDto("Records found", (result), null));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponceAllConfirmDto("Error fetching records", null, e.getMessage()));
         }
     }
 
     @GetMapping("/salespersonId")
-    public ResponseEntity<ResponseForList> getBySalesPersonId(@RequestParam Integer salesPersonId) {
+    public ResponseEntity<ResponceAllConfirmDto> getBySalesPersonId(@RequestParam Integer salesPersonId) {
         try {
             List<B2BConfirmDto> result = b2bConfirmServices.getBySalesPersonId(salesPersonId);
-            return ResponseEntity.ok(new ResponseForList("Records fetched successfully", Collections.singletonList(result), "success"));
+            return ResponseEntity.ok(new ResponceAllConfirmDto("Records fetched successfully", (result), "success"));
         } catch (RuntimeException e) {
             // Returning proper error message with exception details
-            return ResponseEntity.badRequest().body(new ResponseForList("Error fetching records", null, e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponceAllConfirmDto("Error fetching records", null, e.getMessage()));
         }
     }
 
