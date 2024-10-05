@@ -44,7 +44,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
             b2BConfirm.setSellerDealerId(b2b.getSellerDealerId());
             b2BConfirm.setTime(b2b.getTime());
             b2BConfirm.setMessage(b2b.getMessage());
-            b2BConfirm.setRequestStatus(b2b.getRequestStatus());
+            b2BConfirm.setRequestStatus("Confirm");
             b2BConfirm.setSalesPersonId(b2b.getSalesPersonId());
             b2BConfirm.setPrice(b2bConfirmPostDto.getPrice());
             b2BConfirmRepo.save(b2BConfirm);
