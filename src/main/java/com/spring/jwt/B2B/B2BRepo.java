@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface B2BRepo extends JpaRepository<B2B, Integer> {
@@ -27,5 +28,7 @@ public interface B2BRepo extends JpaRepository<B2B, Integer> {
     List<B2B> findByBeadingCarId(Integer beadingCarId);
 
     List<B2B> findBySalesPersonId(Integer salesPersonId);
+
+    Optional<B2B> findByBeadingCarIdAndBuyerDealerId(Integer beadingCarId, Integer buyerDealerId);
 }
 

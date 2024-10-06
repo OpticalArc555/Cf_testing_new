@@ -34,9 +34,9 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
     @Transactional
     public String addConfirmBooking(B2bConfirmPostDto b2bConfirmPostDto) {
         try {
-
             B2B b2b = b2BRepo.findById(b2bConfirmPostDto.getB2BId())
                     .orElseThrow(() -> new RuntimeException("B2B not found with id: " + b2bConfirmPostDto.getB2BId()));
+
             B2BConfirm b2BConfirm = new B2BConfirm();
             b2BConfirm.setB2BId(b2b.getB2BId());
             b2BConfirm.setBeadingCarId(b2b.getBeadingCarId());
@@ -48,6 +48,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
             b2BConfirm.setSalesPersonId(b2b.getSalesPersonId());
             b2BConfirm.setPrice(b2bConfirmPostDto.getPrice());
             b2BConfirmRepo.save(b2BConfirm);
+            b2BRepo.deleteById(b2bConfirmPostDto.getB2BId());
             BeadingCAR beadingCar = beadingCarRepo.findById(b2b.getBeadingCarId())
                     .orElseThrow(() -> new RuntimeException("BeadingCAR not found with id: " + b2b.getBeadingCarId()));
             beadingCar.setCarStatus("SOLD");
@@ -66,12 +67,14 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
                     pendingB2B.setSalesPersonId(otherB2B.getSalesPersonId());
                     pendingB2B.setCreatedTime(new Date(System.currentTimeMillis()));
                     pendingB2BRepo.save(pendingB2B);
+
                     b2BRepo.delete(otherB2B);
                 }
             }
-            return "Confirm booking added successfully";
+
+            return "Confirm booking added and B2B entries deleted successfully";
         } catch (RuntimeException e) {
-            throw new RuntimeException("Exception : " + e.getMessage());
+            throw new RuntimeException("Exception: " + e.getMessage());
         }
     }
 
