@@ -26,12 +26,17 @@ public class B2BServiceImpl implements B2BService {
     @Transactional
     public String addB2B(B2BPostDto b2BPostDto) {
         try {
-            B2B b2B = new B2B();
+            Optional<B2B> existingB2B = b2BRepo.findByBeadingCarIdAndBuyerDealerId(
+                    b2BPostDto.getBeadingCarId(), b2BPostDto.getBuyerDealerId());
 
+            if (existingB2B.isPresent()) {
+                throw new RuntimeException("A B2B transaction already exists for this beadingCarId and buyerDealerId.");
+            }
+
+            B2B b2B = new B2B();
             b2B.setBeadingCarId(b2BPostDto.getBeadingCarId());
             b2B.setBuyerDealerId(b2BPostDto.getBuyerDealerId());
             b2B.setTime(b2BPostDto.getTime().atStartOfDay());
-
 
             BeadingCAR beadingCar = beadingCarRepo.findById(b2BPostDto.getBeadingCarId())
                     .orElseThrow(() -> new RuntimeException("BeadingCar not found with id: " + b2BPostDto.getBeadingCarId()));
@@ -39,6 +44,7 @@ public class B2BServiceImpl implements B2BService {
             if (!beadingCar.getCarStatus().trim().equalsIgnoreCase("ACTIVE")) {
                 throw new RuntimeException("Car is not active.");
             }
+
             b2B.setSellerDealerId(beadingCar.getDealerId());
             b2B.setSalesPersonId(null);
             b2B.setRequestStatus("PENDING");
@@ -46,7 +52,7 @@ public class B2BServiceImpl implements B2BService {
 
             return "B2B transaction added successfully.";
         } catch (RuntimeException e) {
-            throw new RuntimeException("Exception :"+e.getMessage());
+            throw new RuntimeException("Exception: " + e.getMessage());
         }
     }
 
