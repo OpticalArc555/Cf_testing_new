@@ -30,7 +30,7 @@ public class B2BServiceImpl implements B2BService {
                     b2BPostDto.getBeadingCarId(), b2BPostDto.getBuyerDealerId());
 
             if (existingB2B.isPresent()) {
-                throw new RuntimeException("A B2B transaction already exists for this beadingCarId and buyerDealerId.");
+                throw new RuntimeException(" already Interested for this car");
             }
 
             B2B b2B = new B2B();
@@ -100,13 +100,13 @@ public class B2BServiceImpl implements B2BService {
 
 
     @Override
-    public List<B2BPostDto> getByBuyerDealerId(Integer buyerDealerId) {
+    public List<B2BByerGetInfoDto> getByBuyerDealerId(Integer buyerDealerId) {
         List<B2B> b2bList = b2BRepo.findByBuyerDealerId(buyerDealerId);
         if (b2bList.isEmpty()) {
             throw new RuntimeException("No B2B records found for buyerDealerId: " + buyerDealerId);
         }
         return b2bList.stream()
-                .map(this::mapToB2BPostDto)
+                .map(this::mapToB2BByerGetInfoDto)
                 .collect(Collectors.toList());
     }
 
@@ -190,6 +190,13 @@ public class B2BServiceImpl implements B2BService {
         return dto;
     }
 
+    private B2BByerGetInfoDto mapToB2BByerGetInfoDto(B2B b2b){
+        B2BByerGetInfoDto dto = new B2BByerGetInfoDto();
+        dto.setBeadingCarId(b2b.getBeadingCarId());
+        dto.setBuyerDealerId(b2b.getBuyerDealerId());
+        dto.setRequestStatus(b2b.getRequestStatus());
+        return dto;
+    }
     private B2BDto mapToB2BDto(B2B b2b) {
         B2BDto b2bDto = new B2BDto();
 
