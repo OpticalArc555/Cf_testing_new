@@ -137,10 +137,10 @@ public class B2BController {
     }
 
     @GetMapping("/by-buyer-dealer")
-    public ResponseEntity<ResponseAllB2BDto2> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
-        ResponseAllB2BDto2 response = new ResponseAllB2BDto2();
+    public ResponseEntity<ResponseAllB2BDto3> getByBuyerDealerId(@RequestParam Integer buyerDealerId) {
+        ResponseAllB2BDto3 response = new ResponseAllB2BDto3();
         try {
-            List<B2BPostDto> b2bList = b2BService.getByBuyerDealerId(buyerDealerId);
+            List<B2BByerGetInfoDto> b2bList = b2BService.getByBuyerDealerId(buyerDealerId);
             response.setStatus("success");
             response.setMessage("B2B records retrieved successfully.");
             response.setList(b2bList);

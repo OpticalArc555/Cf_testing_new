@@ -19,7 +19,7 @@ public interface B2BService {
 
    List<B2BDto> getByStatus(String requestStatus);
 
-   List<B2BPostDto> getByBuyerDealerId(Integer buyerDealerId);
+   public List<B2BByerGetInfoDto> getByBuyerDealerId(Integer buyerDealerId);
 
    int getCountByBeadingCarId(Integer beadingCarId);
 
