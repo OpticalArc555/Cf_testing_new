@@ -88,7 +88,7 @@ public class B2BServiceImpl implements B2BService {
 
     @Override
     public List<B2BDto> getByStatus(String requestStatus) {
-        List<B2B> b2bList = b2BRepo.findByRequestStatus(requestStatus);
+        List<B2B> b2bList = b2BRepo.findByRequestStatusOrderByB2BIdDesc(requestStatus);
 
         if (b2bList.isEmpty()) {
             throw new RuntimeException("No B2B records found with status: " + requestStatus);
@@ -101,7 +101,7 @@ public class B2BServiceImpl implements B2BService {
 
     @Override
     public List<B2BByerGetInfoDto> getByBuyerDealerId(Integer buyerDealerId) {
-        List<B2B> b2bList = b2BRepo.findByBuyerDealerId(buyerDealerId);
+        List<B2B> b2bList = b2BRepo.findByBuyerDealerIdOrderByB2BIdDesc(buyerDealerId);
         if (b2bList.isEmpty()) {
             throw new RuntimeException("No B2B records found for buyerDealerId: " + buyerDealerId);
         }
@@ -166,7 +166,7 @@ public class B2BServiceImpl implements B2BService {
     @Override
     public List<B2BDto> getBySealsPerson(Integer salesPersonId) {
         try {
-            List<B2B> b2bList = b2BRepo.findBySalesPersonId(salesPersonId);
+            List<B2B> b2bList = b2BRepo.findBySalesPersonIdOrderByB2BIdDesc(salesPersonId);
 
             if (b2bList.isEmpty()) {
                 throw new RuntimeException("No B2B records found for SalesPersonId: " + salesPersonId);
