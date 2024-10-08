@@ -9,11 +9,11 @@ import java.util.Optional;
 @Repository
 public interface B2BConfirmRepo extends JpaRepository<B2BConfirm, Integer> {
 
-    Optional<B2BConfirm> findByBeadingCarId(Integer beadingCarId);
+    Optional<B2BConfirm> findByBeadingCarIdOrderByB2BConfirmIdDesc(Integer beadingCarId);
 
-    List<B2BConfirm> findByBuyerDealerId(Integer buyerDealerId);
+    List<B2BConfirm> findByBuyerDealerIdOrderByB2BConfirmIdDesc(Integer buyerDealerId);
 
-    List<B2BConfirm> findBySellerDealerId(Integer sellerDealerId);
+    List<B2BConfirm> findBySellerDealerIdOrderByB2BConfirmIdDesc(Integer sellerDealerId);
 
-    List<B2BConfirm> findBySalesPersonId(Integer salesPersonId);
+    List<B2BConfirm> findBySalesPersonIdOrderByB2BConfirmIdDesc(Integer salesPersonId);
 }

@@ -81,7 +81,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
 
     @Override
     public B2BConfirmDto getByBeadingCarId(Integer beadingCarId) {
-        B2BConfirm b2BConfirm = b2BConfirmRepo.findByBeadingCarId(beadingCarId)
+        B2BConfirm b2BConfirm = b2BConfirmRepo.findByBeadingCarIdOrderByB2BConfirmIdDesc(beadingCarId)
                 .orElseThrow(() -> new RuntimeException("B2B Confirm not found with Beading Car ID: "));
         return mapToDto(b2BConfirm);
     }
@@ -89,7 +89,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
     @Override
     public List<B2BConfirmDto> getByBuyerDealerId(Integer buyerDealerId) {
 //        try {
-        List<B2BConfirm> confirms = b2BConfirmRepo.findByBuyerDealerId(buyerDealerId);
+        List<B2BConfirm> confirms = b2BConfirmRepo.findByBuyerDealerIdOrderByB2BConfirmIdDesc(buyerDealerId);
         if (confirms.isEmpty()) {
             throw new RuntimeException("No B2BConfirm records found for buyerDealerId: " + buyerDealerId);
         }
@@ -102,7 +102,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
     @Override
     public List<B2BConfirmDto> getBySellerDealerId(Integer sellerDealerId) {
         try {
-            List<B2BConfirm> confirms = b2BConfirmRepo.findBySellerDealerId(sellerDealerId);
+            List<B2BConfirm> confirms = b2BConfirmRepo.findBySellerDealerIdOrderByB2BConfirmIdDesc(sellerDealerId);
             if (confirms.isEmpty()) {
                 throw new RuntimeException("No B2BConfirm records found for sellerDealerId: " );
             }
@@ -114,7 +114,7 @@ public class B2bConfirmServiceImpl implements B2bConfirmServices {
     @Override
     public List<B2BConfirmDto> getBySalesPersonId(Integer salesPersonId) {
         try {
-            List<B2BConfirm> confirms = b2BConfirmRepo.findBySalesPersonId(salesPersonId);
+            List<B2BConfirm> confirms = b2BConfirmRepo.findBySalesPersonIdOrderByB2BConfirmIdDesc(salesPersonId);
             if (confirms.isEmpty()) {
                 throw new RuntimeException("No B2BConfirm records found for salesPersonId: " );
             }
